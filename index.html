@@ -1,0 +1,99 @@
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen"/>
+  <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>Fotm</title>
+  <meta name="description" content="Реализация реактивного манифеста на примере мониторинга Оружейной World of Warcraft.">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">Fotm</h1>
+    </header>
+    <div id="container">
+      <p class="tagline">Реализация реактивного манифеста на примере мониторинга Оружейной World of Warcraft.</p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/Groz/fotm/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/Groz/fotm/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/Groz/fotm" class="code">View Fotm on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
+          <h2>
+<a name="%D0%A0%D0%B5%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F-%D1%80%D0%B5%D0%B0%D0%BA%D1%82%D0%B8%D0%B2%D0%BD%D0%BE%D0%B3%D0%BE-%D0%BC%D0%B0%D0%BD%D0%B8%D1%84%D0%B5%D1%81%D1%82%D0%B0-%D0%BD%D0%B0-%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%BE%D0%BD%D0%B8%D1%82%D0%BE%D1%80%D0%B8%D0%BD%D0%B3%D0%B0-%D0%9E%D1%80%D1%83%D0%B6%D0%B5%D0%B9%D0%BD%D0%BE%D0%B9-world-of-warcraft" class="anchor" href="#%D0%A0%D0%B5%D0%B0%D0%BB%D0%B8%D0%B7%D0%B0%D1%86%D0%B8%D1%8F-%D1%80%D0%B5%D0%B0%D0%BA%D1%82%D0%B8%D0%B2%D0%BD%D0%BE%D0%B3%D0%BE-%D0%BC%D0%B0%D0%BD%D0%B8%D1%84%D0%B5%D1%81%D1%82%D0%B0-%D0%BD%D0%B0-%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80%D0%B5-%D0%BC%D0%BE%D0%BD%D0%B8%D1%82%D0%BE%D1%80%D0%B8%D0%BD%D0%B3%D0%B0-%D0%9E%D1%80%D1%83%D0%B6%D0%B5%D0%B9%D0%BD%D0%BE%D0%B9-world-of-warcraft"><span class="octicon octicon-link"></span></a>Реализация реактивного манифеста на примере мониторинга Оружейной World of Warcraft.</h2>
+
+<p>Начав изучать онлайн курс на <a href="http://pluralsight.com/training/Courses/TableOfContents/implementing-reactive-manifesto-azure-aws">Pluralsight</a> по созданию веб-сайтов реализующих реактивный манифест, я решил, что было бы неплохо параллельно применить полученные навыки на реальной задаче.</p>
+
+<p><strong>Важно:</strong> я не являюсь специалистом по созданию подобного рода приложений, как раз наоборот. Таким образом, обучение будет идти по мере создания проекта. Приветствуются конструктивные комментарии.</p>
+
+<h3>
+<a name="%D0%A0%D0%B5%D0%B0%D0%BA%D1%82%D0%B8%D0%B2%D0%BD%D1%8B%D0%B9-%D0%BC%D0%B0%D0%BD%D0%B8%D1%84%D0%B5%D1%81%D1%82" class="anchor" href="#%D0%A0%D0%B5%D0%B0%D0%BA%D1%82%D0%B8%D0%B2%D0%BD%D1%8B%D0%B9-%D0%BC%D0%B0%D0%BD%D0%B8%D1%84%D0%B5%D1%81%D1%82"><span class="octicon octicon-link"></span></a>Реактивный манифест</h3>
+
+<p>Относительно новомодное явление в архитектуре построения веб-приложений, реактивный манифест обычно описывается, как инфраструктура веб-сайта реализующая четыре общих правила, т.е. она должна быть:</p>
+
+<ul>
+<li>Responsive - интерактивной для пользователя</li>
+<li>Scalable - автоматически масштабироваться по мере увеличения нагрузки</li>
+<li>Resilient - устойчива ко сбоям</li>
+<li>Event-driven - отвечать на асинхронные события от внешних источников</li>
+</ul><p>Используя эти принципы создадим веб-сайт для решения следующей задачи.</p>
+
+<h3>
+<a name="%D0%9A%D0%BE%D0%BD%D1%82%D0%B5%D0%BA%D1%81%D1%82" class="anchor" href="#%D0%9A%D0%BE%D0%BD%D1%82%D0%B5%D0%BA%D1%81%D1%82"><span class="octicon octicon-link"></span></a>Контекст</h3>
+
+<p>Игра World of Warcraft имеет очень активный сектор Player vs Player (PvP) арен, на которых можно играть друг против друга командами 2х2, 3х3 или 5х5. Играющие команды ранжируются по системе аналогичной шахматному <a href="http://ru.wikipedia.org/wiki/%D0%A0%D0%B5%D0%B9%D1%82%D0%B8%D0%BD%D0%B3_%D0%AD%D0%BB%D0%BE">рейтингу ЭЛО</a>. Раньше рейтинг этих команд можно было посмотреть по ссылке на <a href="http://eu.battle.net/wow/ru/pvp/leaderboards/3v3">Оружейную</a>. Недавно этот рейтинг изменили и теперь вместо командного он стал личным.</p>
+
+<p>В данном проекте cоздадим веб-сайт, который будет решать следующие задачи:</p>
+
+<ul>
+<li>Онлайн мониторинг относительной силы классов в рейтинге Оружейной</li>
+<li>С помощью машинного обучения попытаемся определять составы команд на основе личных показателей игроков</li>
+</ul><h3>
+<a name="%D0%98%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D1%83%D0%B5%D0%BC%D1%8B%D0%B5-%D1%82%D0%B5%D1%85%D0%BD%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D0%B8" class="anchor" href="#%D0%98%D1%81%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D1%83%D0%B5%D0%BC%D1%8B%D0%B5-%D1%82%D0%B5%D1%85%D0%BD%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D0%B8"><span class="octicon octicon-link"></span></a>Используемые технологии</h3>
+
+<ul>
+<li>Язык программирования: С#</li>
+<li>Платформа: Microsoft ASP .NET</li>
+<li>Развертывание: Windows Azure и Amazon Web Services</li>
+<li>База данных: MongoDB</li>
+</ul>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/Groz" class="avatar"><img src="https://1.gravatar.com/avatar/f4d4c614b2c7fd140ace306725b5df92?d=https%3A%2F%2Fidenticons.github.com%2F2bf7c1804f4f3ddf9237f5680992cf30.png&amp;r=x&amp;s=60" width="48" height="48"/></a> <a href="https://github.com/Groz">Groz</a> maintains <a href="https://github.com/Groz/fotm">Fotm</a></p>
+
+
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="http://pages.github.com/">GitHub Pages</a><br/>theme by <a href="https://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/Groz/fotm/tarball/master" class="tar">tar</a><a href="https://github.com/Groz/fotm/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+  
+</body>
+</html>
