@@ -12,4 +12,15 @@ namespace FotM.ArmoryScanner
         {
         }
     }
+
+    public class RawPuller
+    {
+        
+    }
+
+    public class DataPuller
+    {
+        // http://blizzard.github.io/api-wow-docs/#pvp-api/leaderboard-api
+
+    }
 }
