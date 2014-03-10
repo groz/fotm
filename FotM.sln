@@ -12,6 +12,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{1C2498
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FotM.Utilities", "FotM.Utilities\FotM.Utilities.csproj", "{90D8A7E8-FBAC-4B87-9EC2-A4E6F02B75C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -22,6 +24,10 @@ Global
 		{3D405398-4A16-4D7A-B0AC-F5D8A044D7D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D405398-4A16-4D7A-B0AC-F5D8A044D7D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D405398-4A16-4D7A-B0AC-F5D8A044D7D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90D8A7E8-FBAC-4B87-9EC2-A4E6F02B75C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90D8A7E8-FBAC-4B87-9EC2-A4E6F02B75C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90D8A7E8-FBAC-4B87-9EC2-A4E6F02B75C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90D8A7E8-FBAC-4B87-9EC2-A4E6F02B75C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
