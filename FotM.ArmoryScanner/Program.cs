@@ -1,4 +1,5 @@
-﻿using FotM.Utilities;
+﻿using FotM.Domain;
+using FotM.Utilities;
 using log4net;
 using log4net.Config;
 
@@ -16,8 +17,9 @@ namespace FotM.ArmoryScanner
 
             var rawArmoryPuller = new RawJsonPuller("http://us.battle.net/api/wow/leaderboard/");
 
-            var result = rawArmoryPuller.DownloadJson<dynamic>("3v3").rows;
-            string str = result[0].name;
+            var result = rawArmoryPuller.DownloadJson<Leaderboard>("2v2");
+            result.Bracket = Bracket.Threes;
+            string str = result.Rows[0].Name;
             Logger.Info(str);
         }
     }
