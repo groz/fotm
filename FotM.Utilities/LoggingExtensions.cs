@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using log4net;
@@ -11,7 +9,7 @@ namespace FotM.Utilities
     {
         public static ILog GetLogger<T>()
         {
-            return LogManager.GetLogger(typeof (T));
+            return LogManager.GetLogger(typeof(T));
         }
     }
 }

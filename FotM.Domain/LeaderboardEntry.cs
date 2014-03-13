@@ -43,5 +43,10 @@ namespace FotM.Domain
         public int SeasonLosses { get; set; }
         public int WeeklyWins { get; set; }
         public int WeeklyLosses { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("Name:{0}, Ranking: {1}, Rating: {2}", Name, Ranking, Rating);
+        }
     }
 }

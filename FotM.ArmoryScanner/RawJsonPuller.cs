@@ -12,7 +12,8 @@ namespace FotM.ArmoryScanner
         private static readonly ILog Logger = LoggingExtensions.GetLogger<RawJsonPuller>();
         private readonly Uri _baseAddress;
 
-        public RawJsonPuller(string baseAddress): this(new Uri(baseAddress))
+        public RawJsonPuller(string baseAddress)
+            : this(new Uri(baseAddress))
         {
         }
 
@@ -22,7 +23,7 @@ namespace FotM.ArmoryScanner
             Logger.InfoFormat("Base address set to {0}", baseAddress);
         }
 
-        public T DownloadJson<T>(string relativeAddress)
+        public T DownloadJson<T>(string relativeAddress = "")
         {
             var address = new Uri(_baseAddress, relativeAddress);
 
@@ -34,7 +35,7 @@ namespace FotM.ArmoryScanner
             {
                 var stream = response.GetResponseStream();
 
-                if (stream == null) 
+                if (stream == null)
                     throw new Exception("Response stream is null.");
 
                 using (var reader = new StreamReader(stream))
@@ -42,7 +43,7 @@ namespace FotM.ArmoryScanner
                     Logger.InfoFormat("Received response from {0}. Deserializing JSON.", address);
 
                     string responseText = reader.ReadToEnd();
-                    Logger.Debug(responseText);
+                    //Logger.Debug(responseText);
                     return JsonConvert.DeserializeObject<T>(responseText);
                 }
             }
