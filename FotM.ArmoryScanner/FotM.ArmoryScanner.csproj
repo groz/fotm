@@ -50,13 +50,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Armory.cs" />
     <Compile Include="ArmoryHistory.cs" />
     <Compile Include="Locale.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RawJsonPuller.cs" />
-    <Compile Include="RegionHost.cs" />
+    <Compile Include="ArmoryPuller.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -11,6 +11,7 @@ namespace FotM.ArmoryScanner
         private static readonly ILog Logger = LoggingExtensions.GetLogger<Program>();
         private readonly int _maxSize;
         private readonly Queue<Leaderboard> _snapshots;
+        private Leaderboard _lastSnapshot = null;
 
         public ArmoryHistory(int maxSize)
         {
@@ -18,9 +19,9 @@ namespace FotM.ArmoryScanner
             _snapshots = new Queue<Leaderboard>(_maxSize);
         }
 
-        public bool AddSnapshot(Leaderboard snapshot)
+        public bool Update(Leaderboard currentSnapshot)
         {
-            if (_snapshots.Any(s => SnapshotsEqual(s, snapshot)))
+            if (_lastSnapshot != null && SnapshotsEqual(_lastSnapshot, currentSnapshot))
             {
                 Logger.Debug("Snapshot already in queue, skipping.");
                 return false;
@@ -32,40 +33,30 @@ namespace FotM.ArmoryScanner
                 _snapshots.Dequeue();
             }
 
-            Logger.Debug("Added snapshot to history.");
-            _snapshots.Enqueue(snapshot);
+            Logger.Debug("Added currentSnapshot to history.");
+            _snapshots.Enqueue(currentSnapshot);
+            _lastSnapshot = currentSnapshot;
 
             return true;
         }
 
-        private static bool SnapshotsEqual(Leaderboard left, Leaderboard right)
+        private static bool SnapshotsEqual(Leaderboard previous, Leaderboard current)
         {
-            for (int i = 0; i < left.Rows.Length; ++i)
-            {
-                var leftRow = left.Rows[i];
-                var rightRow = right.Rows[i];
-
-                if (!MemberCompare.Equal(leftRow, rightRow))
-                {
 #if DEBUG
-                    // DEBUG only
-                    // find same players in previous snapshots
-                    Logger.DebugFormat("Previous left: {0}", leftRow);
+            var diffNew = current.Rows.Except(previous.Rows);
 
-                    var newLeftRow = right.Rows.First(r => r.Name == leftRow.Name && r.RealmId == leftRow.RealmId);
+            foreach (var currentEntry in diffNew)
+            {
+                var previousEntry = previous.Rows.FirstOrDefault(
+                    e => PlayerRegistry.CreatePlayerFrom(currentEntry).Equals(PlayerRegistry.CreatePlayerFrom(e)));
 
-                    Logger.DebugFormat("New left: {0}", newLeftRow);
-
-                    var previousRightRow = left.Rows.First(r => r.Name == rightRow.Name && r.RealmId == rightRow.RealmId);
-                    Logger.DebugFormat("Previous right: {0}", previousRightRow);
-
-                    Logger.DebugFormat("New right: {0}", rightRow);
-#endif
-                    return false;
+                if (previousEntry != null)
+                {
+                    Logger.DebugFormat("{0} -> {1}", previousEntry, currentEntry);
                 }
             }
-
-            return true;
+#endif
+            return current.Rows.SequenceEqual(previous.Rows);
         }
     }
 }

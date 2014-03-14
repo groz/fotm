@@ -4,12 +4,12 @@ using FotM.Domain;
 
 namespace FotM.ArmoryScanner
 {
-    public class RegionHost
+    public class ArmoryPuller
     {
         private readonly Uri _baseAddress;
         public string Host { get; private set; }
 
-        public RegionHost(string host, string locale = Locale.EnUs)
+        public ArmoryPuller(string host, string locale = Locale.EnUs)
         {
             Host = host;
 

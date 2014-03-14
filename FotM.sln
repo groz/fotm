@@ -16,6 +16,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FotM.Utilities", "FotM.Util
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FotM.Domain", "FotM.Domain\FotM.Domain.csproj", "{A9F666C5-47C6-45F7-9DC1-61126140A7E0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FotM.Cassandra", "FotM.Cassandra\FotM.Cassandra.csproj", "{94158125-21FD-4260-995B-6CADAD88A39B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FotM.Cassandra.Tests", "FotM.Cassandra.Tests\FotM.Cassandra.Tests.csproj", "{49026724-C88D-4F60-B16A-D5B7D4385EA0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +38,14 @@ Global
 		{A9F666C5-47C6-45F7-9DC1-61126140A7E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A9F666C5-47C6-45F7-9DC1-61126140A7E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A9F666C5-47C6-45F7-9DC1-61126140A7E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94158125-21FD-4260-995B-6CADAD88A39B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94158125-21FD-4260-995B-6CADAD88A39B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94158125-21FD-4260-995B-6CADAD88A39B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94158125-21FD-4260-995B-6CADAD88A39B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49026724-C88D-4F60-B16A-D5B7D4385EA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49026724-C88D-4F60-B16A-D5B7D4385EA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49026724-C88D-4F60-B16A-D5B7D4385EA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49026724-C88D-4F60-B16A-D5B7D4385EA0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -16,6 +16,17 @@ namespace FotM.ArmoryScanner
      * It will also listen to GetCurrentRankings messages and respond with result calculated last.
      * http://blizzard.github.io/api-wow-docs/#pvp-api/leaderboard-api
      */
+
+    public static class Armories
+    {
+        // Hardcoded stuff for now
+        public static readonly ArmoryPuller US = new ArmoryPuller("us.battle.net");
+        public static readonly ArmoryPuller Europe = new ArmoryPuller("eu.battle.net");
+        public static readonly ArmoryPuller Korea = new ArmoryPuller("kr.battle.net");
+        public static readonly ArmoryPuller Taiwan = new ArmoryPuller("tw.battle.net");
+        public static readonly ArmoryPuller China = new ArmoryPuller("www.battlenet.com.cn");
+    }
+
     class Program
     {
         private static readonly ILog Logger = LoggingExtensions.GetLogger<Program>();
@@ -28,11 +39,8 @@ namespace FotM.ArmoryScanner
 
             var armories = new[]
             {
-                Armory.US,
-                //Armory.Europe,
-                //Armory.China,
-                //Armory.Korea,
-                //Armory.Taiwan
+                Armories.US,
+                //Armories.Europe,
             };
 
             const int maxSize = 100;
@@ -56,7 +64,7 @@ namespace FotM.ArmoryScanner
 
                     var leaderboardSnapshot = armory.DownloadLeaderboard(Bracket.Threes);
 
-                    if (armoryHistory.AddSnapshot(leaderboardSnapshot))
+                    if (armoryHistory.Update(leaderboardSnapshot))
                     {
                         ++addCount;
                     }
