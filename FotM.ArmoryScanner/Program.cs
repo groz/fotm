@@ -44,10 +44,11 @@ namespace FotM.ArmoryScanner
             };
 
             const int maxSize = 100;
-            var history = armories.ToDictionary(a => a, a => new ArmoryHistory(maxSize));
+            var armoriesWithHistory = armories.ToDictionary(a => a, a => new ArmoryHistory(maxSize));
 
-            const int nRunsPerDay = 10000;
-            var timeout = TimeSpan.FromDays(1.0/nRunsPerDay);
+            const int nRunsPerDay = 3000;
+            //var timeout = TimeSpan.FromDays(1.0/nRunsPerDay);
+            var timeout = TimeSpan.FromSeconds(2); //TimeSpan.FromDays(1.0 / nRunsPerDay);
 
             Logger.InfoFormat("Sleep timeout set to {0}", timeout);
 
@@ -57,7 +58,7 @@ namespace FotM.ArmoryScanner
 
             while (true)
             {
-                foreach (var armoryHistoryPair in history)
+                foreach (var armoryHistoryPair in armoriesWithHistory)
                 {
                     var armory = armoryHistoryPair.Key;
                     var armoryHistory = armoryHistoryPair.Value;

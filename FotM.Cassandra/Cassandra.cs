@@ -22,7 +22,7 @@ namespace FotM.Cassandra
             throw new NotImplementedException();
         }
 
-        public IEnumerable<Team> FindTeams(Leaderboard previous, Leaderboard current)
+        public Team[] FindTeams(Leaderboard previous, Leaderboard current)
         {
             Logger.InfoFormat("Previous leaderboard has {0} entries, current - {1}", previous.Rows.Length, current.Rows.Length);
 
@@ -39,10 +39,10 @@ namespace FotM.Cassandra
                 let diff = new PlayerDiff(p, previousStat, currentStat)
                 select diff;
 
-            var playerDiffs = allDiffs.Where(d => d.HasChanges).ToArray();
+            PlayerDiff[] changedEntries = allDiffs.Where(d => d.HasChanges).ToArray();
 
-            Logger.DebugFormat("Total changed rankings: {0}", playerDiffs.Length);
-            foreach (var playerDiff in playerDiffs)
+            Logger.DebugFormat("Total changed rankings: {0}", changedEntries.Length);
+            foreach (var playerDiff in changedEntries)
             {
                 Logger.DebugFormat("Player {0}", playerDiff.Player);
             }
@@ -63,29 +63,28 @@ namespace FotM.Cassandra
                     throw new NotSupportedException();
             }
 
-            int nGroups = playerDiffs.Length / bracketSize;
+            int nGroups = changedEntries.Length / bracketSize;
 
             if (nGroups <= 1)
-                return new[] {new Team(playerDiffs.Select(d => d.Player))};
+                return new[] {new Team(changedEntries.Select(d => d.Player))};
 
-            // run K-Means
             Logger.InfoFormat("Starting K-Means for {0} groups...", nGroups);
 
             var teamLists = Enumerable.Range(0, nGroups).Select(i => new List<Player>()).ToArray();
 
             var kmeans = new KMeans(nGroups);
             
-            int[] playerGroups = kmeans.Compute(playerDiffs);
+            int[] playerGroups = kmeans.Compute(changedEntries);
 
             for (int i = 0; i < playerGroups.Length; ++i)
             {
-                Player player = playerDiffs[i].Player;
+                Player player = changedEntries[i].Player;
                 int nTeam = playerGroups[i];
 
                 teamLists[nTeam].Add(player);
             }
 
-            return teamLists.Select(lst => new Team(lst));
+            return teamLists.Select(lst => new Team(lst)).ToArray();
         }
     }
 }
