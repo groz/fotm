@@ -22,6 +22,13 @@ namespace FotM.Cassandra
             this.Ranking = current.Ranking;
             this.Rating = current.Rating;
             this.FactionId = current.FactionId;
+
+            this.WeeklyWins = current.WeeklyWins;
+            this.WeeklyLosses = current.WeeklyLosses;
+            this.SeasonWins = current.SeasonWins;
+            this.SeasonLosses = current.SeasonLosses;
+
+            this.RealmId = this.Player.Realm.RealmId;
         }
 
         public bool HasChanges
@@ -35,32 +42,47 @@ namespace FotM.Cassandra
         }
 
         public Player Player { get; private set; }
+        public int FactionId { get; private set; }
 
-        [Feature]
+        // FEATURES
+        [Feature(Weight = 100.0)]
+        public int RealmId { get; private set; }
+
+        [Feature(Weight = 0.1)]
         public int Ranking { get; private set; }
 
-        [Feature]
+        [Feature(Weight = 0.05)]
         public int Rating { get; private set; }
 
         [Feature]
-        public int FactionId { get; private set; }
+        public int WeeklyWins { get; private set; }
 
+        [Feature]
+        public int WeeklyLosses { get; private set; }
+
+        [Feature]
+        public int SeasonWins { get; private set; }
+
+        [Feature]
+        public int SeasonLosses { get; private set; }
+
+        // DIFF FEATURES
         [Feature]
         public int RankingDiff { get; private set; }
 
-        [Feature]
+        [Feature(Weight = 10)]
         public int WeeklyWinsDiff { get; private set; }
 
-        [Feature]
+        [Feature(Weight = 10)]
         public int WeeklyLossesDiff { get; private set; }
 
-        [Feature]
+        [Feature(Weight = 10)]
         public int SeasonWinsDiff { get; private set; }
 
-        [Feature]
+        [Feature(Weight = 10)]
         public int SeasonLossesDiff { get; private set; }
 
-        [Feature]
+        [Feature(Weight = 100)]
         public int RatingDiff { get; private set; }
     }
 }

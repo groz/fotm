@@ -34,11 +34,18 @@ namespace FotM.ArmoryScanner
                 _stopwatch = Stopwatch.StartNew();
             }
 
-            Leaderboard currentLeaderboard = _dataPuller.DownloadLeaderboard(_bracket);
-
-            if (_history.Update(currentLeaderboard))
+            try
             {
-                OnUpdate(_history, currentLeaderboard);
+                Leaderboard currentLeaderboard = _dataPuller.DownloadLeaderboard(_bracket);
+
+                if (_history.Update(currentLeaderboard))
+                {
+                    OnUpdate(_history, currentLeaderboard);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using Accord.MachineLearning;
 
 namespace FotM.Cassandra
@@ -26,11 +27,20 @@ namespace FotM.Cassandra
 
                 for (int j = 0; j < nFeatures; ++j)
                 {
-                    matrix[i][j] = Convert.ToDouble( featureProperties[j].GetValue(source[i]) );
+                    double weight = GetFeatureWeight(featureProperties[j]);
+                    matrix[i][j] = Convert.ToDouble( featureProperties[j].GetValue(source[i]) ) * weight;
                 }
             }
 
             return kmeans.Compute(matrix);
+        }
+
+        private static double GetFeatureWeight(PropertyInfo featureProperty)
+        {
+            var attributes = (FeatureAttribute[])
+                featureProperty.GetCustomAttributes(typeof(FeatureAttribute), false);
+
+            return attributes.First().Weight;
         }
     }
 }

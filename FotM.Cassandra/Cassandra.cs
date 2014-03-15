@@ -45,9 +45,39 @@ namespace FotM.Cassandra
             return bracketSize;
         }
 
+        private List<Player>[] FindTeams(int bracketSize, PlayerDiff[] diffs)
+        {
+            Logger.DebugFormat("Total changed rankings: {0}", diffs.Length);
+
+            int nGroups = (int)Math.Ceiling((double)diffs.Length / bracketSize);
+
+            if (nGroups <= 1)
+                return new[] {diffs.Select(d => d.Player).ToList()};
+
+            Logger.InfoFormat("Starting K-Means for {0} groups...", nGroups);
+
+            var teamLists = Enumerable.Range(0, nGroups).Select(i => new List<Player>()).ToArray();
+
+            var kmeans = new KMeans(nGroups);
+
+            int[] playerGroups = kmeans.Compute(diffs);
+
+            for (int i = 0; i < playerGroups.Length; ++i)
+            {
+                Player player = diffs[i].Player;
+                int nTeam = playerGroups[i];
+
+                teamLists[nTeam].Add(player);
+            }
+
+            return teamLists;
+        }
+
         public Team[] FindTeams(Leaderboard previousLeaderboard, Leaderboard currentLeaderboard)
         {
-            Logger.InfoFormat("Previous leaderboard has {0} entries, current - {1}", 
+            int bracketSize = GetBracketSize(currentLeaderboard.Bracket);
+
+            Logger.InfoFormat("Previous leaderboard has {0} entries, current - {1}",
                 previousLeaderboard.Rows.Length, currentLeaderboard.Rows.Length);
 
             // prepare player diffs for players in both leaderboards
@@ -65,40 +95,31 @@ namespace FotM.Cassandra
                 let diff = new PlayerDiff(p, previousStat, currentStat)
                 where diff.HasChanges
                 select diff).ToArray();
-            
-            Logger.DebugFormat("Total changed rankings: {0}", diffs.Length);
-            foreach (var playerDiff in diffs)
-            {
-                Logger.DebugFormat("Player {0}", playerDiff.Player);
-            }
 
-            int bracketSize = GetBracketSize(currentLeaderboard.Bracket);
+            var alliance = diffs.Where(d => d.FactionId == 0).ToArray();
+            var horde = diffs.Where(d => d.FactionId == 1).ToArray();
 
-            int nGroups = (int)Math.Ceiling((double)diffs.Length / bracketSize);
+            var allianceWinners = alliance.Where(d => d.RatingDiff > 0).ToArray();
+            var allianceLosers = alliance.Where(d => d.RatingDiff <= 0).ToArray();
 
-            if (nGroups <= 1)
-                return new[] {new Team(diffs.Select(d => d.Player))};
+            var hordeWinners = horde.Where(d => d.RatingDiff > 0).ToArray();
+            var hordeLosers = horde.Where(d => d.RatingDiff <= 0).ToArray();
 
-            Logger.InfoFormat("Starting K-Means for {0} groups...", nGroups);
+            var allianceWinnerTeams = FindTeams(bracketSize, allianceWinners);
+            var allianceLoserTeams = FindTeams(bracketSize, allianceLosers);
+            var hordeWinnerTeams = FindTeams(bracketSize, hordeWinners);
+            var hordeLoserTeams = FindTeams(bracketSize, hordeLosers);
 
-            var teamLists = Enumerable.Range(0, nGroups).Select(i => new List<Player>()).ToArray();
+            var allTeams = allianceWinnerTeams
+                .Union(allianceLoserTeams)
+                .Union(hordeWinnerTeams)
+                .Union(hordeLoserTeams)
+                .Where(team => team != null && team.Any()).ToArray();
 
-            var kmeans = new KMeans(nGroups);
-            
-            int[] playerGroups = kmeans.Compute(diffs);
+            var incompleteTeams = FindIncompleteTeams(allTeams, bracketSize);
+            var overbookedTeams = FindOverbookedTeams(allTeams, bracketSize);
 
-            for (int i = 0; i < playerGroups.Length; ++i)
-            {
-                Player player = diffs[i].Player;
-                int nTeam = playerGroups[i];
-
-                teamLists[nTeam].Add(player);
-            }
-
-            FindIncompleteTeams(teamLists, bracketSize);
-            var overbookedTeams = FindOverbookedTeams(teamLists, bracketSize);
-            
-            return teamLists.Except(overbookedTeams).Select(lst => new Team(lst)).ToArray();
+            return allTeams.Except(overbookedTeams).Except(incompleteTeams).Select(lst => new Team(lst)).ToArray();
         }
 
         private List<Player>[] FindOverbookedTeams(List<Player>[] teamLists, int bracketSize)
@@ -114,14 +135,14 @@ namespace FotM.Cassandra
             return overbookedTeams;
         }
 
-        private IEnumerable<List<Player>> FindIncompleteTeams(List<Player>[] teamLists, int bracketSize)
+        private List<Player>[] FindIncompleteTeams(List<Player>[] teamLists, int bracketSize)
         {
-            var incompleteTeams = teamLists.Where(lst => lst.Count < bracketSize);
+            var incompleteTeams = teamLists.Where(lst => lst.Count < bracketSize).ToArray();
 
             foreach (var team in incompleteTeams)
             {
                 string roster = string.Join(",", team);
-                Logger.InfoFormat("Team roster [{0}] is incomplete.", roster);
+                Logger.InfoFormat("Team roster [{0}] is incomplete for bracket {1}x{1} and discarded.", roster, bracketSize);
             }
 
             return incompleteTeams;
