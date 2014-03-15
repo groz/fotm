@@ -31,6 +31,14 @@ namespace FotM.ArmoryScanner
             public double RatingChange { get; private set; }
             public int Occurences { get; private set; }
 
+            public bool IsVerified
+            {
+                get
+                {
+                    return Occurences >= 2; // same setup seen twice or more
+                }
+            }
+
             public void Update(double ratingChange)
             {
                 RatingChange += ratingChange;
@@ -120,12 +128,28 @@ namespace FotM.ArmoryScanner
 
         private void LogStats()
         {
+            Logger.Info("Top teams:");
+
+            var verifiedTeams = _teamStats
+                .Where(t => t.Value.IsVerified)
+                .Select(t => new
+                {
+                    Team = t.Key,
+                    Setup = new TeamSetup(t.Key),
+                    Stats = t.Value
+                })
+                .ToArray();
+
+            foreach (var team in verifiedTeams.OrderByDescending(t => t.Stats.RatingChange))
+            {
+                Logger.InfoFormat("Team: {0} ({1}), Seen: {2}, RatingChange: {3}", 
+                    team.Team, team.Setup, team.Stats.Occurences, team.Stats.RatingChange);
+            }
+
             Logger.Info("Top setups:");
 
-            var setups = _teamStats
-                // only for teams that were recorded in same setup at least twice
-                .Where(t => t.Value.Occurences >= 3)
-                .GroupBy(ts => new TeamSetup(ts.Key))
+            var setups = verifiedTeams
+                .GroupBy(t => t.Setup)
                 .Select(setupGroup => new
                 {
                     Setup = setupGroup.Key,

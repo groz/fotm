@@ -21,55 +21,6 @@ namespace FotM.ArmoryScanner
         }
     }
 
-    class PlayerRankings
-    {
-        private static readonly ILog Logger = LoggingExtensions.GetLogger<PlayerRankings>();
-        private readonly Dictionary<Player, LeaderboardEntry> _rankings;
-
-        public PlayerRankings()
-        {
-            _rankings = new Dictionary<Player, LeaderboardEntry>();
-        }
-
-        public List<PlayerUpdate> Update(Leaderboard snapshot)
-        {
-            var updates = new List<PlayerUpdate>();
-
-            foreach (var currentEntry in snapshot.Rows)
-            {
-                Player player = currentEntry.CreatePlayer();
-
-                bool shouldAdd = true;
-
-                LeaderboardEntry previousEntry;
-
-                if (_rankings.TryGetValue(player, out previousEntry))
-                {
-                    if (currentEntry.WeeklyTotal <= previousEntry.WeeklyTotal)
-                    {
-                        shouldAdd = false;
-                        Logger.DebugFormat("Outdated update {0} -> {1}, discarded.", previousEntry, currentEntry);
-                    }
-                    else
-                    {
-                        Logger.DebugFormat("Updating entry {0} -> {1}", previousEntry, currentEntry);
-                        updates.Add(new PlayerUpdate(player, previousEntry, currentEntry));
-                    }
-                }
-                else
-                {
-                    Logger.DebugFormat("New entry {0}", currentEntry);
-                }
-
-                if (shouldAdd)
-                {
-                    _rankings[player] = currentEntry;
-                }
-            }
-            return updates;
-        }
-    }
-
     class ArmoryHistory
     {
         private static readonly ILog Logger = LoggingExtensions.GetLogger<ArmoryHistory>();
