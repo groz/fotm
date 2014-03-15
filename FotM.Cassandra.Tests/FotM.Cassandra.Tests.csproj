@@ -44,7 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CassandraTestBase.cs" />
     <Compile Include="CassandraTests2v2.cs" />
+    <Compile Include="CassandraTests3v3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

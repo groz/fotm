@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FotM.Domain;
@@ -9,45 +8,14 @@ using NUnit.Framework;
 namespace FotM.Cassandra.Tests
 {
     [TestFixture]
-    public class CassandraTests2v2
+    public class CassandraTests2v2: CassandraTestBase
     {
-        private static LeaderboardEntry CreateEntry(int ranking, string name, int rating,
-            int weeklyWins = 0, int weeklyLosses = 0, int seasonWins = 0, int seasonLosses = 0)
+        public CassandraTests2v2(): base(Bracket.Twos)
         {
-            return new LeaderboardEntry()
-            {
-                WeeklyLosses = weeklyLosses,
-                WeeklyWins = weeklyWins,
-                SeasonLosses = seasonLosses,
-                SeasonWins = seasonWins,
-                Name = name,
-                ClassId = 0,
-                SpecId = 0,
-                Rating = rating,
-                Ranking = ranking,
-                RealmId = 1,
-                RealmName = "TestRealm"
-            };
         }
-
-        private static Leaderboard CreateLeaderboard(params LeaderboardEntry[] entries)
-        {
-            return new Leaderboard()
-            {
-                Rows = entries.Union(StaticRankings).ToArray()
-            };
-        }
-
-        private static readonly LeaderboardEntry[] StaticRankings =
-        {
-            CreateEntry(10, "Gothiques", 2500),
-            CreateEntry(11, "Phenomenon", 2400),
-            CreateEntry(12, "Joker", 2300),
-            CreateEntry(503, "Nub", 1500)
-        };
 
         [Test]
-        public void SimpleWinnersGrouping_2v2()
+        public void SimpleWinnersGrouping()
         {
             var p1 = CreateEntry(100, "Groz", 2000);
             var p2 = CreateEntry(101, "Srez", 2000);
@@ -69,7 +37,7 @@ namespace FotM.Cassandra.Tests
         }
 
         [Test]
-        public void ComplexWinnersGrouping_2v2()
+        public void ComplexWinnersGrouping()
         {
             var p1 = CreateEntry(100, "Groz", 2000);
             var p2 = CreateEntry(101, "Srez", 2000);
@@ -101,7 +69,7 @@ namespace FotM.Cassandra.Tests
         }
 
         [Test]
-        public void SimpleLosersGrouping_2v2()
+        public void SimpleLosersGrouping()
         {
             var p1 = CreateEntry(100, "Groz", 2000);
             var p2 = CreateEntry(101, "Srez", 2000);
@@ -123,7 +91,7 @@ namespace FotM.Cassandra.Tests
         }
 
         [Test]
-        public void ComplexLosersGrouping_2v2()
+        public void ComplexLosersGrouping()
         {
             var p1 = CreateEntry(100, "Groz", 2000);
             var p2 = CreateEntry(101, "Srez", 2000);
@@ -155,7 +123,7 @@ namespace FotM.Cassandra.Tests
         }
 
         [Test]
-        public void MixedGrouping_2v2()
+        public void MixedGrouping()
         {
             var p1 = CreateEntry(100, "Groz", 2000);
             var p2 = CreateEntry(101, "Srez", 2000);

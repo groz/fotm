@@ -54,7 +54,7 @@ namespace FotM.Cassandra
                     bracketSize = 2;
                     break;
                 case Bracket.Threes:
-                    bracketSize = 2;
+                    bracketSize = 3;
                     break;
                 case Bracket.Fives:
                     bracketSize = 5;
