@@ -1,7 +1,5 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using FotM.Domain;
 using FotM.Utilities;
 using log4net;
@@ -17,14 +15,14 @@ namespace FotM.ArmoryScanner
      * http://blizzard.github.io/api-wow-docs/#pvp-api/leaderboard-api
      */
 
-    public static class Armories
+    public static class ArmoryConstants
     {
         // Hardcoded stuff for now
-        public static readonly ArmoryPuller US = new ArmoryPuller("us.battle.net");
-        public static readonly ArmoryPuller Europe = new ArmoryPuller("eu.battle.net");
-        public static readonly ArmoryPuller Korea = new ArmoryPuller("kr.battle.net");
-        public static readonly ArmoryPuller Taiwan = new ArmoryPuller("tw.battle.net");
-        public static readonly ArmoryPuller China = new ArmoryPuller("www.battlenet.com.cn");
+        public static readonly string US = "us.battle.net";
+        public static readonly string Europe = "eu.battle.net";
+        public static readonly string Korea = "kr.battle.net";
+        public static readonly string Taiwan = "tw.battle.net";
+        public static readonly string China = "www.battlenet.com.cn";
     }
 
     class Program
@@ -35,50 +33,26 @@ namespace FotM.ArmoryScanner
         {
             XmlConfigurator.Configure();
 
-            Logger.Debug("App started");
+            Logger.Info("App started");
 
-            var armories = new[]
-            {
-                Armories.US,
-                //Armories.Europe,
-            };
-
-            const int maxSize = 100;
-            var armoriesWithHistory = armories.ToDictionary(a => a, a => new ArmoryHistory(maxSize));
-
-            const int nRunsPerDay = 3000;
-            //var timeout = TimeSpan.FromDays(1.0/nRunsPerDay);
-            var timeout = TimeSpan.FromSeconds(2); //TimeSpan.FromDays(1.0 / nRunsPerDay);
-
-            Logger.InfoFormat("Sleep timeout set to {0}", timeout);
-
-            int addCount = 0;
+            var usArmoryScanner = new ArmoryScanner(Bracket.Threes, ArmoryConstants.US, maxHistorySize: 100);
 
             Stopwatch stopwatch = Stopwatch.StartNew();
+            int updateCount = 0;
 
-            while (true)
-            {
-                foreach (var armoryHistoryPair in armoriesWithHistory)
+            Runner runner = Runner.TimesPerDay(() =>
+                usArmoryScanner.Scan((history, leaderboard) =>
                 {
-                    var armory = armoryHistoryPair.Key;
-                    var armoryHistory = armoryHistoryPair.Value;
-
-                    var leaderboardSnapshot = armory.DownloadLeaderboard(Bracket.Threes);
-
-                    if (armoryHistory.Update(leaderboardSnapshot))
-                    {
-                        ++addCount;
-                    }
-
+                    ++updateCount;
                     var elapsed = stopwatch.Elapsed;
 
-                    Logger.InfoFormat("Total time running: {0}, total snapshots added: {1}, snapshots per minute: {2}", 
-                        elapsed, addCount, addCount/elapsed.TotalMinutes);
-                }
-                
-                Logger.InfoFormat("Sleeping for {0}...", timeout);
-                Thread.Sleep(timeout);
-            }
+                    Logger.InfoFormat("Total time running: {0}, total snapshots added: {1}, snapshots per minute: {2}",
+                        elapsed, updateCount, updateCount/elapsed.TotalMinutes);
+
+
+                }), nTimes: 3000);
+
+            runner.Run();
         }
     }
 }

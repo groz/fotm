@@ -47,8 +47,8 @@ namespace FotM.ArmoryScanner
 
             foreach (var currentEntry in diffNew)
             {
-                var previousEntry = previous.Rows.FirstOrDefault(
-                    e => PlayerRegistry.CreatePlayerFrom(currentEntry).Equals(PlayerRegistry.CreatePlayerFrom(e)));
+                var previousEntry = previous.Rows
+                    .FirstOrDefault(e => currentEntry.CreatePlayer().Equals(e.CreatePlayer()));
 
                 if (previousEntry != null)
                 {

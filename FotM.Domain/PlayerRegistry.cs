@@ -23,23 +23,9 @@ namespace FotM.Domain
             _players.UnionWith(newPlayers);
         }
 
-        public static Player CreatePlayerFrom(LeaderboardEntry entry)
-        {
-            return new Player
-            {
-                Name = entry.Name,
-                Realm = new Realm()
-                {
-                    RealmId = entry.RealmId,
-                    RealmName = entry.RealmName,
-                    RealmSlug = entry.RealmSlug
-                }
-            };
-        }
-
         public Player GetPlayer(LeaderboardEntry entry)
         {
-            var player = CreatePlayerFrom(entry);
+            var player = new Player(entry);
 
             if (_players.Add(player))
             {

@@ -7,8 +7,20 @@ namespace FotM.Domain
 {
     public class Player : IEquatable<Player>
     {
-        public string Name { get; set; }
-        public Realm Realm { get; set; }
+        public Player(LeaderboardEntry entry)
+        {
+            Name = entry.Name;
+
+            Realm = new Realm()
+            {
+                RealmId = entry.RealmId,
+                RealmName = entry.RealmName,
+                RealmSlug = entry.RealmSlug
+            };
+        }
+
+        public string Name { get; private set; }
+        public Realm Realm { get; private set; }
 
         public bool Equals(Player other)
         {

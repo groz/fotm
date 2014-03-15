@@ -29,6 +29,11 @@ namespace FotM.Domain
         }
         */
 
+        public Player CreatePlayer()
+        {
+            return new Player(this);
+        }
+
         public int Ranking { get; set; }
         public int Rating { get; set; }
         public string Name { get; set; }
