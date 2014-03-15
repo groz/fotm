@@ -3,6 +3,7 @@ using System.Linq;
 using FotM.Domain;
 using FotM.Utilities;
 using log4net;
+using MoreLinq;
 
 namespace FotM.ArmoryScanner
 {

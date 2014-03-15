@@ -67,6 +67,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FotM.Cassandra\FotM.Cassandra.csproj">
+      <Project>{94158125-21FD-4260-995B-6CADAD88A39B}</Project>
+      <Name>FotM.Cassandra</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FotM.Domain\FotM.Domain.csproj">
       <Project>{A9F666C5-47C6-45F7-9DC1-61126140A7E0}</Project>
       <Name>FotM.Domain</Name>

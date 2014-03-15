@@ -74,7 +74,7 @@ namespace FotM.Cassandra
 
             int bracketSize = GetBracketSize(currentLeaderboard.Bracket);
 
-            int nGroups = diffs.Length / bracketSize;
+            int nGroups = (int)Math.Ceiling((double)diffs.Length / bracketSize);
 
             if (nGroups <= 1)
                 return new[] {new Team(diffs.Select(d => d.Player))};
@@ -108,7 +108,7 @@ namespace FotM.Cassandra
             foreach (var team in overbookedTeams)
             {
                 string roster = string.Join(",", team);
-                Logger.ErrorFormat("Team roster [{0}] is overbooked for bracket {1} and discarded.", roster, bracketSize);
+                Logger.ErrorFormat("Team roster [{0}] is overbooked for bracket {1}x{1} and discarded.", roster, bracketSize);
             }
 
             return overbookedTeams;

@@ -37,7 +37,7 @@ namespace FotM.ArmoryScanner
 
             var usArmoryScanner = new ArmoryScanner(Bracket.Threes, ArmoryConstants.US, maxHistorySize: 100);
 
-            Runner runner = Runner.TimesPerDay(usArmoryScanner.Scan, nTimes: 3000);
+            Runner runner = Runner.TimesPerDay(usArmoryScanner.Scan, nTimes: 30000);
 
             runner.Run();
         }

@@ -10,6 +10,7 @@ namespace FotM.Domain
         public Player(LeaderboardEntry entry)
         {
             Name = entry.Name;
+            ClassId = entry.ClassId;
 
             Realm = new Realm()
             {
@@ -21,6 +22,7 @@ namespace FotM.Domain
 
         public string Name { get; private set; }
         public Realm Realm { get; private set; }
+        public int ClassId { get; private set; }
 
         public bool Equals(Player other)
         {
