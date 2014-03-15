@@ -11,6 +11,7 @@ namespace FotM.Domain
         {
             Name = entry.Name;
             ClassId = entry.ClassId;
+            SpecId = entry.SpecId;
 
             Realm = new Realm()
             {
@@ -23,6 +24,7 @@ namespace FotM.Domain
         public string Name { get; private set; }
         public Realm Realm { get; private set; }
         public int ClassId { get; private set; }
+        public int SpecId { get; set; }
 
         public bool Equals(Player other)
         {

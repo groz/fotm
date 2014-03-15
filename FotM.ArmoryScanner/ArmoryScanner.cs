@@ -18,7 +18,25 @@ namespace FotM.ArmoryScanner
         private int _updateCount;
         private Stopwatch _stopwatch;
         private Leaderboard _previousLeaderboard = null;
-        private readonly Dictionary<Team, double> _teamRatings = new Dictionary<Team, double>();
+        private readonly Dictionary<Team, TeamStats> _teamStats = new Dictionary<Team, TeamStats>();
+
+        class TeamStats
+        {
+            public TeamStats()
+            {
+                RatingChange = 0;
+                Occurences = 1;
+            }
+
+            public double RatingChange { get; private set; }
+            public int Occurences { get; private set; }
+
+            public void Update(double ratingChange)
+            {
+                RatingChange += ratingChange;
+                ++Occurences;
+            }
+        }
 
         public ArmoryScanner(Bracket bracket, string regionHost, int maxHistorySize)
         {
@@ -73,7 +91,7 @@ namespace FotM.ArmoryScanner
 
             foreach (var team in updatedTeams)
             {
-                Logger.InfoFormat("Team found: {0}", team);
+                Logger.InfoFormat("Team {0} found", team);
 
                 double? ratingChange = CalcRatingChange(team, _previousLeaderboard, currentLeaderboard);
 
@@ -83,16 +101,42 @@ namespace FotM.ArmoryScanner
                     continue;
                 }
 
-                if (_teamRatings.ContainsKey(team))
+                TeamStats teamStats;
+
+                if (_teamStats.TryGetValue(team, out teamStats))
                 {
                     Logger.InfoFormat("Updating team {0} with rating change {1}", team, ratingChange);
-                    _teamRatings[team] += ratingChange.Value;
+                    teamStats.Update(ratingChange.Value);
                 }
                 else
                 {
                     Logger.InfoFormat("Adding team {0} with rating change {1}", team, ratingChange);
-                    _teamRatings[team] = ratingChange.Value;
+                    _teamStats[team] = new TeamStats();
                 }
+            }
+
+            LogStats();
+        }
+
+        private void LogStats()
+        {
+            Logger.Info("Top setups:");
+
+            var setups = _teamStats
+                // only for teams that were recorded in same setup at least twice
+                .Where(t => t.Value.Occurences >= 2)
+                .GroupBy(ts => new TeamSetup(ts.Key))
+                .Select(setupGroup => new
+                {
+                    Setup = setupGroup.Key,
+                    Count = setupGroup.Count() // number of those teams
+                }).ToArray();
+
+            var total = setups.Sum(s => s.Count);
+
+            foreach (var teamSetup in setups.OrderByDescending(ts => ts.Count))
+            {
+                Logger.InfoFormat("{0}: {1}/{2}", teamSetup.Setup, teamSetup.Count, total);
             }
         }
 
@@ -108,40 +152,6 @@ namespace FotM.ArmoryScanner
             return entries.Any()
                 ? entries.Average(e => e.currentEntry.Rating - e.previousEntry.Rating)
                 : (double?) null;
-        }
-    }
-
-    class TeamSetup : IEquatable<TeamSetup>
-    {
-        public int[] ClassIds { get; private set; }
-
-        public TeamSetup(Team team)
-        {
-            this.ClassIds = team.Players.Select(p => p.ClassId).OrderBy(id => id).ToArray();
-        }
-
-        public override string ToString()
-        {
-            return string.Join(",", ClassIds);
-        }
-
-        public bool Equals(TeamSetup other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return ClassIds.SequenceEqual(other.ClassIds);
-        }
-
-        public override int GetHashCode()
-        {
-            return (ClassIds != null ? ClassIds.GetHashCode() : 0);
-        }
-
-        public override bool Equals(object other)
-        {
-            if (ReferenceEquals(null, other)) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return Equals((TeamSetup)other);
         }
     }
 }
