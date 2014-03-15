@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using FotM.Domain;
 
 namespace FotM.Cassandra.Tests
@@ -10,6 +11,21 @@ namespace FotM.Cassandra.Tests
         public CassandraTestBase(Bracket bracket)
         {
             this.Bracket = bracket;
+        }
+
+        protected static LeaderboardEntry UpdateEntry(LeaderboardEntry previous, int ratingChange)
+        {
+            int change = Math.Sign(ratingChange);
+
+            return CreateEntry(
+                previous.Ranking - change, 
+                previous.Name, 
+                previous.Rating - ratingChange, 
+                previous.WeeklyWins + (change > 0 ? 1 : 0), 
+                previous.WeeklyLosses - (change > 0 ? 1 : 0),
+                previous.SeasonWins + (change > 0 ? 1 : 0),
+                previous.SeasonLosses - (change > 0 ? 1 : 0)
+            );
         }
 
         protected static LeaderboardEntry CreateEntry(int ranking, string name, int rating,

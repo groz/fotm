@@ -37,20 +37,7 @@ namespace FotM.ArmoryScanner
 
             var usArmoryScanner = new ArmoryScanner(Bracket.Threes, ArmoryConstants.US, maxHistorySize: 100);
 
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            int updateCount = 0;
-
-            Runner runner = Runner.TimesPerDay(() =>
-                usArmoryScanner.Scan((history, leaderboard) =>
-                {
-                    ++updateCount;
-                    var elapsed = stopwatch.Elapsed;
-
-                    Logger.InfoFormat("Total time running: {0}, total snapshots added: {1}, snapshots per minute: {2}",
-                        elapsed, updateCount, updateCount/elapsed.TotalMinutes);
-
-
-                }), nTimes: 3000);
+            Runner runner = Runner.TimesPerDay(usArmoryScanner.Scan, nTimes: 3000);
 
             runner.Run();
         }
