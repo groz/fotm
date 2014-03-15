@@ -29,7 +29,7 @@ namespace FotM.ArmoryScanner
 
             Logger.InfoFormat("Querying {0}...", address);
 
-            WebRequest downloadRequest = WebRequest.CreateHttp(address);
+            HttpWebRequest downloadRequest = WebRequest.CreateHttp(address);
 
             using (var response = downloadRequest.GetResponse())
             {

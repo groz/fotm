@@ -124,7 +124,7 @@ namespace FotM.ArmoryScanner
 
             var setups = _teamStats
                 // only for teams that were recorded in same setup at least twice
-                .Where(t => t.Value.Occurences >= 2)
+                .Where(t => t.Value.Occurences >= 3)
                 .GroupBy(ts => new TeamSetup(ts.Key))
                 .Select(setupGroup => new
                 {

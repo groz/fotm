@@ -7,9 +7,72 @@ using MoreLinq;
 
 namespace FotM.ArmoryScanner
 {
+    class PlayerUpdate
+    {
+        public Player Player { get; set; }
+        public LeaderboardEntry From { get; set; }
+        public LeaderboardEntry To { get; set; }
+
+        public PlayerUpdate(Player player, LeaderboardEntry from, LeaderboardEntry to)
+        {
+            Player = player;
+            From = @from;
+            To = to;
+        }
+    }
+
+    class PlayerRankings
+    {
+        private static readonly ILog Logger = LoggingExtensions.GetLogger<PlayerRankings>();
+        private readonly Dictionary<Player, LeaderboardEntry> _rankings;
+
+        public PlayerRankings()
+        {
+            _rankings = new Dictionary<Player, LeaderboardEntry>();
+        }
+
+        public List<PlayerUpdate> Update(Leaderboard snapshot)
+        {
+            var updates = new List<PlayerUpdate>();
+
+            foreach (var currentEntry in snapshot.Rows)
+            {
+                Player player = currentEntry.CreatePlayer();
+
+                bool shouldAdd = true;
+
+                LeaderboardEntry previousEntry;
+
+                if (_rankings.TryGetValue(player, out previousEntry))
+                {
+                    if (currentEntry.WeeklyTotal <= previousEntry.WeeklyTotal)
+                    {
+                        shouldAdd = false;
+                        Logger.DebugFormat("Outdated update {0} -> {1}, discarded.", previousEntry, currentEntry);
+                    }
+                    else
+                    {
+                        Logger.DebugFormat("Updating entry {0} -> {1}", previousEntry, currentEntry);
+                        updates.Add(new PlayerUpdate(player, previousEntry, currentEntry));
+                    }
+                }
+                else
+                {
+                    Logger.DebugFormat("New entry {0}", currentEntry);
+                }
+
+                if (shouldAdd)
+                {
+                    _rankings[player] = currentEntry;
+                }
+            }
+            return updates;
+        }
+    }
+
     class ArmoryHistory
     {
-        private static readonly ILog Logger = LoggingExtensions.GetLogger<Program>();
+        private static readonly ILog Logger = LoggingExtensions.GetLogger<ArmoryHistory>();
         private readonly int _maxSize;
         private readonly Queue<Leaderboard> _snapshots;
         private Leaderboard _lastSnapshot = null;
@@ -22,9 +85,9 @@ namespace FotM.ArmoryScanner
 
         public bool Update(Leaderboard currentSnapshot)
         {
-            if (_lastSnapshot != null && SnapshotsEqual(_lastSnapshot, currentSnapshot))
+            if (_lastSnapshot != null && !IsValidSnapshot(_lastSnapshot, currentSnapshot))
             {
-                Logger.Debug("Snapshot already in queue, skipping.");
+                Logger.Debug("Leaderboard is outdated or equal to previous.");
                 return false;
             }
 
@@ -41,14 +104,34 @@ namespace FotM.ArmoryScanner
             return true;
         }
 
-        private static bool SnapshotsEqual(Leaderboard previous, Leaderboard current)
+        private static bool IsValidSnapshot(Leaderboard previous, Leaderboard current)
         {
+            // discard outdated updates
+            var previousState = previous.Rows.ToDictionary(r => r.CreatePlayer());
+            var currentState = current.Rows.ToDictionary(r => r.CreatePlayer());
+
+            foreach (var p in previousState)
+            {
+                LeaderboardEntry currentEntry;
+
+                if (currentState.TryGetValue(p.Key, out currentEntry))
+                {
+                    if (p.Value.WeeklyTotal > currentEntry.WeeklyTotal ||
+                        p.Value.SeasonTotal > currentEntry.SeasonTotal)
+                    {
+                        Logger.InfoFormat("Leaderboard is outdated");
+                        return false;
+                    }
+                }
+            }
+
+            Logger.DebugFormat("Previous snapshot: {0} -> Current snapshot: {1}", previous.Time, current.Time);
 #if DEBUG
             var diffNew = current.Rows.Except(previous.Rows);
 
             foreach (var currentEntry in diffNew)
             {
-                var previousEntry = previous.Rows
+                LeaderboardEntry previousEntry = previous.Rows
                     .FirstOrDefault(e => currentEntry.CreatePlayer().Equals(e.CreatePlayer()));
 
                 if (previousEntry != null)
@@ -57,7 +140,7 @@ namespace FotM.ArmoryScanner
                 }
             }
 #endif
-            return current.Rows.SequenceEqual(previous.Rows);
+            return !current.Rows.SequenceEqual(previous.Rows);
         }
     }
 }

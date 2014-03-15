@@ -45,7 +45,7 @@ namespace FotM.Cassandra
         public int FactionId { get; private set; }
 
         // FEATURES
-        [Feature(Weight = 100.0)]
+        [Feature]
         public int RealmId { get; private set; }
 
         [Feature(Weight = 0.1)]
@@ -54,35 +54,35 @@ namespace FotM.Cassandra
         [Feature(Weight = 0.05)]
         public int Rating { get; private set; }
 
-        [Feature]
+        [Feature(Weight = 0.5)]
         public int WeeklyWins { get; private set; }
 
-        [Feature]
+        [Feature(Weight = 0.5)]
         public int WeeklyLosses { get; private set; }
 
-        [Feature]
+        [Feature(Weight = 0.5)]
         public int SeasonWins { get; private set; }
 
-        [Feature]
+        [Feature(Weight = 0.5)]
         public int SeasonLosses { get; private set; }
 
         // DIFF FEATURES
-        [Feature]
+        [Feature(Weight = 5)]
         public int RankingDiff { get; private set; }
 
-        [Feature(Weight = 10)]
+        [Feature]
         public int WeeklyWinsDiff { get; private set; }
 
-        [Feature(Weight = 10)]
+        [Feature]
         public int WeeklyLossesDiff { get; private set; }
 
-        [Feature(Weight = 10)]
+        [Feature]
         public int SeasonWinsDiff { get; private set; }
 
-        [Feature(Weight = 10)]
+        [Feature]
         public int SeasonLossesDiff { get; private set; }
 
-        [Feature(Weight = 100)]
+        [Feature(Weight = 10)]
         public int RatingDiff { get; private set; }
     }
 }

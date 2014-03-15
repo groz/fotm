@@ -51,6 +51,7 @@ namespace FotM.ArmoryScanner
             // making results consistent as Blizzard randomly tosses around players with same rating
             var leaderboard = rawJsonPuller.DownloadJson<Leaderboard>();
             leaderboard.Bracket = bracket;
+            leaderboard.Time = DateTime.Now;
 
             leaderboard.Rows = leaderboard.Rows
                 .OrderByDescending(r => r.Rating)

@@ -50,9 +50,20 @@ namespace FotM.Domain
         public int WeeklyWins { get; set; }
         public int WeeklyLosses { get; set; }
 
+        public int WeeklyTotal
+        {
+            get { return WeeklyWins + WeeklyLosses; }
+        }
+
+        public int SeasonTotal
+        {
+            get { return SeasonWins + SeasonLosses; }
+        }
+
         public override string ToString()
         {
-            return string.Format("Name:{0}, Ranking: {1}, Rating: {2}", Name, Ranking, Rating);
+            return string.Format("Name: {0}, Ranking: {1}, Rating: {2}, WeeklyWins: {3}, WeeklyLosses: {4}", 
+                Name, Ranking, Rating, WeeklyWins, WeeklyLosses);
         }
 
         public override bool Equals(object obj)
