@@ -59,6 +59,10 @@
       <Project>{A9F666C5-47C6-45F7-9DC1-61126140A7E0}</Project>
       <Name>FotM.Domain</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FotM.Utilities\FotM.Utilities.csproj">
+      <Project>{90D8A7E8-FBAC-4B87-9EC2-A4E6F02B75C8}</Project>
+      <Name>FotM.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

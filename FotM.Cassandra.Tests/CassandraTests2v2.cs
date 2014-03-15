@@ -11,14 +11,15 @@ namespace FotM.Cassandra.Tests
     [TestFixture]
     public class CassandraTests2v2
     {
-        private static LeaderboardEntry CreateEntry(int ranking, string name, int rating)
+        private static LeaderboardEntry CreateEntry(int ranking, string name, int rating,
+            int weeklyWins = 0, int weeklyLosses = 0, int seasonWins = 0, int seasonLosses = 0)
         {
             return new LeaderboardEntry()
             {
-                WeeklyLosses = 0,
-                WeeklyWins = 0,
-                SeasonLosses = 0,
-                SeasonWins = 0,
+                WeeklyLosses = weeklyLosses,
+                WeeklyWins = weeklyWins,
+                SeasonLosses = seasonLosses,
+                SeasonWins = seasonWins,
                 Name = name,
                 ClassId = 0,
                 SpecId = 0,
@@ -57,14 +58,14 @@ namespace FotM.Cassandra.Tests
 
             var expectedTeam = new Team(groz, srez);
 
-            var c1 = CreateEntry(99, "Groz", 2010);
-            var c2 = CreateEntry(100, "Srez", 2010);
+            var c1 = CreateEntry(99, "Groz", 2010, weeklyWins: 1, seasonWins: 1);
+            var c2 = CreateEntry(100, "Srez", 2010, weeklyWins: 1, seasonWins: 1);
             var currentLeaderboard = CreateLeaderboard(c1, c2);
 
             var cassandra = new Cassandra();
             var predictedTeams = cassandra.FindTeams(previousLeaderboard, currentLeaderboard);
 
-            Assert.AreEqual(expectedTeam, predictedTeams);
+            CollectionAssert.AreEquivalent(new[] {expectedTeam}, predictedTeams);
         }
 
         [Test]
@@ -87,10 +88,10 @@ namespace FotM.Cassandra.Tests
                 new Team(borna, invis)
             };
 
-            var c1 = CreateEntry(99, "Groz", 2010);
-            var c2 = CreateEntry(100, "Srez", 2010);
-            var c3 = CreateEntry(151, "Borna", 1920);
-            var c4 = CreateEntry(152, "Invisibles", 1920);
+            var c1 = CreateEntry(99, "Groz", 2010, weeklyWins: 1, seasonWins: 1);
+            var c2 = CreateEntry(100, "Srez", 2010, weeklyWins: 1, seasonWins: 1);
+            var c3 = CreateEntry(151, "Borna", 1920, weeklyWins: 1, seasonWins: 1);
+            var c4 = CreateEntry(152, "Invisibles", 1920, weeklyWins: 1, seasonWins: 1);
             var currentLeaderboard = CreateLeaderboard(c1, c2, c3, c4);
 
             var cassandra = new Cassandra();
@@ -111,14 +112,14 @@ namespace FotM.Cassandra.Tests
 
             var expectedTeam = new Team(groz, srez);
 
-            var c1 = CreateEntry(101, "Groz", 1950);
-            var c2 = CreateEntry(102, "Srez", 1950);
+            var c1 = CreateEntry(101, "Groz", 1950, weeklyLosses: 1, seasonLosses: 1);
+            var c2 = CreateEntry(102, "Srez", 1950, weeklyLosses: 1, seasonLosses: 1);
             var currentLeaderboard = CreateLeaderboard(c1, c2);
 
             var cassandra = new Cassandra();
             var predictedTeams = cassandra.FindTeams(previousLeaderboard, currentLeaderboard);
 
-            Assert.AreEqual(expectedTeam, predictedTeams);
+            CollectionAssert.AreEquivalent(new[] {expectedTeam}, predictedTeams);
         }
 
         [Test]
@@ -141,10 +142,10 @@ namespace FotM.Cassandra.Tests
                 new Team(borna, invis)
             };
 
-            var c1 = CreateEntry(110, "Groz", 1990);
-            var c2 = CreateEntry(111, "Srez", 1990);
-            var c3 = CreateEntry(161, "Borna", 1890);
-            var c4 = CreateEntry(162, "Invisibles", 1890);
+            var c1 = CreateEntry(99, "Groz", 2010, weeklyWins: 1, seasonWins: 1);
+            var c2 = CreateEntry(100, "Srez", 2010, weeklyWins: 1, seasonWins: 1);
+            var c3 = CreateEntry(151, "Borna", 1920, weeklyWins: 1, seasonWins: 1);
+            var c4 = CreateEntry(152, "Invisibles", 1920, weeklyWins: 1, seasonWins: 1);
             var currentLeaderboard = CreateLeaderboard(c1, c2, c3, c4);
 
             var cassandra = new Cassandra();
@@ -173,10 +174,10 @@ namespace FotM.Cassandra.Tests
                 new Team(borna, invis)
             };
 
-            var c1 = CreateEntry(99, "Groz", 2010);
-            var c2 = CreateEntry(100, "Srez", 2010);
-            var c3 = CreateEntry(161, "Borna", 1890);
-            var c4 = CreateEntry(162, "Invisibles", 1890);
+            var c1 = CreateEntry(99, "Groz", 2010, weeklyWins: 1, seasonWins: 1);
+            var c2 = CreateEntry(100, "Srez", 2010, weeklyWins: 1, seasonWins: 1);
+            var c3 = CreateEntry(161, "Borna", 1890, weeklyLosses: 1, seasonLosses: 1);
+            var c4 = CreateEntry(162, "Invisibles", 1890, weeklyLosses: 1, seasonLosses: 1);
             var currentLeaderboard = CreateLeaderboard(c1, c2, c3, c4);
 
             var cassandra = new Cassandra();

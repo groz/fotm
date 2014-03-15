@@ -27,5 +27,10 @@ namespace FotM.Domain
             if (obj.GetType() != this.GetType()) return false;
             return Equals((Realm) obj);
         }
+
+        public override string ToString()
+        {
+            return RealmName;
+        }
     }
 }
