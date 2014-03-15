@@ -11,7 +11,7 @@ namespace FotM.Cassandra.Tests
     [TestFixture]
     public class CassandraTests2v2
     {
-        private LeaderboardEntry CreateEntry(int ranking, string name, int rating)
+        private static LeaderboardEntry CreateEntry(int ranking, string name, int rating)
         {
             return new LeaderboardEntry()
             {
@@ -29,29 +29,37 @@ namespace FotM.Cassandra.Tests
             };
         }
 
-        private Leaderboard From(params LeaderboardEntry[] entries)
+        private static Leaderboard CreateLeaderboard(params LeaderboardEntry[] entries)
         {
             return new Leaderboard()
             {
-                Rows = entries
+                Rows = entries.Union(StaticRankings).ToArray()
             };
         }
+
+        private static readonly LeaderboardEntry[] StaticRankings =
+        {
+            CreateEntry(10, "Gothiques", 2500),
+            CreateEntry(11, "Phenomenon", 2400),
+            CreateEntry(12, "Joker", 2300),
+            CreateEntry(503, "Nub", 1500)
+        };
 
         [Test]
         public void SimpleWinnersGrouping_2v2()
         {
-            var p1 = CreateEntry(100, "Tagir", 2000);
-            var p2 = CreateEntry(100, "Sergey", 2000);
-            var previousLeaderboard = From(p1, p2);
+            var p1 = CreateEntry(100, "Groz", 2000);
+            var p2 = CreateEntry(101, "Srez", 2000);
+            var previousLeaderboard = CreateLeaderboard(p1, p2);
 
-            var tagir = PlayerRegistry.CreatePlayerFrom(p1);
-            var sergey = PlayerRegistry.CreatePlayerFrom(p2);
+            var groz = PlayerRegistry.CreatePlayerFrom(p1);
+            var srez = PlayerRegistry.CreatePlayerFrom(p2);
 
-            var expectedTeam = new Team(tagir, sergey);
+            var expectedTeam = new Team(groz, srez);
 
-            var c1 = CreateEntry(100, "Tagir", 2010);
-            var c2 = CreateEntry(100, "Sergey", 2010);
-            var currentLeaderboard = From(c1, c2);
+            var c1 = CreateEntry(99, "Groz", 2010);
+            var c2 = CreateEntry(100, "Srez", 2010);
+            var currentLeaderboard = CreateLeaderboard(c1, c2);
 
             var cassandra = new Cassandra();
             var predictedTeams = cassandra.FindTeams(previousLeaderboard, currentLeaderboard);
@@ -62,16 +70,119 @@ namespace FotM.Cassandra.Tests
         [Test]
         public void ComplexWinnersGrouping_2v2()
         {
+            var p1 = CreateEntry(100, "Groz", 2000);
+            var p2 = CreateEntry(101, "Srez", 2000);
+            var p3 = CreateEntry(152, "Borna", 1900);
+            var p4 = CreateEntry(153, "Invisibles", 1900);
+            var previousLeaderboard = CreateLeaderboard(p1, p2, p3, p4);
+
+            var groz = PlayerRegistry.CreatePlayerFrom(p1);
+            var srez = PlayerRegistry.CreatePlayerFrom(p2);
+            var borna = PlayerRegistry.CreatePlayerFrom(p3);
+            var invis = PlayerRegistry.CreatePlayerFrom(p4);
+
+            var expectedTeams = new[]
+            {
+                new Team(groz, srez),
+                new Team(borna, invis)
+            };
+
+            var c1 = CreateEntry(99, "Groz", 2010);
+            var c2 = CreateEntry(100, "Srez", 2010);
+            var c3 = CreateEntry(151, "Borna", 1920);
+            var c4 = CreateEntry(152, "Invisibles", 1920);
+            var currentLeaderboard = CreateLeaderboard(c1, c2, c3, c4);
+
+            var cassandra = new Cassandra();
+            var predictedTeams = cassandra.FindTeams(previousLeaderboard, currentLeaderboard);
+
+            CollectionAssert.AreEquivalent(expectedTeams, predictedTeams);
         }
 
         [Test]
         public void SimpleLosersGrouping_2v2()
         {
+            var p1 = CreateEntry(100, "Groz", 2000);
+            var p2 = CreateEntry(101, "Srez", 2000);
+            var previousLeaderboard = CreateLeaderboard(p1, p2);
+
+            var groz = PlayerRegistry.CreatePlayerFrom(p1);
+            var srez = PlayerRegistry.CreatePlayerFrom(p2);
+
+            var expectedTeam = new Team(groz, srez);
+
+            var c1 = CreateEntry(101, "Groz", 1950);
+            var c2 = CreateEntry(102, "Srez", 1950);
+            var currentLeaderboard = CreateLeaderboard(c1, c2);
+
+            var cassandra = new Cassandra();
+            var predictedTeams = cassandra.FindTeams(previousLeaderboard, currentLeaderboard);
+
+            Assert.AreEqual(expectedTeam, predictedTeams);
         }
 
         [Test]
         public void ComplexLosersGrouping_2v2()
         {
+            var p1 = CreateEntry(100, "Groz", 2000);
+            var p2 = CreateEntry(101, "Srez", 2000);
+            var p3 = CreateEntry(152, "Borna", 1900);
+            var p4 = CreateEntry(153, "Invisibles", 1900);
+            var previousLeaderboard = CreateLeaderboard(p1, p2, p3, p4);
+
+            var groz = PlayerRegistry.CreatePlayerFrom(p1);
+            var srez = PlayerRegistry.CreatePlayerFrom(p2);
+            var borna = PlayerRegistry.CreatePlayerFrom(p3);
+            var invis = PlayerRegistry.CreatePlayerFrom(p4);
+
+            var expectedTeams = new[]
+            {
+                new Team(groz, srez),
+                new Team(borna, invis)
+            };
+
+            var c1 = CreateEntry(110, "Groz", 1990);
+            var c2 = CreateEntry(111, "Srez", 1990);
+            var c3 = CreateEntry(161, "Borna", 1890);
+            var c4 = CreateEntry(162, "Invisibles", 1890);
+            var currentLeaderboard = CreateLeaderboard(c1, c2, c3, c4);
+
+            var cassandra = new Cassandra();
+            var predictedTeams = cassandra.FindTeams(previousLeaderboard, currentLeaderboard);
+
+            CollectionAssert.AreEquivalent(expectedTeams, predictedTeams);
+        }
+
+        [Test]
+        public void MixedGrouping_2v2()
+        {
+            var p1 = CreateEntry(100, "Groz", 2000);
+            var p2 = CreateEntry(101, "Srez", 2000);
+            var p3 = CreateEntry(152, "Borna", 1900);
+            var p4 = CreateEntry(153, "Invisibles", 1900);
+            var previousLeaderboard = CreateLeaderboard(p1, p2, p3, p4);
+
+            var groz = PlayerRegistry.CreatePlayerFrom(p1);
+            var srez = PlayerRegistry.CreatePlayerFrom(p2);
+            var borna = PlayerRegistry.CreatePlayerFrom(p3);
+            var invis = PlayerRegistry.CreatePlayerFrom(p4);
+
+            var expectedTeams = new[]
+            {
+                new Team(groz, srez),
+                new Team(borna, invis)
+            };
+
+            var c1 = CreateEntry(99, "Groz", 2010);
+            var c2 = CreateEntry(100, "Srez", 2010);
+            var c3 = CreateEntry(161, "Borna", 1890);
+            var c4 = CreateEntry(162, "Invisibles", 1890);
+            var currentLeaderboard = CreateLeaderboard(c1, c2, c3, c4);
+
+            var cassandra = new Cassandra();
+            var predictedTeams = cassandra.FindTeams(previousLeaderboard, currentLeaderboard);
+
+            CollectionAssert.AreEquivalent(expectedTeams, predictedTeams);
         }
     }
 }
