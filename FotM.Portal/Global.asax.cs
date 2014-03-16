@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using FotM.Portal.Hubs;
 
 namespace FotM.Portal
 {
@@ -16,6 +17,8 @@ namespace FotM.Portal
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            Reactive.Instance.Start();
         }
     }
 }

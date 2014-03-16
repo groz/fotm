@@ -199,6 +199,10 @@
       <Project>{a9f666c5-47c6-45f7-9dc1-61126140a7e0}</Project>
       <Name>FotM.Domain</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FotM.Messaging\FotM.Messaging.csproj">
+      <Project>{56EE32B7-8222-4C10-8D38-2D0BC633294C}</Project>
+      <Name>FotM.Messaging</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

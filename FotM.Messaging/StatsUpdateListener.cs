@@ -27,7 +27,10 @@ namespace FotM.Messaging
             _subscriptionClient = SubscriptionClient.CreateFromConnectionString(Constants.ConnectionString,
                 Constants.StatsUpdateTopic,
                 subscriptionName);
+        }
 
+        public void Listen()
+        {
             _subscriptionClient.OnMessage(HandleMessage);
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using FotM.Domain;
+using FotM.Messaging;
 using FotM.Utilities;
 using log4net;
 using Newtonsoft.Json;
@@ -20,6 +21,8 @@ namespace FotM.ArmoryScanner
         private Stopwatch _stopwatch;
         private Leaderboard _previousLeaderboard = null;
         private readonly Dictionary<Team, TeamStats> _teamStats = new Dictionary<Team, TeamStats>();
+
+        private readonly StatsUpdatePublisher _statsUpdatePublisher = new StatsUpdatePublisher();
 
         public ArmoryScanner(Bracket bracket, IArmoryPuller dataPuller, int maxHistorySize)
         {
@@ -101,7 +104,16 @@ namespace FotM.ArmoryScanner
             }
 
             if (updatedTeams.Length != 0)
+            {
                 LogStats();
+
+                var updateMessage = new StatsUpdateMessage()
+                {
+                    Stats = _teamStats.Values.ToArray()
+                };
+
+                _statsUpdatePublisher.Publish(updateMessage);
+            }
         }
 
         public string SerializeStats()
