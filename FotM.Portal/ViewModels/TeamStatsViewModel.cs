@@ -38,9 +38,9 @@ namespace FotM.Portal.ViewModels
             get { return _model.Rating; }
         }
 
-        public DateTime Updated
+        public string Updated
         {
-            get { return _model.UpdatedUtc.ToLocalTime(); }
+            get { return _model.UpdatedUtc.ToString(); }
         }
 
         public string RatingChange
@@ -56,7 +56,7 @@ namespace FotM.Portal.ViewModels
         {
             get
             {
-                if (DateTime.Now - UpdateTimeout > Updated)
+                if (DateTime.Now - UpdateTimeout > _model.UpdatedUtc.ToLocalTime())
                     return "";
 
                 // color recent changes
