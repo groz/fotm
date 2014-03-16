@@ -134,7 +134,7 @@ namespace FotM.ArmoryScanner
                 })
                 .ToArray();
 
-            foreach (var team in verifiedTeams.OrderByDescending(t => t.Stats.RatingChange))
+            foreach (var team in verifiedTeams.OrderByDescending(t => t.Stats.Rating))
             {
                 Logger.InfoFormat("Team: {0} ({1}), Seen: {2}, Rating: {3} ({4}{5})", 
                     team.Team, 
