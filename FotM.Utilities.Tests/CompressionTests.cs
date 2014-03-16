@@ -31,5 +31,27 @@ namespace FotM.Utilities.Tests
 
             Assert.AreEqual(str, unzipped);
         }
+
+        [Test]
+        public void Base64UnzippedStringShouldBeTheSameEn()
+        {
+            const string str = "Hello, world!";
+
+            string zipped = CompressionUtils.ZipToBase64(str);
+            string unzipped = CompressionUtils.UnzipFromBase64(zipped);
+
+            Assert.AreEqual(str, unzipped);
+        }
+
+        [Test]
+        public void Base64UnzippedStringShouldBeTheSameRu()
+        {
+            const string str = "Привет, мир!";
+
+            string zipped = CompressionUtils.ZipToBase64(str);
+            string unzipped = CompressionUtils.UnzipFromBase64(zipped);
+
+            Assert.AreEqual(str, unzipped);
+        }
     }
 }

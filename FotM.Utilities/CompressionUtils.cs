@@ -39,5 +39,17 @@ namespace FotM.Utilities
                 return Encoding.UTF8.GetString(mso.ToArray());
             }
         }
+
+        public static string ZipToBase64(string str)
+        {
+            byte[] zipped = Zip(str);
+            return Convert.ToBase64String(zipped);
+        }
+
+        public static string UnzipFromBase64(string base64Zip)
+        {
+            byte[] zipped = Convert.FromBase64String(base64Zip);
+            return Unzip(zipped);
+        }
     }
 }
