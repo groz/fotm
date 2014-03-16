@@ -50,6 +50,11 @@ namespace FotM.Domain
         public int WeeklyWins { get; set; }
         public int WeeklyLosses { get; set; }
 
+        public Gender Gender
+        {
+            get { return (Gender) GenderId; }
+        }
+
         public CharacterSpec Spec
         {
             get
@@ -64,6 +69,11 @@ namespace FotM.Domain
             {
                 return (CharacterClass) ClassId;
             }
+        }
+
+        public Faction Faction
+        {
+            get { return (Faction) FactionId; }
         }
 
         public int WeeklyTotal

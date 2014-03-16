@@ -47,10 +47,13 @@
     <Compile Include="Bracket.cs" />
     <Compile Include="CharacterClass.cs" />
     <Compile Include="CharacterSpec.cs" />
+    <Compile Include="Faction.cs" />
+    <Compile Include="Gender.cs" />
     <Compile Include="Leaderboard.cs" />
     <Compile Include="LeaderboardEntry.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Race.cs" />
     <Compile Include="Realm.cs" />
     <Compile Include="Team.cs" />
     <Compile Include="TeamSetup.cs" />
