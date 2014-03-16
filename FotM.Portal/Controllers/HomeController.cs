@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -20,7 +21,8 @@ namespace FotM.Portal.Controllers
                 SpecId = (int)CharacterSpec.Warrior_Arms,
                 Rating = 2350,
                 Name = "Mortalstriek",
-                Ranking = 1
+                Ranking = 1,
+                RealmName = "Outland",
             }), 
             new Player(new LeaderboardEntry()
             {
@@ -31,7 +33,8 @@ namespace FotM.Portal.Controllers
                 SpecId = (int)CharacterSpec.Druid_Restoration,
                 Rating = 2225,
                 Name = "Lifebloom",
-                Ranking = 2
+                Ranking = 2,
+                RealmName = "Outland",
             }), 
             new Player(new LeaderboardEntry()
             {
@@ -42,7 +45,8 @@ namespace FotM.Portal.Controllers
                 SpecId = (int)CharacterSpec.Priest_Holy,
                 Rating = 2150,
                 Name = "Fearward",
-                Ranking = 3
+                Ranking = 3,
+                RealmName = "Outland",
             }), 
             new Player(new LeaderboardEntry()
             {
@@ -53,7 +57,8 @@ namespace FotM.Portal.Controllers
                 SpecId = (int)CharacterSpec.Paladin_Holy,
                 Rating = 2050,
                 Name = "Holinka",
-                Ranking = 4
+                Ranking = 4,
+                RealmName = "Outland",
             }), 
             new Player(new LeaderboardEntry()
             {
@@ -64,7 +69,8 @@ namespace FotM.Portal.Controllers
                 SpecId = (int)CharacterSpec.Hunter_Marksmanship,
                 Rating = 2025,
                 Name = "Hunter",
-                Ranking = 5
+                Ranking = 5,
+                RealmName = "Korgath",
             }), 
             new Player(new LeaderboardEntry()
             {
@@ -75,7 +81,8 @@ namespace FotM.Portal.Controllers
                 SpecId = (int)CharacterSpec.Shaman_Enhancement,
                 Rating = 2015,
                 Name = "Sham",
-                Ranking = 6
+                Ranking = 6,
+                RealmName = "Soulflayer",
             }), 
         };
 
@@ -92,7 +99,7 @@ namespace FotM.Portal.Controllers
 
         public ActionResult Index()
         {
-            return View(_teamsStats.Select(ts => new TeamStatsViewModel(ts)));
+            return View(_teamsStats.Select((ts, i) => new TeamStatsViewModel(i+1, ts)));
         }
 
         public ActionResult About()

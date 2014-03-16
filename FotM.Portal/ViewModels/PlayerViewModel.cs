@@ -12,6 +12,16 @@ namespace FotM.Portal.ViewModels
             _model = model;
         }
 
+        public string Name
+        {
+            get { return _model.Name; }
+        }
+
+        public string Realm
+        {
+            get { return _model.Realm.RealmName; }
+        }
+
         public string RaceImageLink
         {
             get

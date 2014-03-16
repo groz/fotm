@@ -13,21 +13,40 @@
 </div>
 
 <div class="row">
-    <div class="col-md-4">
+    <table class="table table-striped table-condensed table-responsive">
+        <tr>
+            <th>#</th>
+            <th>Faction</th>
+            <th>Player 1</th>
+            <th>Player 2</th>
+            <th>Player 3</th>
+            <th>Rating</th>
+            <th>Delta</th>
+            <th>Updated</th>
+        </tr>
         @foreach (var teamStats in Model)
         {
-            <img src="@(teamStats.FactionImageLink)"/>
+            <tr class="@(teamStats.DeltaType)">
+                <td>@teamStats.Rank</td>
+                <td>
+                    <img src="@(teamStats.FactionImageLink)" alt="FactionImage" />
+                </td>
 
-            foreach (var player in teamStats.Players)
-            {
-                <img src="@(player.RaceImageLink)"/>
-                <img src="@(player.ClassImageLink)"/>
-                <img src="@(player.SpecImageLink)"/>
-            }
-            @teamStats.Rating<span> </span>
-            @teamStats.RatingChange<span> </span>
-            @teamStats.Updated
-            <br/>
+                @foreach (var player in teamStats.Players)
+                {
+                    <td>
+                        <img src="@(player.RaceImageLink)" alt="RaceImage"/>
+                        <img src="@(player.ClassImageLink)" alt="ClassImage"/>
+                        <img src="@(player.SpecImageLink)" alt="SpecImage"/>
+                        @player.Name
+                        -
+                        @player.Realm
+                    </td>
+                }
+                <td>@teamStats.Rating</td>
+                <td>@teamStats.RatingChange</td>
+                <td>@teamStats.Updated</td>
+            </tr>
         }
-    </div>
+    </table>
 </div>
