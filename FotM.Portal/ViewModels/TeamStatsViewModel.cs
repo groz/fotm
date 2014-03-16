@@ -29,7 +29,7 @@ namespace FotM.Portal.ViewModels
         {
             get
             {
-                return string.Format("http://media.blizzard.com/wow/icons/18/faction_{0}.jpg", _factionId);
+                return MediaLinks.FactionImageLink(_factionId);
             }
         }
 

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FotM.Portal.ViewModels.TeamStatsViewModel>
+﻿@model FotM.Portal.ViewModels.ArmoryViewModel
 
 @{
     ViewBag.Title = "Home Page";
@@ -18,7 +18,7 @@
             <th>Delta</th>
             <th>Updated</th>
         </tr>
-        @foreach (var teamStats in Model)
+        @foreach (var teamStats in Model.TeamStatsViewModels)
         {
             <tr class="@(teamStats.DeltaType)">
                 <td>@teamStats.Rank</td>
@@ -45,4 +45,33 @@
             </tr>
         }
     </table>
+</div>
+
+<h2>FotM setups</h2>
+
+<div class="row">
+    <div class="col-lg-5">
+        <table class="table table-striped table-condensed table-responsive col-lg-1">
+            <tr>
+                <th>#</th>
+                <th>Setup</th>
+                <th>Percent</th>
+            </tr>
+
+            @foreach (var teamSetup in Model.TeamSetupsViewModels)
+            {
+                <tr>
+                    <td>@teamSetup.Rank</td>
+                    <td>
+                        @for (int i = 0; i < teamSetup.BracketSize; i++)
+                        {
+                            @*<img src="@(@teamSetup.ClassImageLinks[i])" alt="RaceImage" />*@
+                            <img src="@(@teamSetup.SpecImageLinks[i])" alt="SpecImage" />
+                        }
+                    </td>
+                    <td>@teamSetup.Percent</td>
+                </tr>
+            }
+        </table>
+    </div>
 </div>

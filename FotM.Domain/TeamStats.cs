@@ -27,7 +27,7 @@ namespace FotM.Domain
         {
             get
             {
-                return TimesSeen >= 2; // same setup seen twice or more
+                return TimesSeen >= 1; // same setup seen twice or more
             }
         }
 

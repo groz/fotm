@@ -87,7 +87,7 @@ namespace FotM.Portal.Controllers
         };
 
         private readonly List<TeamStats> _teamsStats;
-        
+
         public HomeController()
         {
             _teamsStats = new List<TeamStats>()
@@ -99,7 +99,8 @@ namespace FotM.Portal.Controllers
 
         public ActionResult Index()
         {
-            return View(_teamsStats.Select((ts, i) => new TeamStatsViewModel(i+1, ts)));
+            var armoryViewModel = new ArmoryViewModel(_teamsStats);
+            return View(armoryViewModel);
         }
 
         public ActionResult About()

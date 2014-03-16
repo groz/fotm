@@ -7,10 +7,16 @@ namespace FotM.Domain
     public class TeamSetup : IEquatable<TeamSetup>
     {
         public int[] SpecIds { get; private set; }
+        public int[] ClassIds { get; private set; }
+        public int BracketSize { get; private set; }
 
         public TeamSetup(Team team)
         {
-            this.SpecIds = team.Players.Select(p => p.SpecId).OrderBy(id => id).ToArray();
+            var players = team.Players.OrderBy(p => p.ClassId).ToArray();
+
+            SpecIds = players.Select(p => p.SpecId).ToArray();
+            ClassIds = players.Select(p => p.ClassId).ToArray();
+            BracketSize = team.Players.Length;
         }
 
         public override string ToString()

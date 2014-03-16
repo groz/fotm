@@ -120,7 +120,10 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="ViewModels\ArmoryViewModel.cs" />
+    <Compile Include="ViewModels\MediaLinks.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
+    <Compile Include="ViewModels\TeamSetupViewModel.cs" />
     <Compile Include="ViewModels\TeamStatsViewModel.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
