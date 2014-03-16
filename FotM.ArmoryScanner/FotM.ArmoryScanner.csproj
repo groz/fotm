@@ -76,6 +76,10 @@
       <Project>{A9F666C5-47C6-45F7-9DC1-61126140A7E0}</Project>
       <Name>FotM.Domain</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FotM.Messaging\FotM.Messaging.csproj">
+      <Project>{56ee32b7-8222-4c10-8d38-2d0bc633294c}</Project>
+      <Name>FotM.Messaging</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FotM.Utilities\FotM.Utilities.csproj">
       <Project>{90D8A7E8-FBAC-4B87-9EC2-A4E6F02B75C8}</Project>
       <Name>FotM.Utilities</Name>
@@ -83,6 +87,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(SolutionDir)FotM.Messaging\$(OutDir)FotM.Messaging.dll.config" "$(ProjectDir)$(OutDir)"
+</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

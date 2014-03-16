@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,9 +11,16 @@ namespace FotM.Messaging
     {
         static Constants()
         {
-            ConnectionString = ConfigHelpers.LoadConfig()
-                .AppSettings
-                .Settings["Microsoft.ServiceBus.ConnectionString"].ToString();
+            var cfg = ConfigHelpers.LoadConfig();
+
+            var section = cfg.AppSettings;
+            var strs = cfg.ConnectionStrings;
+
+            Console.WriteLine(section.Settings.Count);
+
+            ConnectionString = section
+                .Settings["Microsoft.ServiceBus.ConnectionString"]
+                .ToString();
         }
 
         public static readonly string ConnectionString;
