@@ -26,6 +26,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FotM.TestingUtilities", "Fo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FotM.Utilities.Tests", "FotM.Utilities.Tests\FotM.Utilities.Tests.csproj", "{A4A06207-D5B5-446C-AE63-1FB624489473}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FotM.Portal", "FotM.Portal\FotM.Portal.csproj", "{2F105C55-F4B0-43BA-97E7-D4CED0A9ECE0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FotM.Portal.Tests", "FotM.Portal.Tests\FotM.Portal.Tests.csproj", "{AFE98523-0757-4186-AC94-68CF7793A692}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +68,14 @@ Global
 		{A4A06207-D5B5-446C-AE63-1FB624489473}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A4A06207-D5B5-446C-AE63-1FB624489473}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A4A06207-D5B5-446C-AE63-1FB624489473}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F105C55-F4B0-43BA-97E7-D4CED0A9ECE0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F105C55-F4B0-43BA-97E7-D4CED0A9ECE0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F105C55-F4B0-43BA-97E7-D4CED0A9ECE0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F105C55-F4B0-43BA-97E7-D4CED0A9ECE0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AFE98523-0757-4186-AC94-68CF7793A692}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AFE98523-0757-4186-AC94-68CF7793A692}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AFE98523-0757-4186-AC94-68CF7793A692}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AFE98523-0757-4186-AC94-68CF7793A692}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
