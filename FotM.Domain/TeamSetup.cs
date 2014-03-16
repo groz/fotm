@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FotM.Domain;
 
-namespace FotM.ArmoryScanner
+namespace FotM.Domain
 {
-    class TeamSetup : IEquatable<TeamSetup>
+    public class TeamSetup : IEquatable<TeamSetup>
     {
         public int[] SpecIds { get; private set; }
 

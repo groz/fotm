@@ -48,10 +48,10 @@
     <Compile Include="Leaderboard.cs" />
     <Compile Include="LeaderboardEntry.cs" />
     <Compile Include="Player.cs" />
-    <Compile Include="PlayerRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Realm.cs" />
     <Compile Include="Team.cs" />
+    <Compile Include="TeamSetup.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
