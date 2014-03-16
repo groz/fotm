@@ -19,7 +19,7 @@ namespace FotM.Domain
 
             for (int i = 0; i < Rows.Length; ++i)
             {
-                Rows[i].Ranking = i;
+                Rows[i].Ranking = i + 1;
             }
         }
     }

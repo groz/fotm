@@ -104,7 +104,12 @@ namespace FotM.ArmoryScanner
 
         public string SerializeStats()
         {
-            return JsonConvert.SerializeObject(_teamStats.Values.ToArray());
+            string json = JsonConvert.SerializeObject(_teamStats.Values.ToArray());
+
+            var zipped = CompressionUtils.Zip(json);
+            Logger.DebugFormat("Archived size: {0}", zipped.Length);
+
+            return json;
         }
 
         public TeamStats[] DeserializeStats(string json)
