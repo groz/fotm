@@ -5,27 +5,21 @@ using System.Linq;
 
 namespace FotM.Domain
 {
-    public class Team: IEnumerable<Player>, IEquatable<Team>
+    public class Team: IEquatable<Team>
     {
-        public IReadOnlyCollection<Player> Players { get; private set; }
+        public Player[] Players { get; set; }
+
+        public Team()
+        {
+        }
 
         public Team(IEnumerable<Player> players)
         {
-            Players = players.OrderBy(p => p.Name).ThenBy(p => p.Realm).ToList();
+            Players = players.OrderBy(p => p.Name).ThenBy(p => p.Realm).ToArray();
         }
 
         public Team(params Player[] players): this(players.AsEnumerable())
         {
-        }
-
-        public IEnumerator<Player> GetEnumerator()
-        {
-            return Players.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
 
         public override int GetHashCode()
@@ -50,7 +44,7 @@ namespace FotM.Domain
 
         public override string ToString()
         {
-            return "(" + string.Join(",", Players) + ")";
+            return "(" + string.Join(",", Players.AsEnumerable()) + ")";
         }
     }
 }

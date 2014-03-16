@@ -150,13 +150,12 @@ namespace FotM.ArmoryScanner
             }
 
             string json = SerializeStats();
-            var x = DeserializeStats(json);
             Logger.DebugFormat("Serialized stats size: {0}", json.Length);
         }
 
         public static double? CalcRatingChange(Team team, Leaderboard previousLeaderboard, Leaderboard currentLeaderboard)
         {
-            var entries = (from player in team
+            var entries = (from player in team.Players
                 let previousEntry = previousLeaderboard.Rows.FirstOrDefault(r => r.CreatePlayer().Equals(player))
                 where previousEntry != null
                 let currentEntry = currentLeaderboard.Rows.FirstOrDefault(r => r.CreatePlayer().Equals(player))
@@ -171,17 +170,22 @@ namespace FotM.ArmoryScanner
 
     public class TeamStats
     {
+        public TeamStats()
+        {
+        }
+
         public TeamStats(Team team)
         {
             RatingChange = 0;
             TimesSeen = 1;
             Team = team;
+            Seen = DateTime.Now;
         }
 
-        public double RatingChange { get; private set; }
-        public int TimesSeen { get; private set; }
-        public DateTime Seen { get; private set; }
-        public Team Team { get; private set; }
+        public double RatingChange { get; set; }
+        public int TimesSeen { get; set; }
+        public DateTime Seen { get; set; }
+        public Team Team { get; set; }
 
         public bool IsVerified
         {

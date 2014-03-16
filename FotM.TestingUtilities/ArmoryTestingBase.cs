@@ -6,9 +6,9 @@ namespace FotM.TestingUtilities
 {
     public class ArmoryTestingBase
     {
-        protected readonly Bracket Bracket = Bracket.Rbg;
+        protected readonly Bracket Bracket;
 
-        public ArmoryTestingBase(Bracket bracket)
+        public ArmoryTestingBase(Bracket bracket = Bracket.Rbg)
         {
             this.Bracket = bracket;
         }
