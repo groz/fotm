@@ -51,17 +51,7 @@ namespace FotM.ArmoryScanner
             var leaderboard = rawJsonPuller.DownloadJson<Leaderboard>();
             leaderboard.Bracket = bracket;
             leaderboard.Time = DateTime.Now;
-
-            leaderboard.Rows = leaderboard.Rows
-                .OrderByDescending(r => r.Rating)
-                .ThenBy(r => r.Name)
-                .ThenBy(r => r.RealmId)
-                .ToArray();
-
-            for (int i = 0; i < leaderboard.Rows.Length; ++i)
-            {
-                leaderboard.Rows[i].Ranking = i;
-            }
+            leaderboard.Order();
 
             return leaderboard;
         }

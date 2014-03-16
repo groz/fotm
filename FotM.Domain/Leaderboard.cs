@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace FotM.Domain
 {
@@ -7,6 +8,20 @@ namespace FotM.Domain
         public LeaderboardEntry[] Rows { get; set; }
         public Bracket Bracket { get; set; }
         public DateTime Time { get; set; }
+
+        public void Order()
+        {
+            Rows = Rows
+                .OrderByDescending(r => r.Rating)
+                .ThenBy(r => r.Name)
+                .ThenBy(r => r.RealmId)
+                .ToArray();
+
+            for (int i = 0; i < Rows.Length; ++i)
+            {
+                Rows[i].Ranking = i;
+            }
+        }
     }
 
 }

@@ -67,8 +67,7 @@ namespace FotM.ArmoryScanner
 
                 if (currentState.TryGetValue(p.Key, out currentEntry))
                 {
-                    if (p.Value.WeeklyTotal > currentEntry.WeeklyTotal ||
-                        p.Value.SeasonTotal > currentEntry.SeasonTotal)
+                    if (p.Value.SeasonTotal > currentEntry.SeasonTotal)
                     {
                         Logger.InfoFormat("Leaderboard is outdated");
                         return false;

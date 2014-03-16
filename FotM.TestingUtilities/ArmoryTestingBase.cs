@@ -8,7 +8,7 @@ namespace FotM.TestingUtilities
     {
         protected readonly Bracket Bracket;
 
-        public ArmoryTestingBase(Bracket bracket = Bracket.Rbg)
+        public ArmoryTestingBase(Bracket bracket)
         {
             this.Bracket = bracket;
         }
@@ -22,14 +22,18 @@ namespace FotM.TestingUtilities
                 previous.Name, 
                 previous.Rating - ratingChange, 
                 previous.WeeklyWins + (change > 0 ? 1 : 0), 
-                previous.WeeklyLosses - (change > 0 ? 1 : 0),
+                previous.WeeklyLosses + (change > 0 ? 1 : 0),
                 previous.SeasonWins + (change > 0 ? 1 : 0),
-                previous.SeasonLosses - (change > 0 ? 1 : 0)
+                previous.SeasonLosses + (change > 0 ? 1 : 0),
+                previous.RealmName,
+                previous.RealmId,
+                previous.RealmSlug
             );
         }
 
         protected static LeaderboardEntry CreateEntry(int ranking, string name, int rating,
-            int weeklyWins = 0, int weeklyLosses = 0, int seasonWins = 0, int seasonLosses = 0)
+            int weeklyWins = 0, int weeklyLosses = 0, int seasonWins = 0, int seasonLosses = 0,
+            string realmName = null, int realmId = -1, string realmSlug = null)
         {
             return new LeaderboardEntry()
             {
@@ -42,18 +46,24 @@ namespace FotM.TestingUtilities
                 SpecId = 0,
                 Rating = rating,
                 Ranking = ranking,
-                RealmId = 1,
-                RealmName = "TestRealm"
+                RealmId = realmId == -1 ? 1 : realmId,
+                RealmName = string.IsNullOrEmpty(realmName) ? "TestRealm" : realmName,
+                RealmSlug = string.IsNullOrEmpty(realmSlug) ? "TestRealmSlug" : realmSlug,
             };
         }
 
         protected Leaderboard CreateLeaderboard(params LeaderboardEntry[] entries)
         {
-            return new Leaderboard()
+            var leaderboard = new Leaderboard()
             {
                 Rows = entries.Union(StaticRankings).ToArray(),
-                Bracket = this.Bracket
+                Bracket = this.Bracket,
+                Time = DateTime.Now
             };
+
+            leaderboard.Order();
+
+            return leaderboard;
         }
 
         protected static readonly LeaderboardEntry[] StaticRankings =
