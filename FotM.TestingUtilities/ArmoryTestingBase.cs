@@ -20,11 +20,11 @@ namespace FotM.TestingUtilities
             return CreateEntry(
                 previous.Ranking - change, 
                 previous.Name, 
-                previous.Rating - ratingChange, 
+                previous.Rating + ratingChange, 
                 previous.WeeklyWins + (change > 0 ? 1 : 0), 
-                previous.WeeklyLosses + (change > 0 ? 1 : 0),
+                previous.WeeklyLosses + (change > 0 ? 0 : 1),
                 previous.SeasonWins + (change > 0 ? 1 : 0),
-                previous.SeasonLosses + (change > 0 ? 1 : 0),
+                previous.SeasonLosses + (change > 0 ? 0 : 1),
                 previous.RealmName,
                 previous.RealmId,
                 previous.RealmSlug

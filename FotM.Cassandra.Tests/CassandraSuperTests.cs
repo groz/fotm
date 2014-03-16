@@ -22,10 +22,10 @@ namespace FotM.Cassandra.Tests
         private readonly Realm[] _realms = new Realm[]
         {
             new Realm() { RealmId = 0, RealmSlug = "0", RealmName = "Zero"},
-            new Realm() { RealmId = 0, RealmSlug = "1", RealmName = "Two"},
-            new Realm() { RealmId = 0, RealmSlug = "2", RealmName = "Three"},
-            new Realm() { RealmId = 0, RealmSlug = "3", RealmName = "Four"},
-            new Realm() { RealmId = 0, RealmSlug = "4", RealmName = "Five"},
+            new Realm() { RealmId = 1, RealmSlug = "1", RealmName = "Two"},
+            new Realm() { RealmId = 2, RealmSlug = "2", RealmName = "Three"},
+            new Realm() { RealmId = 3, RealmSlug = "3", RealmName = "Four"},
+            new Realm() { RealmId = 4, RealmSlug = "4", RealmName = "Five"},
         };
 
         public CassandraSuperTests() : base(Bracket.Threes)
@@ -62,23 +62,34 @@ namespace FotM.Cassandra.Tests
                 .ToArray();
         }
 
-        Team[] GenerateTeams(LeaderboardEntry[] players)
+        Team[] GenerateTeams(LeaderboardEntry[] entries)
         {
-            int size = 3;
-            int nTeams = players.Length/size;
+            const int teamSize = 3;
+
+            /* Generate teams from players of the same realm */
+            var playersPerRealm = entries
+                .Select(e => e.CreatePlayer())
+                .GroupBy(p => p.Realm);
 
             List<Team> teams = new List<Team>();
 
-            for (int i = 0; i < nTeams; ++i)
+            foreach (var realm in playersPerRealm)
             {
-                var teamPlayers = new List<Player>();
+                var players = realm.ToArray();
 
-                for (int j = 0; j < size; ++j)
+                int nTeams = players.Length / teamSize;
+
+                for (int i = 0; i < nTeams; ++i)
                 {
-                    teamPlayers.Add(players[i*size+j].CreatePlayer());
-                }
+                    var teamPlayers = new List<Player>();
 
-                teams.Add(new Team(teamPlayers));
+                    for (int j = 0; j < teamSize; ++j)
+                    {
+                        teamPlayers.Add(players[i * teamSize + j]);
+                    }
+
+                    teams.Add(new Team(teamPlayers));
+                }
             }
 
             return teams.ToArray();
