@@ -1,4 +1,4 @@
-﻿@model IEnumerable<FotM.Domain.TeamStats>
+﻿@model IEnumerable<FotM.Portal.ViewModels.TeamStatsViewModel>
 
 @{
     ViewBag.Title = "Home Page";
@@ -16,15 +16,17 @@
     <div class="col-md-4">
         @foreach (var teamStats in Model)
         {
-            
-            foreach (var player in teamStats.Team.Players)
+            <img src="@(teamStats.FactionImageLink)"/>
+
+            foreach (var player in teamStats.Players)
             {
-                @*<img src="http://media.blizzard.com/wow/icons/18/race_@(player.RaceId)_@(player.GenderId).jpg" />*@
-                <img src="http://media.blizzard.com/wow/icons/18/class_@(player.ClassId).jpg"/>
+                <img src="@(player.RaceImageLink)"/>
+                <img src="@(player.ClassImageLink)"/>
+                <img src="@(player.SpecImageLink)"/>
             }
             @teamStats.Rating<span> </span>
             @teamStats.RatingChange<span> </span>
-            @teamStats.UpdatedUtc.ToLocalTime()
+            @teamStats.Updated
             <br/>
         }
     </div>

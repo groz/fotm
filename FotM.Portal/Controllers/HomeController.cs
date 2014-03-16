@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using FotM.Domain;
+using FotM.Portal.ViewModels;
 
 namespace FotM.Portal.Controllers
 {
@@ -92,7 +92,7 @@ namespace FotM.Portal.Controllers
 
         public ActionResult Index()
         {
-            return View(_teamsStats);
+            return View(_teamsStats.Select(ts => new TeamStatsViewModel(ts)));
         }
 
         public ActionResult About()
