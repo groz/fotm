@@ -107,9 +107,9 @@ namespace FotM.Cassandra.Tests
             for (int i = 0; i < length; ++i)
             {
                 // Select subset of teams that will play
-                int nPlayingThisTurn = rnd.Next(5);
+                int nTeamsPlayedThisTurn = 10;//3+rnd.Next(10);
 
-                Team[] playingTeams = teams.Shuffle().Take(nPlayingThisTurn).ToArray();
+                Team[] playingTeams = teams.Shuffle().Take(nTeamsPlayedThisTurn).ToArray();
 
                 // For each of them generate rating change, update players and create new leaderboard
                 var updatedEntries = new List<LeaderboardEntry>();
@@ -176,7 +176,8 @@ namespace FotM.Cassandra.Tests
             }
 
             double accuracy = correctlyDerived/(double) totalChanges;
-            Trace.WriteLine(accuracy);
+            string msg = string.Format("Cassandra accuracy: {0}", accuracy);
+            Trace.WriteLine(msg);
         }
     }
 }

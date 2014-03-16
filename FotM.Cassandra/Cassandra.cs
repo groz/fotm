@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Accord.MachineLearning;
-using Accord.Math;
 using FotM.Domain;
 using System.Collections.Generic;
 using FotM.Domain;
@@ -17,6 +15,13 @@ namespace FotM.Cassandra
     public class Cassandra
     {
         private static readonly ILog Logger = LoggingExtensions.GetLogger<Cassandra>();
+        private readonly IKMeans<PlayerDiff> _kmeans;
+
+        public Cassandra(IKMeans<PlayerDiff> kmeans = null)
+        {
+            _kmeans = kmeans ?? new NumlKMeans();
+            //_kmeans = kmeans ?? new AccordKMeans();
+        }
 
         public IEnumerable<Team> FindTeams(IEnumerable<Leaderboard> history)
         {
@@ -58,9 +63,7 @@ namespace FotM.Cassandra
 
             var teamLists = Enumerable.Range(0, nGroups).Select(i => new List<Player>()).ToArray();
 
-            var kmeans = new KMeans(nGroups);
-
-            int[] playerGroups = kmeans.Compute(diffs);
+            int[] playerGroups = _kmeans.Compute(diffs, nGroups);
 
             for (int i = 0; i < playerGroups.Length; ++i)
             {

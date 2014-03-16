@@ -7,11 +7,11 @@ namespace FotM.Cassandra
 {
     public static class AccordKMeansExtension
     {
-        public static int[] Compute<T>(this KMeans kmeans, T[] source)
+        public static int[] Compute<T>(this IClusteringAlgorithm<double[]> kmeans, T[] source)
         {
             // get properties marked with Feature
             var featureProperties = typeof (T).GetProperties()
-                .Where(p => p.IsDefined(typeof (FeatureAttribute), false))
+                .Where(p => p.IsDefined(typeof (AccordFeatureAttribute), false))
                 .ToArray();
 
             int nFeatures = featureProperties.Length;
@@ -32,13 +32,13 @@ namespace FotM.Cassandra
                 }
             }
 
-            return kmeans.Compute(matrix);
+            return kmeans.Compute(matrix, 1e-05);
         }
 
         private static double GetFeatureWeight(PropertyInfo featureProperty)
         {
-            var attributes = (FeatureAttribute[])
-                featureProperty.GetCustomAttributes(typeof(FeatureAttribute), false);
+            var attributes = (AccordFeatureAttribute[])
+                featureProperty.GetCustomAttributes(typeof(AccordFeatureAttribute), false);
 
             return attributes.First().Weight;
         }
