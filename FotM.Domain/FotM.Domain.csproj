@@ -52,6 +52,7 @@
     <Compile Include="Realm.cs" />
     <Compile Include="Team.cs" />
     <Compile Include="TeamSetup.cs" />
+    <Compile Include="TeamStats.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
