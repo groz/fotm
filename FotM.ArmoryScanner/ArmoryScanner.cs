@@ -5,6 +5,7 @@ using System.Linq;
 using FotM.Domain;
 using FotM.Utilities;
 using log4net;
+using Newtonsoft.Json;
 
 namespace FotM.ArmoryScanner
 {
@@ -19,32 +20,6 @@ namespace FotM.ArmoryScanner
         private Stopwatch _stopwatch;
         private Leaderboard _previousLeaderboard = null;
         private readonly Dictionary<Team, TeamStats> _teamStats = new Dictionary<Team, TeamStats>();
-
-        class TeamStats
-        {
-            public TeamStats()
-            {
-                RatingChange = 0;
-                Occurences = 1;
-            }
-
-            public double RatingChange { get; private set; }
-            public int Occurences { get; private set; }
-
-            public bool IsVerified
-            {
-                get
-                {
-                    return Occurences >= 2; // same setup seen twice or more
-                }
-            }
-
-            public void Update(double ratingChange)
-            {
-                RatingChange += ratingChange;
-                ++Occurences;
-            }
-        }
 
         public ArmoryScanner(Bracket bracket, string regionHost, int maxHistorySize)
         {
@@ -119,11 +94,16 @@ namespace FotM.ArmoryScanner
                 else
                 {
                     Logger.InfoFormat("Adding team {0} with rating change {1}", team, ratingChange);
-                    _teamStats[team] = new TeamStats();
+                    _teamStats[team] = new TeamStats(team);
                 }
             }
 
             LogStats();
+        }
+
+        private string SerializeStats()
+        {
+            return JsonConvert.SerializeObject(_teamStats.Values.ToArray());
         }
 
         private void LogStats()
@@ -143,7 +123,7 @@ namespace FotM.ArmoryScanner
             foreach (var team in verifiedTeams.OrderByDescending(t => t.Stats.RatingChange))
             {
                 Logger.InfoFormat("Team: {0} ({1}), Seen: {2}, RatingChange: {3}", 
-                    team.Team, team.Setup, team.Stats.Occurences, team.Stats.RatingChange);
+                    team.Team, team.Setup, team.Stats.TimesSeen, team.Stats.RatingChange);
             }
 
             Logger.Info("Top setups:");
@@ -162,6 +142,9 @@ namespace FotM.ArmoryScanner
             {
                 Logger.InfoFormat("{0}: {1}/{2}", teamSetup.Setup, teamSetup.Count, total);
             }
+
+            string str = SerializeStats();
+            Logger.DebugFormat("Serialized stats size: {0}", str.Length);
         }
 
         private double? CalcRatingChange(Team team, Leaderboard previousLeaderboard, Leaderboard currentLeaderboard)
@@ -176,6 +159,36 @@ namespace FotM.ArmoryScanner
             return entries.Any()
                 ? entries.Average(e => e.currentEntry.Rating - e.previousEntry.Rating)
                 : (double?) null;
+        }
+    }
+
+    public class TeamStats
+    {
+        public TeamStats(Team team)
+        {
+            RatingChange = 0;
+            TimesSeen = 1;
+            Team = team;
+        }
+
+        public double RatingChange { get; private set; }
+        public int TimesSeen { get; private set; }
+        public DateTime Seen { get; private set; }
+        public Team Team { get; private set; }
+
+        public bool IsVerified
+        {
+            get
+            {
+                return TimesSeen >= 2; // same setup seen twice or more
+            }
+        }
+
+        public void Update(double ratingChange)
+        {
+            RatingChange += ratingChange;
+            Seen = DateTime.Now;
+            ++TimesSeen;
         }
     }
 }
