@@ -68,7 +68,7 @@ namespace FotM.Cassandra.Tests
 
             /* Generate teams from players of the same realm */
             var playersPerRealm = entries
-                .Select(e => e.CreatePlayer())
+                .Select(e => e.Player())
                 .GroupBy(p => p.Realm);
 
             List<Team> teams = new List<Team>();
@@ -120,7 +120,7 @@ namespace FotM.Cassandra.Tests
 
                     foreach (var player in playingTeam.Players)
                     {
-                        var previousEntry = leaderboard.Rows.FirstOrDefault(r => r.CreatePlayer().Equals(player));
+                        var previousEntry = leaderboard.Rows.FirstOrDefault(r => r.Player().Equals(player));
                         var updatedEntry = UpdateEntry(previousEntry, ratingChange);
                         updatedEntries.Add(updatedEntry);
                     }
@@ -128,7 +128,7 @@ namespace FotM.Cassandra.Tests
 
                 // Fill it
                 var updatedPlayers = playingTeams.SelectMany(t => t.Players).ToHashSet();
-                var oldEntries = leaderboard.Rows.Where(r => !updatedPlayers.Contains(r.CreatePlayer()));
+                var oldEntries = leaderboard.Rows.Where(r => !updatedPlayers.Contains(r.Player()));
 
                 var newLeaderboard = new Leaderboard
                 {

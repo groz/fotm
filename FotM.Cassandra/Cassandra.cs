@@ -84,8 +84,8 @@ namespace FotM.Cassandra
                 previousLeaderboard.Rows.Length, currentLeaderboard.Rows.Length);
 
             // prepare player diffs for players in both leaderboards
-            var previousSet = previousLeaderboard.Rows.ToDictionary(r => r.CreatePlayer(), r => r);
-            var currentSet = currentLeaderboard.Rows.ToDictionary(r => r.CreatePlayer(), r => r);
+            var previousSet = previousLeaderboard.Rows.ToDictionary(r => r.Player(), r => r);
+            var currentSet = currentLeaderboard.Rows.ToDictionary(r => r.Player(), r => r);
 
             var players = currentSet.Keys.Intersect(previousSet.Keys).ToHashSet();
 

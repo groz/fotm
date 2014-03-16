@@ -29,7 +29,7 @@ namespace FotM.Domain
         }
         */
 
-        public Player CreatePlayer()
+        public Player Player()
         {
             return new Player(this);
         }
@@ -49,6 +49,22 @@ namespace FotM.Domain
         public int SeasonLosses { get; set; }
         public int WeeklyWins { get; set; }
         public int WeeklyLosses { get; set; }
+
+        public CharacterSpec Spec
+        {
+            get
+            {
+                return (CharacterSpec) SpecId;
+            }
+        }
+
+        public CharacterClass Class
+        {
+            get
+            {
+                return (CharacterClass) ClassId;
+            }
+        }
 
         public int WeeklyTotal
         {

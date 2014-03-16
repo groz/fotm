@@ -25,7 +25,7 @@ namespace FotM.Domain
 
         public LeaderboardEntry this[Player player]
         {
-            get { return Rows.FirstOrDefault(r => r.CreatePlayer().Equals(player)); }
+            get { return Rows.FirstOrDefault(r => r.Player().Equals(player)); }
         }
     }
 

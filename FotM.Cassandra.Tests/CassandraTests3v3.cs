@@ -22,8 +22,8 @@ namespace FotM.Cassandra.Tests
 
             _previousLeaderboard = CreateLeaderboard(_groz, _srez, _donder, _borna, _invis, _maks);
 
-            _moskva = new Team(_groz.CreatePlayer(), _srez.CreatePlayer(), _donder.CreatePlayer());
-            _limita = new Team(_borna.CreatePlayer(), _invis.CreatePlayer(), _maks.CreatePlayer());
+            _moskva = new Team(_groz.Player(), _srez.Player(), _donder.Player());
+            _limita = new Team(_borna.Player(), _invis.Player(), _maks.Player());
         }
 
         [Test]

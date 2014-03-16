@@ -58,8 +58,8 @@ namespace FotM.ArmoryScanner
         private static bool IsValidSnapshot(Leaderboard previous, Leaderboard current)
         {
             // discard outdated updates
-            var previousState = previous.Rows.ToDictionary(r => r.CreatePlayer());
-            var currentState = current.Rows.ToDictionary(r => r.CreatePlayer());
+            var previousState = previous.Rows.ToDictionary(r => r.Player());
+            var currentState = current.Rows.ToDictionary(r => r.Player());
 
             foreach (var p in previousState)
             {
@@ -82,7 +82,7 @@ namespace FotM.ArmoryScanner
             foreach (var currentEntry in diffNew)
             {
                 LeaderboardEntry previousEntry = previous.Rows
-                    .FirstOrDefault(e => currentEntry.CreatePlayer().Equals(e.CreatePlayer()));
+                    .FirstOrDefault(e => currentEntry.Player().Equals(e.Player()));
 
                 if (previousEntry != null)
                 {

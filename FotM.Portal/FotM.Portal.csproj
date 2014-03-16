@@ -164,7 +164,12 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\jquery-2.1.0.min.map" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\FotM.Domain\FotM.Domain.csproj">
+      <Project>{a9f666c5-47c6-45f7-9dc1-61126140a7e0}</Project>
+      <Name>FotM.Domain</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
