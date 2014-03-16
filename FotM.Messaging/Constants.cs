@@ -12,15 +12,8 @@ namespace FotM.Messaging
         static Constants()
         {
             var cfg = ConfigHelpers.LoadConfig();
-
-            var section = cfg.AppSettings;
-            var strs = cfg.ConnectionStrings;
-
-            Console.WriteLine(section.Settings.Count);
-
-            ConnectionString = section
-                .Settings["Microsoft.ServiceBus.ConnectionString"]
-                .ToString();
+            var appSettings = cfg.AppSettings.Settings;
+            ConnectionString = appSettings["Microsoft.ServiceBus.ConnectionString"].Value;
         }
 
         public static readonly string ConnectionString;
