@@ -9,22 +9,22 @@ using Newtonsoft.Json;
 
 namespace FotM.ArmoryScanner
 {
-    class ArmoryScanner
+    public class ArmoryScanner
     {
         private static readonly ILog Logger = LoggingExtensions.GetLogger<ArmoryScanner>();
 
         private readonly Bracket _bracket;
-        private readonly ArmoryPuller _dataPuller;
+        private readonly IArmoryPuller _dataPuller;
         private readonly ArmoryHistory _history;
         private int _updateCount;
         private Stopwatch _stopwatch;
         private Leaderboard _previousLeaderboard = null;
         private readonly Dictionary<Team, TeamStats> _teamStats = new Dictionary<Team, TeamStats>();
 
-        public ArmoryScanner(Bracket bracket, string regionHost, int maxHistorySize)
+        public ArmoryScanner(Bracket bracket, IArmoryPuller dataPuller, int maxHistorySize)
         {
             _bracket = bracket;
-            _dataPuller = new ArmoryPuller(regionHost);
+            _dataPuller = dataPuller;
             _history = new ArmoryHistory(maxHistorySize);
         }
 
@@ -98,12 +98,18 @@ namespace FotM.ArmoryScanner
                 }
             }
 
-            LogStats();
+            if (updatedTeams.Length != 0)
+                LogStats();
         }
 
-        private string SerializeStats()
+        public string SerializeStats()
         {
             return JsonConvert.SerializeObject(_teamStats.Values.ToArray());
+        }
+
+        public TeamStats[] DeserializeStats(string json)
+        {
+            return JsonConvert.DeserializeObject<TeamStats[]>(json);
         }
 
         private void LogStats()
@@ -143,11 +149,12 @@ namespace FotM.ArmoryScanner
                 Logger.InfoFormat("{0}: {1}/{2}", teamSetup.Setup, teamSetup.Count, total);
             }
 
-            string str = SerializeStats();
-            Logger.DebugFormat("Serialized stats size: {0}", str.Length);
+            string json = SerializeStats();
+            var x = DeserializeStats(json);
+            Logger.DebugFormat("Serialized stats size: {0}", json.Length);
         }
 
-        private double? CalcRatingChange(Team team, Leaderboard previousLeaderboard, Leaderboard currentLeaderboard)
+        public static double? CalcRatingChange(Team team, Leaderboard previousLeaderboard, Leaderboard currentLeaderboard)
         {
             var entries = (from player in team
                 let previousEntry = previousLeaderboard.Rows.FirstOrDefault(r => r.CreatePlayer().Equals(player))

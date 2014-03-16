@@ -1,10 +1,11 @@
 ﻿using FotM.Domain;
+using FotM.TestingUtilities;
 using NUnit.Framework;
 
 namespace FotM.Cassandra.Tests
 {
     [TestFixture]
-    public class CassandraTests3v3: CassandraTestBase
+    public class CassandraTests3v3 : ArmoryTestingBase
     {
         private readonly LeaderboardEntry _groz, _srez, _donder, _borna, _invis, _maks;
         private readonly Leaderboard _previousLeaderboard;

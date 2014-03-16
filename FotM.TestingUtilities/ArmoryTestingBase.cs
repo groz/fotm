@@ -2,13 +2,13 @@
 using System.Linq;
 using FotM.Domain;
 
-namespace FotM.Cassandra.Tests
+namespace FotM.TestingUtilities
 {
-    public class CassandraTestBase
+    public class ArmoryTestingBase
     {
         protected readonly Bracket Bracket = Bracket.Rbg;
 
-        public CassandraTestBase(Bracket bracket)
+        public ArmoryTestingBase(Bracket bracket)
         {
             this.Bracket = bracket;
         }

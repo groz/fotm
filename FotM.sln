@@ -20,6 +20,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FotM.Cassandra", "FotM.Cass
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FotM.Cassandra.Tests", "FotM.Cassandra.Tests\FotM.Cassandra.Tests.csproj", "{49026724-C88D-4F60-B16A-D5B7D4385EA0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FotM.ArmoryScanner.Tests", "FotM.ArmoryScanner.Tests\FotM.ArmoryScanner.Tests.csproj", "{B6D7741A-39EE-4809-A11D-063773FF208C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FotM.TestingUtilities", "FotM.TestingUtilities\FotM.TestingUtilities.csproj", "{F56EE221-0274-4FB5-8932-2E3605B84AFE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +50,14 @@ Global
 		{49026724-C88D-4F60-B16A-D5B7D4385EA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49026724-C88D-4F60-B16A-D5B7D4385EA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49026724-C88D-4F60-B16A-D5B7D4385EA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6D7741A-39EE-4809-A11D-063773FF208C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6D7741A-39EE-4809-A11D-063773FF208C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6D7741A-39EE-4809-A11D-063773FF208C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6D7741A-39EE-4809-A11D-063773FF208C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F56EE221-0274-4FB5-8932-2E3605B84AFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F56EE221-0274-4FB5-8932-2E3605B84AFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F56EE221-0274-4FB5-8932-2E3605B84AFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F56EE221-0274-4FB5-8932-2E3605B84AFE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

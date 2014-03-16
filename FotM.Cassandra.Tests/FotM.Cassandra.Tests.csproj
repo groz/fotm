@@ -44,7 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CassandraTestBase.cs" />
     <Compile Include="CassandraTests2v2.cs" />
     <Compile Include="CassandraTests3v3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -57,6 +56,10 @@
     <ProjectReference Include="..\FotM.Domain\FotM.Domain.csproj">
       <Project>{A9F666C5-47C6-45F7-9DC1-61126140A7E0}</Project>
       <Name>FotM.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FotM.TestingUtilities\FotM.TestingUtilities.csproj">
+      <Project>{F56EE221-0274-4FB5-8932-2E3605B84AFE}</Project>
+      <Name>FotM.TestingUtilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

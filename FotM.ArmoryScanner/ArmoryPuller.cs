@@ -4,7 +4,7 @@ using FotM.Domain;
 
 namespace FotM.ArmoryScanner
 {
-    public class ArmoryPuller
+    public class ArmoryPuller: IArmoryPuller
     {
         private readonly Uri _baseAddress;
         public string Host { get; private set; }
@@ -13,8 +13,7 @@ namespace FotM.ArmoryScanner
         {
             Host = host;
 
-            var builder = new UriBuilder(Uri.UriSchemeHttp, host);
-            builder.Path = "api/wow";
+            var builder = new UriBuilder(Uri.UriSchemeHttp, host) {Path = "api/wow"};
             _baseAddress = builder.Uri;
         }
 

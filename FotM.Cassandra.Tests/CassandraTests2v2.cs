@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using FotM.Domain;
+using FotM.TestingUtilities;
 using NUnit.Framework;
 
 namespace FotM.Cassandra.Tests
 {
     [TestFixture]
-    public class CassandraTests2v2 : CassandraTestBase
+    public class CassandraTests2v2 : ArmoryTestingBase
     {
         private readonly LeaderboardEntry _groz, _srez, _borna, _invis;
         private readonly Leaderboard _previousLeaderboard;
