@@ -50,6 +50,11 @@ namespace FotM.Domain
         public int WeeklyWins { get; set; }
         public int WeeklyLosses { get; set; }
 
+        public Race Race
+        {
+            get { return (Race) RaceId; }
+        }
+
         public Gender Gender
         {
             get { return (Gender) GenderId; }

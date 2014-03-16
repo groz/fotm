@@ -16,6 +16,9 @@ namespace FotM.Domain
             Name = entry.Name;
             ClassId = entry.ClassId;
             SpecId = entry.SpecId;
+            FactionId = entry.FactionId;
+            GenderId = entry.GenderId;
+            RaceId = entry.RaceId;
 
             Realm = new Realm()
             {
@@ -29,6 +32,40 @@ namespace FotM.Domain
         public Realm Realm { get; set; }
         public int ClassId { get; set; }
         public int SpecId { get; set; }
+        public int FactionId { get; set; }
+        public int GenderId { get; set; }
+        public int RaceId { get; set; }
+
+        public Race Race
+        {
+            get { return (Race) RaceId; }
+        }
+
+        public Gender Gender
+        {
+            get { return (Gender)GenderId; }
+        }
+
+        public CharacterSpec Spec
+        {
+            get
+            {
+                return (CharacterSpec)SpecId;
+            }
+        }
+
+        public CharacterClass Class
+        {
+            get
+            {
+                return (CharacterClass)ClassId;
+            }
+        }
+
+        public Faction Faction
+        {
+            get { return (Faction)FactionId; }
+        }
 
         public bool Equals(Player other)
         {
