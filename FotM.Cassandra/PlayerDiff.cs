@@ -29,6 +29,7 @@ namespace FotM.Cassandra
             this.SeasonLosses = current.SeasonLosses;
 
             this.RealmId = this.Player.Realm.RealmId;
+            this.RealmSlug = this.Player.Realm.RealmSlug;
         }
 
         public bool HasChanges
@@ -47,6 +48,8 @@ namespace FotM.Cassandra
         // FEATURES
         //[Feature]
         public int RealmId { get; private set; }
+
+        public string RealmSlug { get; set; }
 
         [AccordFeature(Weight = 0.1)]
         public int Ranking { get; private set; }
