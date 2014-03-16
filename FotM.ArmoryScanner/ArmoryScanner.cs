@@ -76,7 +76,9 @@ namespace FotM.ArmoryScanner
             {
                 Logger.InfoFormat("Team {0} found", team);
 
-                double? ratingChange = CalcRatingChange(team, _previousLeaderboard, currentLeaderboard);
+                int? previousRating = GetRating(team, _previousLeaderboard);
+                int? currentRating = GetRating(team, currentLeaderboard);
+                int? ratingChange = currentRating - previousRating;
 
                 if (!ratingChange.HasValue)
                 {
@@ -89,12 +91,12 @@ namespace FotM.ArmoryScanner
                 if (_teamStats.TryGetValue(team, out teamStats))
                 {
                     Logger.InfoFormat("Updating team {0} with rating change {1}", team, ratingChange);
-                    teamStats.Update(ratingChange.Value);
+                    teamStats.Update(currentRating.Value, ratingChange.Value);
                 }
                 else
                 {
                     Logger.InfoFormat("Adding team {0} with rating change {1}", team, ratingChange);
-                    _teamStats[team] = new TeamStats(team);
+                    _teamStats[team] = new TeamStats(team, currentRating.Value, ratingChange.Value);
                 }
             }
 
@@ -107,7 +109,8 @@ namespace FotM.ArmoryScanner
             string json = JsonConvert.SerializeObject(_teamStats.Values.ToArray());
 
             var zipped = CompressionUtils.Zip(json);
-            Logger.DebugFormat("Archived size: {0}", zipped.Length);
+            var base64Zipped = CompressionUtils.ZipToBase64(json);
+            Logger.DebugFormat("Compressed size: {0}, base64: {1}", zipped.Length, base64Zipped.Length);
 
             return json;
         }
@@ -133,8 +136,13 @@ namespace FotM.ArmoryScanner
 
             foreach (var team in verifiedTeams.OrderByDescending(t => t.Stats.RatingChange))
             {
-                Logger.InfoFormat("Team: {0} ({1}), Seen: {2}, RatingChange: {3}", 
-                    team.Team, team.Setup, team.Stats.TimesSeen, team.Stats.RatingChange);
+                Logger.InfoFormat("Team: {0} ({1}), Seen: {2}, Rating: {3} ({4}{5})", 
+                    team.Team, 
+                    team.Setup, 
+                    team.Stats.TimesSeen, 
+                    team.Stats.Rating,
+                    team.Stats.RatingChange > 0 ? "+" : "", 
+                    team.Stats.RatingChange);
             }
 
             Logger.Info("Top setups:");
@@ -158,18 +166,11 @@ namespace FotM.ArmoryScanner
             Logger.DebugFormat("Serialized stats size: {0}", json.Length);
         }
 
-        public static double? CalcRatingChange(Team team, Leaderboard previousLeaderboard, Leaderboard currentLeaderboard)
+        private int? GetRating(Team team, Leaderboard leaderboard)
         {
-            var entries = (from player in team.Players
-                let previousEntry = previousLeaderboard.Rows.FirstOrDefault(r => r.CreatePlayer().Equals(player))
-                where previousEntry != null
-                let currentEntry = currentLeaderboard.Rows.FirstOrDefault(r => r.CreatePlayer().Equals(player))
-                where currentEntry != null
-                select new {player, previousEntry, currentEntry}).ToArray();
+            var entries = team.Players.Select(p => leaderboard[p]).Where(p => p != null).ToArray();
 
-            return entries.Any()
-                ? entries.Average(e => e.currentEntry.Rating - e.previousEntry.Rating)
-                : (double?) null;
+            return entries.Length == 0 ? null : (int?)entries.Average(e => e.Rating);
         }
     }
 }

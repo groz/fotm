@@ -8,15 +8,17 @@ namespace FotM.Domain
         {
         }
 
-        public TeamStats(Team team)
+        public TeamStats(Team team, int rating, int ratingChange)
         {
-            RatingChange = 0;
+            RatingChange = ratingChange;
             TimesSeen = 1;
             Team = team;
             Seen = DateTime.Now;
+            Rating = rating;
         }
 
-        public double RatingChange { get; set; }
+        public int Rating { get; set; }
+        public int RatingChange { get; set; }
         public int TimesSeen { get; set; }
         public DateTime Seen { get; set; }
         public Team Team { get; set; }
@@ -25,11 +27,11 @@ namespace FotM.Domain
         {
             get
             {
-                return TimesSeen >= 2; // same setup seen twice or more
+                return TimesSeen >= 1; // same setup seen twice or more
             }
         }
 
-        public void Update(double ratingChange)
+        public void Update(int rating, int ratingChange)
         {
             RatingChange += ratingChange;
             Seen = DateTime.Now;

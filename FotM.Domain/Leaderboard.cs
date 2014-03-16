@@ -22,6 +22,11 @@ namespace FotM.Domain
                 Rows[i].Ranking = i + 1;
             }
         }
+
+        public LeaderboardEntry this[Player player]
+        {
+            get { return Rows.FirstOrDefault(r => r.CreatePlayer().Equals(player)); }
+        }
     }
 
 }
