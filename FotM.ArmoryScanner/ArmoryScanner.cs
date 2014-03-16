@@ -112,6 +112,7 @@ namespace FotM.ArmoryScanner
                     Stats = _teamStats.Values.ToArray()
                 };
 
+                Logger.InfoFormat("Publishing update message...");
                 _statsUpdatePublisher.Publish(updateMessage);
             }
         }

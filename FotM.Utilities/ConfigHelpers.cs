@@ -15,8 +15,10 @@ namespace FotM.Utilities
             /* usage:
              * private static readonly Configuration Config = ConfigHelpers.LoadConfig();
              */
+
             Assembly currentAssembly = Assembly.GetCallingAssembly();
-            return ConfigurationManager.OpenExeConfiguration(currentAssembly.Location);
+            string configPath = new Uri(currentAssembly.CodeBase).LocalPath;
+            return ConfigurationManager.OpenExeConfiguration(configPath);
         }
     }
 }
