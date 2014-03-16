@@ -136,13 +136,14 @@ namespace FotM.ArmoryScanner
 
             foreach (var team in verifiedTeams.OrderByDescending(t => t.Stats.Rating))
             {
-                Logger.InfoFormat("Team: {0} ({1}), Seen: {2}, Rating: {3} ({4}{5})", 
+                Logger.InfoFormat("Team: {0} ({1}), Rating: {3} ({4}{5}), TimesSeen: {2}, Updated: {6}", 
                     team.Team, 
                     team.Setup, 
                     team.Stats.TimesSeen, 
                     team.Stats.Rating,
                     team.Stats.RatingChange > 0 ? "+" : "", 
-                    team.Stats.RatingChange);
+                    team.Stats.RatingChange,
+                    team.Stats.UpdatedUtc.ToLocalTime());
             }
 
             Logger.Info("Top setups:");
