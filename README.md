@@ -8,6 +8,7 @@ TODO:
 - Add correct setup per region
 - Deploy per region
 - Faster expired teams that were seen only once
+- Divide ratings updatet per number of games if diff more than 1
 
 Backlog:
 - Refactor Messaging
