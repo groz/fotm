@@ -63,7 +63,7 @@ namespace FotM.Portal.ViewModels
                 case CharacterSpec.Mage_Fire:
                     return "http://media.blizzard.com/wow/icons/18/spell_fire_firebolt02.jpg";
                 case CharacterSpec.Mage_Frost:
-                    return "http://media.blizzard.com/wow/icons/18/spell_fire_firebolt02.jpg";
+                    return "http://media.blizzard.com/wow/icons/18/spell_frost_frostbolt02.jpg";
 
                 case CharacterSpec.Monk_Brewmaster:
                     return "http://media.blizzard.com/wow/icons/18/spell_monk_brewmaster_spec.jpg";
