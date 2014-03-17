@@ -26,19 +26,16 @@ namespace FotM.Portal.ViewModels
 
         public int Rank { get; set; }
 
+        public int Rating
+        {
+            get { return _model.Rating; }
+        }
+
         public string FactionImageLink
         {
             get
             {
                 return MediaLinks.FactionImageLink(_factionId);
-            }
-        }
-
-        public string Rating
-        {
-            get
-            {
-                return string.Format("{0,2}",_model.Rating);
             }
         }
 
