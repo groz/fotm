@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using FotM.Messaging;
+using FotM.Portal.ViewModels;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
 
@@ -33,7 +34,8 @@ namespace FotM.Portal.Hubs
 
         private void OnStatsUpdateReceived(StatsUpdateMessage msg)
         {
-            _clients.All.update(msg.Stats);
+            var armoryViewModel = new ArmoryViewModel(msg.Stats, 20, 10);
+            _clients.All.update(armoryViewModel);
         }
 
         public void Start()

@@ -37,6 +37,7 @@ namespace FotM.Portal.ViewModels
 
             _teamStatsViewModels = verifiedTeams
                 .Take(nTeamsToShow)
+                .OrderByDescending(t => t.Stats.Rating)
                 .Select((ts, i) => new TeamStatsViewModel(i + 1, ts.Stats))
                 .ToArray();
 
