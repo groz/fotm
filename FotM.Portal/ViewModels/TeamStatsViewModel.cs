@@ -19,7 +19,8 @@ namespace FotM.Portal.ViewModels
             _factionId = model.Team.Players.First().FactionId;
 
             Players = model.Team.Players
-                .OrderBy(p => p.ClassId)
+                .OrderBy(p => p.Spec.IsHealer())
+                .ThenBy(p => p.ClassId)
                 .Select(p => new PlayerViewModel(p)).ToArray();
         }
 
@@ -56,16 +57,15 @@ namespace FotM.Portal.ViewModels
         {
             get
             {
-                if (DateTime.Now - UpdateTimeout > _model.UpdatedUtc.ToLocalTime())
-                    return "";
-
-                // color recent changes
-                if (_model.RatingChange > 0)
-                    return "success";
-                else if (_model.RatingChange < 0)
-                    return "danger";
-
-                return "info";
+                if (DateTime.Now - UpdateTimeout < _model.UpdatedUtc.ToLocalTime())
+                {
+                    // color recent changes
+                    if (_model.RatingChange > 0)
+                        return "success";
+                    else if (_model.RatingChange < 0)
+                        return "danger";
+                }
+                return "";
             }
         }
     }

@@ -45,6 +45,19 @@ namespace FotM.Domain
         Monk_Mistweaver = 270
     }
 
+    public static class SpecExtensions
+    {
+        public static bool IsHealer(this CharacterSpec spec)
+        {
+            return spec == CharacterSpec.Druid_Restoration ||
+                   spec == CharacterSpec.Shaman_Restoration ||
+                   spec == CharacterSpec.Paladin_Holy ||
+                   spec == CharacterSpec.Priest_Holy ||
+                   spec == CharacterSpec.Priest_Discipline ||
+                   spec == CharacterSpec.Monk_Mistweaver;
+        }
+    }
+
     public static class SpecNames
     {
         public static Dictionary<int, string> Names = new Dictionary<int, string>
