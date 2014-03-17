@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using FotM.Messaging;
 using FotM.Portal.ViewModels;
 using Microsoft.AspNet.SignalR;
@@ -62,7 +63,7 @@ namespace FotM.Portal.Infrastructure
 
         private ArmoryViewModel CreateViewModel(StatsUpdateMessage msg)
         {
-            return new ArmoryViewModel(msg.Stats, 20, 10, 10);
+            return new ArmoryViewModel(msg.Stats, 20, 10, 10, TimeSpan.FromHours(2));
         }
     }
 }

@@ -34,9 +34,12 @@ namespace FotM.Portal.ViewModels
             }
         }
 
-        public int Rating
+        public string Rating
         {
-            get { return _model.Rating; }
+            get
+            {
+                return string.Format("{0,2}",_model.Rating);
+            }
         }
 
         public string Updated

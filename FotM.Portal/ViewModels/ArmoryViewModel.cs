@@ -8,7 +8,6 @@ namespace FotM.Portal.ViewModels
 {
     public class ArmoryViewModel
     {
-        private readonly TimeSpan PlayingNowCutoff = TimeSpan.FromHours(1);
         private readonly TeamStatsViewModel[] _allTimeViewModels;
         private readonly TeamStatsViewModel[] _playingNowViewModels;
         private readonly TeamSetupViewModel[] _teamSetupsViewModels;
@@ -16,7 +15,8 @@ namespace FotM.Portal.ViewModels
         public ArmoryViewModel(IEnumerable<TeamStats> teamStats, 
             int nTeamsToShow, 
             int nSetupsToShow,
-            int nPlayingNowMax)
+            int nPlayingNowMax,
+            TimeSpan playingNowPeriod)
         {
             var verifiedTeams = teamStats
                 .Where(t => t.IsVerified)
@@ -50,7 +50,7 @@ namespace FotM.Portal.ViewModels
 
             _playingNowViewModels = verifiedTeams
                 .OrderByDescending(t => t.Stats.UpdatedUtc)
-                .TakeWhile(t => utcNow - t.Stats.UpdatedUtc < PlayingNowCutoff)
+                .TakeWhile(t => utcNow - t.Stats.UpdatedUtc < playingNowPeriod)
                 .Take(nPlayingNowMax)
                 .OrderByDescending(t => t.Stats.Rating)
                 .Select((ts, i) => new TeamStatsViewModel(i + 1, ts.Stats))

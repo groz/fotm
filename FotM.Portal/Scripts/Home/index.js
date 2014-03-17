@@ -1,13 +1,25 @@
 ﻿// Code-behind for Home/Index action
 
 function ArmoryViewModel() {
-    this.bracket = ko.observable("3v3");
-    this.region = ko.observable("US");
+    var self = this;
+    
+    self.bracket = ko.observable("3v3");
+    self.region = ko.observable("US");
+    self.leaderboardSelected = ko.observable(true);
+    self.playingNowSelected = ko.observable(false);
 
-    this.model = ko.observable({
+    self.model = ko.observable({
         AllTimeLeaders: ko.observable(),
         PlayingNow: ko.observable(),
         TeamSetupsViewModels: ko.observable(),
+    });
+
+    self.selectedPage = ko.computed(function () {
+        if (self.leaderboardSelected()) {
+            return self.model().AllTimeLeaders();
+        } else {
+            return self.model().PlayingNow();
+        }
     });
 }
 
@@ -15,6 +27,19 @@ $(function () {
 
     var armory = new ArmoryViewModel();
     ko.applyBindings(armory);
+    
+    armory.leaderboardSelected(true);
+    armory.playingNowSelected(false);
+    
+    $("#leaderboardBtn").click(function () {
+        armory.leaderboardSelected(true);
+        armory.playingNowSelected(false);
+    });
+    
+    $("#playingNowBtn").click(function () {
+        armory.leaderboardSelected(false);
+        armory.playingNowSelected(true);
+    });
 
     var hub = $.connection.indexHub;
 
