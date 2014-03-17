@@ -139,7 +139,8 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Hubs\IndexHub.cs" />
+    <Compile Include="Infrastructure\IndexHub.cs" />
+    <Compile Include="Infrastructure\ReactiveUpdateManager.cs" />
     <Compile Include="ViewModels\ArmoryViewModel.cs" />
     <Compile Include="ViewModels\MediaLinks.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />

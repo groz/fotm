@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using FotM.Portal.Hubs;
+using FotM.Portal.Infrastructure;
 
 namespace FotM.Portal
 {
@@ -18,7 +18,7 @@ namespace FotM.Portal
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            Reactive.Instance.Start();
+            ReactiveUpdateManager.Instance.Start();
         }
     }
 }

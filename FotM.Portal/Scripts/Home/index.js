@@ -11,16 +11,16 @@ function ArmoryViewModel() {
 }
 
 $(function () {
-    
+
     var armory = new ArmoryViewModel();
     ko.applyBindings(armory);
-   
+
     var hub = $.connection.indexHub;
 
-    hub.client.update = function(msg) {
+    hub.client.update = function (msg) {
         console.log(msg);
 
-        $(msg.TeamStatsViewModels).each(function(idx) {
+        $(msg.TeamStatsViewModels).each(function (idx) {
             this.LocalUpdateTime = asLocalTime(this.Updated);
         });
 
@@ -28,6 +28,8 @@ $(function () {
         armory.model().TeamSetupsViewModels(msg.TeamSetupsViewModels);
     };
 
-    $.connection.hub.start();
+    $.connection.hub.start().done(function () {
+        hub.server.queryLatestUpdate();
+    });
 
 });
