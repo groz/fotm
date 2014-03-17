@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using FotM.Domain;
 using FotM.Messaging;
@@ -13,6 +14,8 @@ namespace FotM.ArmoryScanner
     public class ArmoryScanner
     {
         private static readonly ILog Logger = LoggingExtensions.GetLogger<ArmoryScanner>();
+
+        private const string DbFile = "data.txt"; // TODO: add real DB
 
         private readonly Bracket _bracket;
         private readonly IArmoryPuller _dataPuller;
@@ -30,12 +33,69 @@ namespace FotM.ArmoryScanner
             _bracket = bracket;
             _dataPuller = dataPuller;
             _history = new ArmoryHistory(maxHistorySize);
+
+            LoadFromDb();
         }
 
-        private void OnQueryLatestStatsMessage(QueryLatestStatsMessage msg)
+        private void SaveToDb()
         {
-            // TODO: refactor to publish to the private queue of requester instead of all topic listeners
-            PublishStats();
+            Logger.InfoFormat("Saving all data to file {0}", DbFile);
+
+            try
+            {
+                string serializedStats = SerializeStats();
+                File.WriteAllText(DbFile, serializedStats);
+            }
+            catch (Exception ex)
+            {
+                Logger.ErrorFormat("Saving to file failed with {0}.", ex.Message);
+            }
+        }
+
+        private void LoadFromDb()
+        {
+            if (File.Exists(DbFile))
+            {
+                try
+                {
+                    Logger.InfoFormat("File {0} found, trying to load persisted data...", DbFile);
+
+                    string json = File.ReadAllText(DbFile);
+
+                    TeamStats[] persistedStats = DeserializeStats(json);
+
+                    foreach (var teamStats in persistedStats)
+                    {
+                        _teamStats[teamStats.Team] = teamStats;
+                    }
+
+                    Logger.InfoFormat("Persisted data loaded successfully.");
+                }
+                catch (Exception ex)
+                {
+                    Logger.ErrorFormat("Loading persisted data failed with {0}. Initializing anew.", ex.Message);
+                }
+            }
+            else
+            {
+                Logger.InfoFormat("File {0} not found. Initializing anew.", DbFile);
+            }
+        }
+
+        private bool OnQueryLatestStatsMessage(QueryLatestStatsMessage msg)
+        {
+            Logger.InfoFormat("Received QueryLatestStatsMessage from {0}", msg.QueryingHost);
+
+            if (_teamStats.Any())
+            {
+                // TODO: refactor to publish to the private queue of requester instead of all topic listeners
+                PublishStats();
+                return true;
+            }
+
+            Logger.InfoFormat("No stats to send to {0}.", msg.QueryingHost);
+
+            return false;
         }
 
         public void Scan()
@@ -53,13 +113,14 @@ namespace FotM.ArmoryScanner
                 {
                     OnUpdate(_history, currentLeaderboard);
                 }
+
+                Logger.Info("Checking for messages...");
+                _queryLatestStatsClient.Receive(OnQueryLatestStatsMessage);
             }
             catch (Exception ex)
             {
                 Logger.Error(ex.Message);
             }
-            
-            _queryLatestStatsClient.Receive(OnQueryLatestStatsMessage);
         }
 
         private void OnUpdate(ArmoryHistory history, Leaderboard currentLeaderboard)
@@ -116,6 +177,7 @@ namespace FotM.ArmoryScanner
             {
                 LogStats();
                 PublishStats();
+                SaveToDb();
             }
         }
 

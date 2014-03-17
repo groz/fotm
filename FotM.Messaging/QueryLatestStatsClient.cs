@@ -27,14 +27,19 @@ namespace FotM.Messaging
             _queueClient.Send(brokeredMessage);
         }
 
-        public void Receive(Action<QueryLatestStatsMessage> onReceived)
+        public void Receive(Predicate<QueryLatestStatsMessage> onReceived)
         {
-            var brokeredMessage = _queueClient.Receive();
+            var brokeredMessage = _queueClient.Receive(TimeSpan.FromSeconds(0.5));
+
             if (brokeredMessage != null)
             {
                 var msg = brokeredMessage.GetBody<QueryLatestStatsMessage>();
-                onReceived(msg);
-                brokeredMessage.Complete();
+                bool handled = onReceived(msg);
+
+                if (handled)
+                {
+                    brokeredMessage.Complete();
+                }
             }
         }
     }

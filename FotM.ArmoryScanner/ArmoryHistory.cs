@@ -50,9 +50,7 @@ namespace FotM.ArmoryScanner
                     Logger.Debug("Leaderboard snapshot was already added to history.");
                     return false;
                 }
-            }
-            else
-            {
+
                 LogChanges(currentSnapshot);
             }
 
