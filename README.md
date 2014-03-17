@@ -9,6 +9,8 @@ TODO:
 - Delete expired (1 week?) entries from leaderboard
 - Add correct setup per region
 - Deploy per region
+- Persist data in ArmoryScanner
 
 Backlog:
-- Persist data in ArmoryScanner
+- Refactor Messaging
+- Add AWS SNS/SQS
