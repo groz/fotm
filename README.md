@@ -9,6 +9,7 @@ TODO:
 - Deploy per region
 - Set smaller expiration date for teams that were seen only once
 - Divide ratings updatet per number of games if diff more than 1
+- Google analytics
 
 Backlog:
 - Refactor Messaging
