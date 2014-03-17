@@ -19,5 +19,6 @@ namespace FotM.Messaging
         public static readonly string ConnectionString;
         public static readonly string Namespace = "fotm-test";
         public static readonly string StatsUpdateTopic = "stats-update-topic";
+        public static readonly string QueryLatestStatsQueue = "query-latest-stats-queue";
     }
 }

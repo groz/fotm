@@ -17,11 +17,13 @@ namespace FotM.Portal.Infrastructure
         private readonly IHubConnectionContext _clients;
         private readonly StatsUpdateListener _statsUpdateListener;
         private StatsUpdateMessage _latestMessage = null;
+        private readonly QueryLatestStatsClient _queryLastStatsClient;
 
         private ReactiveUpdateManager()
         {
             _clients = GlobalHost.ConnectionManager.GetHubContext<IndexHub>().Clients;
             _statsUpdateListener = new StatsUpdateListener(OnStatsUpdateReceived);
+            _queryLastStatsClient = new QueryLatestStatsClient();
         }
 
         private void OnStatsUpdateReceived(StatsUpdateMessage msg)
@@ -33,6 +35,10 @@ namespace FotM.Portal.Infrastructure
 
         public void Start()
         {
+            _queryLastStatsClient.Send(new QueryLatestStatsMessage()
+            {
+                // TODO: create private queue, send it in message and listen to it for response
+            });
             _statsUpdateListener.Listen();
         }
 

@@ -23,12 +23,19 @@ namespace FotM.ArmoryScanner
         private readonly Dictionary<Team, TeamStats> _teamStats = new Dictionary<Team, TeamStats>();
 
         private readonly StatsUpdatePublisher _statsUpdatePublisher = new StatsUpdatePublisher();
+        private readonly QueryLatestStatsClient _queryLatestStatsClient = new QueryLatestStatsClient();
 
         public ArmoryScanner(Bracket bracket, IArmoryPuller dataPuller, int maxHistorySize)
         {
             _bracket = bracket;
             _dataPuller = dataPuller;
             _history = new ArmoryHistory(maxHistorySize);
+        }
+
+        private void OnQueryLatestStatsMessage(QueryLatestStatsMessage msg)
+        {
+            // TODO: refactor to publish to the private queue of requester instead of all topic listeners
+            PublishStats();
         }
 
         public void Scan()
@@ -51,6 +58,8 @@ namespace FotM.ArmoryScanner
             {
                 Logger.Error(ex.Message);
             }
+            
+            _queryLatestStatsClient.Receive(OnQueryLatestStatsMessage);
         }
 
         private void OnUpdate(ArmoryHistory history, Leaderboard currentLeaderboard)
@@ -106,15 +115,19 @@ namespace FotM.ArmoryScanner
             if (updatedTeams.Length != 0)
             {
                 LogStats();
-
-                var updateMessage = new StatsUpdateMessage()
-                {
-                    Stats = _teamStats.Values.ToArray()
-                };
-
-                Logger.InfoFormat("Publishing update message...");
-                _statsUpdatePublisher.Publish(updateMessage);
+                PublishStats();
             }
+        }
+
+        public void PublishStats()
+        {
+            var updateMessage = new StatsUpdateMessage()
+            {
+                Stats = _teamStats.Values.ToArray()
+            };
+
+            Logger.InfoFormat("Publishing update message...");
+            _statsUpdatePublisher.Publish(updateMessage);
         }
 
         public string SerializeStats()
