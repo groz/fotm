@@ -114,8 +114,9 @@ namespace FotM.ArmoryScanner
                     OnUpdate(_history, currentLeaderboard);
                 }
 
-                Logger.Info("Checking for messages...");
-                _queryLatestStatsClient.Receive(OnQueryLatestStatsMessage);
+                TimeSpan waitPeriod = TimeSpan.FromSeconds(10);
+                Logger.InfoFormat("Checking for messages/sleeping for {0}...", waitPeriod);
+                _queryLatestStatsClient.Receive(OnQueryLatestStatsMessage, waitPeriod);
             }
             catch (Exception ex)
             {

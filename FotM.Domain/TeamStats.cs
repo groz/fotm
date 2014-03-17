@@ -27,7 +27,7 @@ namespace FotM.Domain
         {
             get
             {
-                return TimesSeen >= 3; // same setup seen three times or more, reinforcing predictor algo
+                return TimesSeen >= 1; // same setup seen three times or more, reinforcing predictor algo
             }
         }
 

@@ -27,9 +27,9 @@ namespace FotM.Messaging
             _queueClient.Send(brokeredMessage);
         }
 
-        public void Receive(Predicate<QueryLatestStatsMessage> onReceived)
+        public void Receive(Predicate<QueryLatestStatsMessage> onReceived, TimeSpan timeout)
         {
-            var brokeredMessage = _queueClient.Receive(TimeSpan.FromSeconds(0.5));
+            var brokeredMessage = _queueClient.Receive(timeout);
 
             if (brokeredMessage != null)
             {

@@ -1,4 +1,5 @@
-﻿using FotM.Messaging;
+﻿using System.Linq;
+using FotM.Messaging;
 using FotM.Portal.ViewModels;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
@@ -30,7 +31,11 @@ namespace FotM.Portal.Infrastructure
         {
             _latestMessage = msg;
             var armoryViewModel = CreateViewModel(msg);
-            _clients.All.update(armoryViewModel);
+
+            if (armoryViewModel.TeamStatsViewModels.Any())
+            {
+                _clients.All.update(armoryViewModel);
+            }
         }
 
         public void Start()
@@ -47,7 +52,11 @@ namespace FotM.Portal.Infrastructure
             if (_latestMessage != null)
             {
                 var armoryViewModel = CreateViewModel(_latestMessage);
-                caller.update(armoryViewModel);
+
+                if (armoryViewModel.TeamStatsViewModels.Any())
+                {
+                    caller.update(armoryViewModel);
+                }
             }
         }
 
