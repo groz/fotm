@@ -6,12 +6,18 @@
 
 @section scripts
 {
+    <!-- TODO: switch to release(minified) versions of scripts -->
+    <script src="~/Scripts/knockout-3.1.0.debug.js"></script>
     <script src="~/Scripts/jquery.signalR-2.0.2.js"></script>
     <script src="~/signalr/hubs"></script>
     <script src="~/Scripts/Home/index.js"></script>
 }
 
-<h2>3v3 EU</h2>
+<h2>
+    <span data-bind="text: bracket"></span>
+    <span data-bind="text: region"></span>
+</h2>
+
 
 <div class="row">
     <table class="table table-striped table-condensed table-responsive">

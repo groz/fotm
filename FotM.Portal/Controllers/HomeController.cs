@@ -99,7 +99,7 @@ namespace FotM.Portal.Controllers
 
         public ActionResult Index()
         {
-            var armoryViewModel = new ArmoryViewModel(_teamsStats);
+            var armoryViewModel = new ArmoryViewModel(_teamsStats, 20, 10);
             return View(armoryViewModel);
         }
 

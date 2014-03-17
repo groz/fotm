@@ -11,7 +11,7 @@ namespace FotM.Portal.ViewModels
         private readonly TeamStatsViewModel[] _teamStatsViewModels;
         private readonly TeamSetupViewModel[] _teamSetupsViewModels;
 
-        public ArmoryViewModel(IEnumerable<TeamStats> teamStats)
+        public ArmoryViewModel(IEnumerable<TeamStats> teamStats, int nTeamsToShow, int nSetupsToShow)
         {
             var verifiedTeams = teamStats
                 .Where(t => t.IsVerified)
@@ -32,9 +32,11 @@ namespace FotM.Portal.ViewModels
                     Percent = setupGroup.Count()/(double)setupGroups.Length
                 })
                 .OrderByDescending(ts => ts.Percent)
+                .Take(nSetupsToShow)
                 .ToArray();
 
             _teamStatsViewModels = verifiedTeams
+                .Take(nTeamsToShow)
                 .Select((ts, i) => new TeamStatsViewModel(i + 1, ts.Stats))
                 .ToArray();
 
