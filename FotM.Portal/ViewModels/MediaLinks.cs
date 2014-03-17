@@ -14,6 +14,11 @@ namespace FotM.Portal.ViewModels
                     raceId, genderId);
         }
 
+        public static string ClassImageLink(CharacterClass charClass)
+        {
+            return ClassImageLink((int) charClass);
+        }
+
         public static string ClassImageLink(int classId)
         {
             return string.Format("http://media.blizzard.com/wow/icons/18/class_{0}.jpg", classId);

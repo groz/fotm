@@ -36,12 +36,27 @@ namespace FotM.ArmoryScanner
 
         public bool Update(Leaderboard currentSnapshot)
         {
-            if (_lastSnapshot != null && !IsValidSnapshot(_lastSnapshot, currentSnapshot))
+            // check if it's an update
+            if (_lastSnapshot != null)
             {
-                Logger.Debug("Leaderboard is outdated or equal to previous.");
-                return false;
+                if (!IsValidSnapshot(_lastSnapshot, currentSnapshot))
+                {
+                    Logger.Debug("Leaderboard is outdated.");
+                    return false;
+                }
+
+                if (IsInHistory(currentSnapshot))
+                {
+                    Logger.Debug("Leaderboard snapshot was already added to history.");
+                    return false;
+                }
+            }
+            else
+            {
+                LogChanges(currentSnapshot);
             }
 
+            // add to history
             if (_snapshots.Count == _maxSize)
             {
                 Logger.DebugFormat("Max queue size {0} reached, removing first element.", _maxSize);
@@ -53,6 +68,30 @@ namespace FotM.ArmoryScanner
             _lastSnapshot = currentSnapshot;
 
             return true;
+        }
+
+        private void LogChanges(Leaderboard currentSnapshot)
+        {
+            Logger.DebugFormat("Previous snapshot: {0} -> Current snapshot: {1}",
+                _lastSnapshot.Time, currentSnapshot.Time);
+         
+            var diffNew = currentSnapshot.Rows.Except(_lastSnapshot.Rows);
+
+            foreach (var currentEntry in diffNew)
+            {
+                LeaderboardEntry previousEntry = _lastSnapshot.Rows
+                    .FirstOrDefault(e => currentEntry.Player().Equals(e.Player()));
+
+                if (previousEntry != null)
+                {
+                    Logger.DebugFormat("{0} -> {1}", previousEntry, currentEntry);
+                }
+            }
+        }
+
+        private bool IsInHistory(Leaderboard currentSnapshot)
+        {
+            return _snapshots.Any(s => s.Rows.SequenceEqual(currentSnapshot.Rows));
         }
 
         private static bool IsValidSnapshot(Leaderboard previous, Leaderboard current)
@@ -75,22 +114,7 @@ namespace FotM.ArmoryScanner
                 }
             }
 
-            Logger.DebugFormat("Previous snapshot: {0} -> Current snapshot: {1}", previous.Time, current.Time);
-#if DEBUG
-            var diffNew = current.Rows.Except(previous.Rows);
-
-            foreach (var currentEntry in diffNew)
-            {
-                LeaderboardEntry previousEntry = previous.Rows
-                    .FirstOrDefault(e => currentEntry.Player().Equals(e.Player()));
-
-                if (previousEntry != null)
-                {
-                    Logger.DebugFormat("{0} -> {1}", previousEntry, currentEntry);
-                }
-            }
-#endif
-            return !current.Rows.SequenceEqual(previous.Rows);
+            return true;
         }
     }
 }

@@ -33,6 +33,7 @@ namespace FotM.Domain
 
         public void Update(int rating, int ratingChange)
         {
+            Rating = rating;
             RatingChange = ratingChange;
             UpdatedUtc = DateTime.UtcNow;
             ++TimesSeen;
