@@ -5,7 +5,8 @@ function ArmoryViewModel() {
     this.region = ko.observable("US");
 
     this.model = ko.observable({
-        TeamStatsViewModels: ko.observable(),
+        AllTimeLeaders: ko.observable(),
+        PlayingNow: ko.observable(),
         TeamSetupsViewModels: ko.observable(),
     });
 }
@@ -20,11 +21,16 @@ $(function () {
     hub.client.update = function (msg) {
         console.log(msg);
 
-        $(msg.TeamStatsViewModels).each(function (idx) {
+        $(msg.PlayingNow).each(function (idx) {
+            this.LocalUpdateTime = asLocalTime(this.Updated);
+        });
+        
+        $(msg.AllTimeLeaders).each(function (idx) {
             this.LocalUpdateTime = asLocalTime(this.Updated);
         });
 
-        armory.model().TeamStatsViewModels(msg.TeamStatsViewModels);
+        armory.model().AllTimeLeaders(msg.AllTimeLeaders);
+        armory.model().PlayingNow(msg.PlayingNow);
         armory.model().TeamSetupsViewModels(msg.TeamSetupsViewModels);
     };
 

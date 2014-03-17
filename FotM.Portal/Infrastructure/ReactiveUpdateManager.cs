@@ -32,7 +32,7 @@ namespace FotM.Portal.Infrastructure
             _latestMessage = msg;
             var armoryViewModel = CreateViewModel(msg);
 
-            if (armoryViewModel.TeamStatsViewModels.Any())
+            if (armoryViewModel.AllTimeLeaders.Any())
             {
                 _clients.All.update(armoryViewModel);
             }
@@ -53,7 +53,7 @@ namespace FotM.Portal.Infrastructure
             {
                 var armoryViewModel = CreateViewModel(_latestMessage);
 
-                if (armoryViewModel.TeamStatsViewModels.Any())
+                if (armoryViewModel.AllTimeLeaders.Any())
                 {
                     caller.update(armoryViewModel);
                 }
@@ -62,7 +62,7 @@ namespace FotM.Portal.Infrastructure
 
         private ArmoryViewModel CreateViewModel(StatsUpdateMessage msg)
         {
-            return new ArmoryViewModel(msg.Stats, 20, 10);
+            return new ArmoryViewModel(msg.Stats, 20, 10, 10);
         }
     }
 }

@@ -18,49 +18,8 @@
 
 
 <div class="row">
-    <table class="table table-striped table-condensed table-responsive table-hover">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Faction</th>
-                <th>Player 1</th>
-                <th>Player 2</th>
-                <th>Player 3</th>
-                <th>Rating</th>
-                <th>Delta</th>
-                <th>Updated</th>
-            </tr>
-        </thead>
-        <tbody data-bind="foreach: model().TeamStatsViewModels">
-            <tr data-bind="css: DeltaType">
-                <td data-bind="text: Rank"></td>
-                <td>
-                    <img data-bind="attr:{src: FactionImageLink}" alt="FactionImage"/>
-                </td>
-                    
-                <!-- ko foreach: Players -->
-                <td>
-                    <img data-bind="attr:{src: RaceImageLink}" alt="RaceImage"/>
-                    <img data-bind="attr:{src: ClassImageLink}" alt="ClassImage"/>
-                    <img data-bind="attr:{src: SpecImageLink}" alt="SpecImage"/>
-                    <span data-bind="text:Name"></span>
-                    -
-                    <span data-bind="text:Realm"></span>
-                </td>
-                <!-- /ko -->
-
-                <td data-bind="text: Rating"></td>
-                <td data-bind="text: RatingChange"></td>
-                <td data-bind="text: LocalUpdateTime"></td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<h2>FotM setups</h2>
-
-<div class="row">
-    <div class="col-lg-5">
+    <div class="col-lg-3">
+        <h2>FotM</h2>
         <table class="table table-striped table-condensed table-responsive col-lg-1">
             <thead>
                 <tr>
@@ -84,4 +43,82 @@
             </tbody>
         </table>
     </div>
+    
+    <div class="col-lg-9">
+        <h2>Leaderboard</h2>
+        <table class="table table-striped table-condensed table-responsive table-hover">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Faction</th>
+                    <th>Player 1</th>
+                    <th>Player 2</th>
+                    <th>Player 3</th>
+                    <th>Rating</th>
+                </tr>
+            </thead>
+            <tbody data-bind="foreach: model().AllTimeLeaders">
+                <tr>
+                    <td data-bind="text: Rank"></td>
+                    <td>
+                        <img data-bind="attr:{src: FactionImageLink}" alt="FactionImage" />
+                    </td>
+
+                    <!-- ko foreach: Players -->
+                    <td>
+                        <img data-bind="attr:{src: RaceImageLink}" alt="RaceImage" />
+                        <img data-bind="attr:{src: ClassImageLink}" alt="ClassImage" />
+                        <img data-bind="attr:{src: SpecImageLink}" alt="SpecImage" />
+                        <span data-bind="text: Name"></span>
+                        -
+                        <span data-bind="text: Realm"></span>
+                    </td>
+                    <!-- /ko -->
+
+                    <td data-bind="text: Rating"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <h2>Playing now</h2>
+    <table class="table table-striped table-condensed table-responsive table-hover">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Faction</th>
+                <th>Player 1</th>
+                <th>Player 2</th>
+                <th>Player 3</th>
+                <th>Rating</th>
+                <th>Delta</th>
+                <th>Updated</th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach: model().PlayingNow">
+            <tr data-bind="css: DeltaType">
+                <td data-bind="text: Rank"></td>
+                <td>
+                    <img data-bind="attr:{src: FactionImageLink}" alt="FactionImage" />
+                </td>
+
+                <!-- ko foreach: Players -->
+                <td>
+                    <img data-bind="attr:{src: RaceImageLink}" alt="RaceImage" />
+                    <img data-bind="attr:{src: ClassImageLink}" alt="ClassImage" />
+                    <img data-bind="attr:{src: SpecImageLink}" alt="SpecImage" />
+                    <span data-bind="text: Name"></span>
+                    -
+                    <span data-bind="text: Realm"></span>
+                </td>
+                <!-- /ko -->
+
+                <td data-bind="text: Rating"></td>
+                <td data-bind="text: RatingChange"></td>
+                <td data-bind="text: LocalUpdateTime"></td>
+            </tr>
+        </tbody>
+    </table>
 </div>

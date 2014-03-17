@@ -8,10 +8,15 @@ namespace FotM.Portal.ViewModels
 {
     public class ArmoryViewModel
     {
-        private readonly TeamStatsViewModel[] _teamStatsViewModels;
+        private readonly TimeSpan PlayingNowCutoff = TimeSpan.FromHours(1);
+        private readonly TeamStatsViewModel[] _allTimeViewModels;
+        private readonly TeamStatsViewModel[] _playingNowViewModels;
         private readonly TeamSetupViewModel[] _teamSetupsViewModels;
 
-        public ArmoryViewModel(IEnumerable<TeamStats> teamStats, int nTeamsToShow, int nSetupsToShow)
+        public ArmoryViewModel(IEnumerable<TeamStats> teamStats, 
+            int nTeamsToShow, 
+            int nSetupsToShow,
+            int nPlayingNowMax)
         {
             var verifiedTeams = teamStats
                 .Where(t => t.IsVerified)
@@ -35,8 +40,18 @@ namespace FotM.Portal.ViewModels
                 .Take(nSetupsToShow)
                 .ToArray();
 
-            _teamStatsViewModels = verifiedTeams
+            _allTimeViewModels = verifiedTeams
                 .Take(nTeamsToShow)
+                .OrderByDescending(t => t.Stats.Rating)
+                .Select((ts, i) => new TeamStatsViewModel(i + 1, ts.Stats))
+                .ToArray();
+
+            var utcNow = DateTime.UtcNow;
+
+            _playingNowViewModels = verifiedTeams
+                .OrderByDescending(t => t.Stats.UpdatedUtc)
+                .TakeWhile(t => utcNow - t.Stats.UpdatedUtc < PlayingNowCutoff)
+                .Take(nPlayingNowMax)
                 .OrderByDescending(t => t.Stats.Rating)
                 .Select((ts, i) => new TeamStatsViewModel(i + 1, ts.Stats))
                 .ToArray();
@@ -46,14 +61,19 @@ namespace FotM.Portal.ViewModels
                 .ToArray();
         }
 
-        public TeamStatsViewModel[] TeamStatsViewModels
+        public TeamStatsViewModel[] AllTimeLeaders
         {
-            get { return _teamStatsViewModels; }
+            get { return _allTimeViewModels; }
         }
 
         public TeamSetupViewModel[] TeamSetupsViewModels
         {
             get { return _teamSetupsViewModels; }
+        }
+
+        public TeamStatsViewModel[] PlayingNow
+        {
+            get { return _playingNowViewModels; }
         }
     }
 }
