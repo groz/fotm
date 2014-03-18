@@ -63,7 +63,7 @@ namespace FotM.Cassandra
 
             var teamLists = Enumerable.Range(0, nGroups).Select(i => new List<Player>()).ToArray();
 
-            int[] playerGroups = _kmeans.Compute(diffs, nGroups);
+            int[] playerGroups = _kmeans.ComputeGroups(diffs, nGroups);
 
             for (int i = 0; i < playerGroups.Length; ++i)
             {

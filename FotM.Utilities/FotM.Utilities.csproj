@@ -49,6 +49,7 @@
     <Compile Include="CompressionUtils.cs" />
     <Compile Include="ConfigHelpers.cs" />
     <Compile Include="LoggingExtensions.cs" />
+    <Compile Include="MathUtils.cs" />
     <Compile Include="MemberCompare.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

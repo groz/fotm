@@ -1,20 +1,15 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+﻿using System.Collections.Generic;
 using Accord.MachineLearning;
 
 namespace FotM.Cassandra
 {
     public static class AccordKMeansExtension
     {
-        public static int[] Compute<T>(this IClusteringAlgorithm<double[]> kmeans, T[] source)
+        public static int[] Compute<T>(this IClusteringAlgorithm<double[]> kmeans, 
+            T[] source,
+            IFeatureDescriptor<T> featureDescriptor)
         {
-            // get properties marked with Feature
-            var featureProperties = typeof (T).GetProperties()
-                .Where(p => p.IsDefined(typeof (AccordFeatureAttribute), false))
-                .ToArray();
-
-            int nFeatures = featureProperties.Length;
+            int nFeatures = featureDescriptor.TotalFeatures;
             
             // transform to double matrix
             int nSamples = source.Length;
@@ -27,20 +22,12 @@ namespace FotM.Cassandra
 
                 for (int j = 0; j < nFeatures; ++j)
                 {
-                    double weight = GetFeatureWeight(featureProperties[j]);
-                    matrix[i][j] = Convert.ToDouble( featureProperties[j].GetValue(source[i]) ) * weight;
+                    double featureValue = featureDescriptor.GetFeatureValue(j, source[i]);
+                    matrix[i][j] = featureValue;
                 }
             }
 
             return kmeans.Compute(matrix, 1e-05);
-        }
-
-        private static double GetFeatureWeight(PropertyInfo featureProperty)
-        {
-            var attributes = (AccordFeatureAttribute[])
-                featureProperty.GetCustomAttributes(typeof(AccordFeatureAttribute), false);
-
-            return attributes.First().Weight;
         }
     }
 }

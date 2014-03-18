@@ -168,11 +168,12 @@ namespace FotM.Cassandra.Tests
 
         public double Distance(double[] a, double[] b)
         {
+            return 0;
         }
 
         readonly IKMeans<PlayerDiff> _kmeans = 
             new AccordKMeans();
-            //new NumlKMeans(new numl.Math.Metrics.HammingDistance());
+            //new NumlKMeans(new numl.Math.Metrics.ManhattanDistance());
 
         [Test]
         [TestMethod]

@@ -14,13 +14,17 @@ namespace FotM.Cassandra
             _distance = distance;
         }
 
-        public int[] Compute(PlayerDiff[] diffs, int nGroups)
+        public int[] ComputeGroups(PlayerDiff[] dataSet, int nGroups)
         {
             KMeans kMeans = (_distance == null)
                 ? new KMeans(nGroups)
                 : new KMeans(nGroups, _distance);
 
-            return kMeans.Compute(diffs);
+            IFeatureDescriptor<PlayerDiff> descriptor = new FeatureAttributeDescriptor<PlayerDiff>();
+
+            descriptor = new FeatureScalerNormalizer<PlayerDiff>(descriptor, dataSet);
+
+            return kMeans.Compute(dataSet, descriptor);
         }
     }
 }

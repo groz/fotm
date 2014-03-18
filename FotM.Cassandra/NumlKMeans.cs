@@ -30,13 +30,13 @@ namespace FotM.Cassandra
             _distanceMetric = distanceMetric ?? new HammingDistance();
         }
 
-        public int[] Compute(PlayerDiff[] diffs, int nGroups)
+        public int[] ComputeGroups(PlayerDiff[] dataSet, int nGroups)
         {
             var kMeans = new KMeans();
             kMeans.Descriptor = DiffDescriptor;
 
             // I have no idea why, but HammingDistance brings prediction accuracy from 33% to whooping 90%
-            return kMeans.Generate(diffs, nGroups, _distanceMetric);
+            return kMeans.Generate(dataSet, nGroups, _distanceMetric);
         }
     }
 }
