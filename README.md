@@ -3,7 +3,9 @@ fotm
 
 World of Warcraft arena FotM monitor.
 
-TODO:
+TODO
+
+Infrastructure:
 - Delete expired (1 week?) entries from leaderboard
 - Add correct setup per region
 - Deploy per region
@@ -14,3 +16,10 @@ TODO:
 Backlog:
 - Refactor Messaging
 - Add AWS SNS/SQS
+
+Machine learning:
+- Move all teams to single faction in CassandraSuperTest
+- Create separate SuperTest for the case when all playing teams are winning/losing in the same turn
+- Create separate SuperTests per KMeans algorithm, make algorithm optionally injectable to Cassandra
+- Apply mean normalization/feature scaling
+- Learn feature weights for k-means for normalized features on generated training set
