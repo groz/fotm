@@ -28,28 +28,6 @@ namespace FotM.Cassandra
             throw new NotImplementedException();
         }
 
-        int GetBracketSize(Bracket bracket)
-        {
-            int bracketSize;
-
-            switch (bracket)
-            {
-                case Bracket.Twos:
-                    bracketSize = 2;
-                    break;
-                case Bracket.Threes:
-                    bracketSize = 3;
-                    break;
-                case Bracket.Fives:
-                    bracketSize = 5;
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
-
-            return bracketSize;
-        }
-
         private List<Player>[] FindTeams(int bracketSize, PlayerDiff[] diffs)
         {
             Logger.DebugFormat("Total changed rankings: {0}", diffs.Length);
@@ -78,7 +56,7 @@ namespace FotM.Cassandra
 
         public Team[] FindTeams(Leaderboard previousLeaderboard, Leaderboard currentLeaderboard)
         {
-            int bracketSize = GetBracketSize(currentLeaderboard.Bracket);
+            int bracketSize = currentLeaderboard.Bracket.Size();
 
             Logger.InfoFormat("Previous leaderboard has {0} entries, current - {1}",
                 previousLeaderboard.Rows.Length, currentLeaderboard.Rows.Length);

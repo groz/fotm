@@ -7,11 +7,16 @@ namespace FotM.Cassandra
     public class FeatureAttributeDescriptor<T>: IFeatureDescriptor<T>
     {
         private readonly PropertyInfo[] _featureProperties;
+        private readonly AccordFeatureAttribute[] _attributeValues;
 
         public FeatureAttributeDescriptor()
         {
             _featureProperties = typeof (T).GetProperties()
                 .Where(p => p.IsDefined(typeof (AccordFeatureAttribute), false))
+                .ToArray();
+
+            _attributeValues = _featureProperties
+                .Select(p => p.GetCustomAttribute<AccordFeatureAttribute>(false))
                 .ToArray();
         }
 
@@ -27,17 +32,9 @@ namespace FotM.Cassandra
         {
             var prop = _featureProperties[featureIdx];
 
-            //double w = GetFeatureWeight(prop);
+            //double w = _attributeValues[featureIdx].Weight;
 
             return Convert.ToDouble(prop.GetValue(obj));
-        }
-
-        private static double GetFeatureWeight(PropertyInfo featureProperty)
-        {
-            var attributes = (AccordFeatureAttribute[])
-                featureProperty.GetCustomAttributes(typeof(AccordFeatureAttribute), false);
-
-            return attributes.First().Weight;
         }
     }
 }

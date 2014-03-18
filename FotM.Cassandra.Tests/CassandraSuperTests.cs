@@ -22,9 +22,9 @@ namespace FotM.Cassandra.Tests
     public class CassandraSuperTests: ArmoryTestingBase
     {
         const int TeamSize = 3;
-        private readonly Random _rng = new Random(367);
+        private static readonly Random Rng = new Random(367);
 
-        private readonly Realm[] _realms = new Realm[]
+        private static readonly Realm[] Realms = new Realm[]
         {
             new Realm() { RealmId = 0, RealmSlug = "0", RealmName = "Zero"},
             new Realm() { RealmId = 1, RealmSlug = "1", RealmName = "Two"},
@@ -37,35 +37,35 @@ namespace FotM.Cassandra.Tests
         {
         }
 
-        LeaderboardEntry[] GeneratePlayers(int nPlayers)
+        public static LeaderboardEntry[] GeneratePlayers(int nPlayers)
         {
             return Enumerable.Range(0, nPlayers)
                 .Select(i =>
                 {
-                    int nRealm = _rng.Next(5);
+                    int nRealm = Rng.Next(5);
 
                     return new LeaderboardEntry()
                     {
-                        ClassId = _rng.Next(10),
+                        ClassId = Rng.Next(10),
                         FactionId = 0,
-                        GenderId = _rng.Next(2),
-                        RaceId = _rng.Next(5),
+                        GenderId = Rng.Next(2),
+                        RaceId = Rng.Next(5),
                         Name = Guid.NewGuid().ToString(),
-                        Ranking = _rng.Next(1, 1000),
-                        Rating = _rng.Next(1900, 2400),
-                        RealmId = _realms[nRealm].RealmId,
-                        RealmName = _realms[nRealm].RealmName,
-                        RealmSlug = _realms[nRealm].RealmSlug,
-                        WeeklyWins = _rng.Next(10),
-                        WeeklyLosses = _rng.Next(10),
-                        SeasonLosses = 10+_rng.Next(50),
-                        SeasonWins = 10+_rng.Next(50)
+                        Ranking = Rng.Next(1, 1000),
+                        Rating = Rng.Next(1900, 2400),
+                        RealmId = Realms[nRealm].RealmId,
+                        RealmName = Realms[nRealm].RealmName,
+                        RealmSlug = Realms[nRealm].RealmSlug,
+                        WeeklyWins = Rng.Next(10),
+                        WeeklyLosses = Rng.Next(10),
+                        SeasonLosses = 10+Rng.Next(50),
+                        SeasonWins = 10+Rng.Next(50)
                     };
                 })
                 .ToArray();
         }
 
-        Team[] GenerateTeams(LeaderboardEntry[] entries)
+        public static Team[] GenerateTeams(LeaderboardEntry[] entries)
         {
             /* Generate teams from players of the same realm */
             var playersPerRealm = entries
@@ -76,7 +76,7 @@ namespace FotM.Cassandra.Tests
 
             foreach (var realm in playersPerRealm)
             {
-                var players = realm.Shuffle(_rng).ToArray();
+                var players = realm.Shuffle(Rng).ToArray();
 
                 int nTeams = players.Length / TeamSize;
 
@@ -106,12 +106,14 @@ namespace FotM.Cassandra.Tests
             for (int i = 0; i < length; ++i)
             {
                 // Select subset of teams that will play
-                int nTeamsPlayedThisTurn = 8+_rng.Next(4);
+                int nTeamsPlayedThisTurn = 8+Rng.Next(4);
 
-                Team[] playingTeams = teams.Shuffle(_rng).Take(nTeamsPlayedThisTurn).ToArray();
+                Team[] playingTeams = teams.Shuffle(Rng).Take(nTeamsPlayedThisTurn).ToArray();
 
                 // For each of them generate rating change, update players and create new leaderboard
                 var updatedEntries = new List<LeaderboardEntry>();
+
+                int winLose = Rng.Next(2);
 
                 foreach (var playingTeam in playingTeams)
                 {
@@ -121,7 +123,10 @@ namespace FotM.Cassandra.Tests
                             .OrderByDescending(p => p.Rating)
                             .ToArray();
 
-                    int teamRatingChange = _rng.Next(-30, 30);
+                    int teamRatingChange =
+                        winLose == 0
+                            ? Rng.Next(-30, -10)
+                            : Rng.Next(10, 30);
 
                     for (int iPlayer = 0; iPlayer < TeamSize; ++iPlayer)
                     {

@@ -16,7 +16,7 @@ namespace FotM.Cassandra
 
         public int[] ComputeGroups(PlayerDiff[] dataSet, int nGroups)
         {
-            KMeans kMeans = (_distance == null)
+             var kmeans = (_distance == null)
                 ? new KMeans(nGroups)
                 : new KMeans(nGroups, _distance);
 
@@ -24,7 +24,7 @@ namespace FotM.Cassandra
 
             descriptor = new FeatureScalerNormalizer<PlayerDiff>(descriptor, dataSet);
 
-            return kMeans.Compute(dataSet, descriptor);
+            return kmeans.Compute(dataSet, descriptor);
         }
     }
 }

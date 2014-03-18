@@ -45,47 +45,48 @@ namespace FotM.Cassandra
         public Player Player { get; private set; }
         public int FactionId { get; private set; }
 
-        // FEATURES
+        public string RealmSlug { get; set; }
+
         //[Feature]
         public int RealmId { get; private set; }
 
-        public string RealmSlug { get; set; }
+        [AccordFeature(Weight = 10)]
+        public int RatingDiff { get; private set; }
 
-        [AccordFeature(Weight = 0.1)]
+        //[AccordFeature(Weight = 5)]
+        public int RankingDiff { get; private set; }
+
+        //[AccordFeature(Weight = 0.1)]
         public int Ranking { get; private set; }
 
         [AccordFeature(Weight = 0.05)]
         public int Rating { get; private set; }
 
-        [AccordFeature(Weight = 0.5)]
+        //[AccordFeature(Weight = 0.5)]
         public int WeeklyWins { get; private set; }
 
-        [AccordFeature(Weight = 0.5)]
+        //[AccordFeature(Weight = 0.5)]
         public int WeeklyLosses { get; private set; }
 
-        [AccordFeature(Weight = 0.5)]
+        //[AccordFeature(Weight = 0.5)]
         public int SeasonWins { get; private set; }
 
-        [AccordFeature(Weight = 0.5)]
+        //[AccordFeature(Weight = 0.5)]
         public int SeasonLosses { get; private set; }
 
-        // DIFF FEATURES
-        [AccordFeature(Weight = 5)]
-        public int RankingDiff { get; private set; }
-
-        [AccordFeature]
+       
+        //[AccordFeature]
         public int WeeklyWinsDiff { get; private set; }
 
-        [AccordFeature]
+        //[AccordFeature]
         public int WeeklyLossesDiff { get; private set; }
 
-        [AccordFeature]
+        //[AccordFeature]
         public int SeasonWinsDiff { get; private set; }
 
-        [AccordFeature]
+        //[AccordFeature]
         public int SeasonLossesDiff { get; private set; }
-
-        [AccordFeature(Weight = 10)]
-        public int RatingDiff { get; private set; }
     }
+
+    
 }
