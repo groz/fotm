@@ -18,6 +18,7 @@ Backlog:
 - Add AWS SNS/SQS
 
 Machine learning:
+- Setup different predictor injections into CassandraSuperTest and simultaneous run for all of them
 - Simulate data per week
 - Introduce some team jumping in test data
 - Learn feature weights for k-means for normalized features on generated training set
