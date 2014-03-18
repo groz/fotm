@@ -166,6 +166,14 @@ namespace FotM.Cassandra.Tests
             return results;
         }
 
+        public double Distance(double[] a, double[] b)
+        {
+        }
+
+        readonly IKMeans<PlayerDiff> _kmeans = 
+            new AccordKMeans();
+            //new NumlKMeans(new numl.Math.Metrics.HammingDistance());
+
         [Test]
         [TestMethod]
         public void CalculateDerivationAccuracy()
@@ -186,7 +194,7 @@ namespace FotM.Cassandra.Tests
 
                 totalChanges += expectedTeams.Count;
 
-                var cassandra = new Cassandra();
+                var cassandra = new Cassandra(_kmeans);
                 var derivedTeams = cassandra.FindTeams(previousLeaderboard, leaderboard);
 
                 correctlyDerived += derivedTeams.Intersect(expectedTeams).Count();
