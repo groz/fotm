@@ -44,13 +44,16 @@ namespace FotM.Cassandra.Tests
                 {
                     int nRealm = Rng.Next(5);
 
+                    var guid = new byte[16];
+                    Rng.NextBytes(guid);
+
                     return new LeaderboardEntry()
                     {
                         ClassId = Rng.Next(10),
                         FactionId = 0,
                         GenderId = Rng.Next(2),
                         RaceId = Rng.Next(5),
-                        Name = Guid.NewGuid().ToString(),
+                        Name = new Guid(guid).ToString().Substring(0, 5),
                         Ranking = Rng.Next(1, 1000),
                         Rating = Rng.Next(1900, 2400),
                         RealmId = Realms[nRealm].RealmId,
@@ -106,7 +109,7 @@ namespace FotM.Cassandra.Tests
             for (int i = 0; i < length; ++i)
             {
                 // Select subset of teams that will play
-                int nTeamsPlayedThisTurn = 8+Rng.Next(4);
+                int nTeamsPlayedThisTurn = 5;// 8 + Rng.Next(4);
 
                 Team[] playingTeams = teams.Shuffle(Rng).Take(nTeamsPlayedThisTurn).ToArray();
 
