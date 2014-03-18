@@ -19,8 +19,8 @@ namespace FotM.Cassandra
 
         public Cassandra(IKMeans<PlayerDiff> kmeans = null)
         {
-            //_kmeans = kmeans ?? new NumlKMeans();
-            _kmeans = kmeans ?? new AccordKMeans();
+            _kmeans = kmeans ?? new NumlKMeans();
+            //_kmeans = kmeans ?? new AccordKMeans();
         }
 
         public IEnumerable<Team> FindTeams(IEnumerable<Leaderboard> history)

@@ -21,6 +21,9 @@ namespace FotM.Cassandra.Tests
     [TestClass]
     public class CassandraSuperTests: ArmoryTestingBase
     {
+        const int TeamSize = 3;
+        private readonly Random _rng = new Random(367);
+
         private readonly Realm[] _realms = new Realm[]
         {
             new Realm() { RealmId = 0, RealmSlug = "0", RealmName = "Zero"},
@@ -36,29 +39,27 @@ namespace FotM.Cassandra.Tests
 
         LeaderboardEntry[] GeneratePlayers(int nPlayers)
         {
-            var rnd = new Random();
-
             return Enumerable.Range(0, nPlayers)
                 .Select(i =>
                 {
-                    int nRealm = rnd.Next(5);
+                    int nRealm = _rng.Next(5);
 
                     return new LeaderboardEntry()
                     {
-                        ClassId = rnd.Next(10),
-                        FactionId = rnd.Next(2),
-                        GenderId = rnd.Next(2),
-                        RaceId = rnd.Next(5),
+                        ClassId = _rng.Next(10),
+                        FactionId = 0,
+                        GenderId = _rng.Next(2),
+                        RaceId = _rng.Next(5),
                         Name = Guid.NewGuid().ToString(),
-                        Ranking = rnd.Next(1, 1000),
-                        Rating = rnd.Next(1900, 2400),
+                        Ranking = _rng.Next(1, 1000),
+                        Rating = _rng.Next(1900, 2400),
                         RealmId = _realms[nRealm].RealmId,
                         RealmName = _realms[nRealm].RealmName,
                         RealmSlug = _realms[nRealm].RealmSlug,
-                        WeeklyWins = rnd.Next(10),
-                        WeeklyLosses = rnd.Next(10),
-                        SeasonLosses = 10+rnd.Next(50),
-                        SeasonWins = 10+rnd.Next(50)
+                        WeeklyWins = _rng.Next(10),
+                        WeeklyLosses = _rng.Next(10),
+                        SeasonLosses = 10+_rng.Next(50),
+                        SeasonWins = 10+_rng.Next(50)
                     };
                 })
                 .ToArray();
@@ -66,8 +67,6 @@ namespace FotM.Cassandra.Tests
 
         Team[] GenerateTeams(LeaderboardEntry[] entries)
         {
-            const int teamSize = 3;
-
             /* Generate teams from players of the same realm */
             var playersPerRealm = entries
                 .Select(e => e.Player())
@@ -77,17 +76,17 @@ namespace FotM.Cassandra.Tests
 
             foreach (var realm in playersPerRealm)
             {
-                var players = realm.ToArray();
+                var players = realm.Shuffle(_rng).ToArray();
 
-                int nTeams = players.Length / teamSize;
+                int nTeams = players.Length / TeamSize;
 
                 for (int i = 0; i < nTeams; ++i)
                 {
                     var teamPlayers = new List<Player>();
 
-                    for (int j = 0; j < teamSize; ++j)
+                    for (int j = 0; j < TeamSize; ++j)
                     {
-                        teamPlayers.Add(players[i * teamSize + j]);
+                        teamPlayers.Add(players[i * TeamSize + j]);
                     }
 
                     teams.Add(new Team(teamPlayers));
@@ -99,8 +98,6 @@ namespace FotM.Cassandra.Tests
 
         Dictionary<Leaderboard, HashSet<Team>> GenerateHistory(Team[] teams, LeaderboardEntry[] startingEntries, int length)
         {
-            var rnd = new Random();
-
             var leaderboard = CreateLeaderboard(startingEntries);
 
             var results = new Dictionary<Leaderboard, HashSet<Team>>();
@@ -109,20 +106,39 @@ namespace FotM.Cassandra.Tests
             for (int i = 0; i < length; ++i)
             {
                 // Select subset of teams that will play
-                int nTeamsPlayedThisTurn = 10;//3+rnd.Next(10);
+                int nTeamsPlayedThisTurn = 8+_rng.Next(4);
 
-                Team[] playingTeams = teams.Shuffle().Take(nTeamsPlayedThisTurn).ToArray();
+                Team[] playingTeams = teams.Shuffle(_rng).Take(nTeamsPlayedThisTurn).ToArray();
 
                 // For each of them generate rating change, update players and create new leaderboard
                 var updatedEntries = new List<LeaderboardEntry>();
 
                 foreach (var playingTeam in playingTeams)
                 {
-                    int ratingChange = rnd.Next(-30, 30);
+                    var previousPlayerEntries =
+                        playingTeam.Players.Select(
+                            player => leaderboard.Rows.FirstOrDefault(r => r.Player().Equals(player)))
+                            .OrderByDescending(p => p.Rating)
+                            .ToArray();
 
-                    foreach (var player in playingTeam.Players)
+                    int teamRatingChange = _rng.Next(-30, 30);
+
+                    for (int iPlayer = 0; iPlayer < TeamSize; ++iPlayer)
                     {
-                        var previousEntry = leaderboard.Rows.FirstOrDefault(r => r.Player().Equals(player));
+                        var previousEntry = previousPlayerEntries[iPlayer];
+
+                        // higher rated players gain less rating and lose more
+                        int ratingChange = teamRatingChange;
+
+                        if (ratingChange > 0)
+                        {
+                            ratingChange += iPlayer; // add 0, 1 or 2
+                        }
+                        else
+                        {
+                            ratingChange -= TeamSize-iPlayer; // decrease rating more
+                        }
+
                         var updatedEntry = UpdateEntry(previousEntry, ratingChange);
                         updatedEntries.Add(updatedEntry);
                     }
@@ -179,7 +195,7 @@ namespace FotM.Cassandra.Tests
             }
 
             double accuracy = correctlyDerived/(double) totalChanges;
-            string msg = string.Format("Cassandra accuracy: {0}", accuracy);
+            string msg = string.Format("Cassandra accuracy: {0:F2}%", accuracy*100);
             Trace.WriteLine(msg);
         }
     }
