@@ -18,7 +18,7 @@ Backlog:
 - Add AWS SNS/SQS
 
 Machine learning:
-- Move all teams to single faction in CassandraSuperTest
+- Adjust rating based on relative player ratings (higher rated should be awarded less per win, etc)
 - Create separate SuperTest for the case when all playing teams are winning/losing in the same turn
 - Create separate SuperTests per KMeans algorithm, make algorithm optionally injectable to Cassandra
 - Apply mean normalization/feature scaling
