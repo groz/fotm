@@ -34,7 +34,7 @@ namespace FotM.Cassandra
 
             int nGroups = (int)Math.Ceiling((double)diffs.Length / bracketSize);
 
-            return diffs.Shuffle(new Random(5)).Select(d => d.Player).Batch(3).Select(batch => batch.ToList()).ToArray();
+            //return diffs.Shuffle(new Random(15)).Select(d => d.Player).Batch(3).Select(batch => batch.ToList()).ToArray();
 
             if (nGroups <= 1)
                 return new[] {diffs.Select(d => d.Player).ToList()};

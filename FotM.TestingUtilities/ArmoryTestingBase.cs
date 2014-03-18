@@ -56,7 +56,7 @@ namespace FotM.TestingUtilities
         {
             var leaderboard = new Leaderboard()
             {
-                Rows = entries.Union(StaticRankings).ToArray(),
+                Rows = entries.ToArray(),
                 Bracket = this.Bracket,
                 Time = DateTime.Now
             };
@@ -66,12 +66,5 @@ namespace FotM.TestingUtilities
             return leaderboard;
         }
 
-        protected static readonly LeaderboardEntry[] StaticRankings =
-        {
-            CreateEntry(10, "Gothiques", 2500),
-            CreateEntry(11, "Phenomenon", 2400),
-            CreateEntry(12, "Joker", 2300),
-            CreateEntry(503, "Nub", 1500)
-        };
     }
 }

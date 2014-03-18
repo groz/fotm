@@ -55,14 +55,14 @@ namespace FotM.Cassandra.Tests
                         RaceId = Rng.Next(5),
                         Name = new Guid(guid).ToString().Substring(0, 5),
                         Ranking = Rng.Next(1, 1000),
-                        Rating = Rng.Next(1900, 2400),
+                        Rating = Rng.Next(2100, 2300),
                         RealmId = Realms[nRealm].RealmId,
                         RealmName = Realms[nRealm].RealmName,
                         RealmSlug = Realms[nRealm].RealmSlug,
-                        WeeklyWins = Rng.Next(10),
-                        WeeklyLosses = Rng.Next(10),
-                        SeasonLosses = 10+Rng.Next(50),
-                        SeasonWins = 10+Rng.Next(50)
+                        WeeklyWins = 0,
+                        WeeklyLosses = 0,
+                        SeasonLosses = 0,
+                        SeasonWins = 0
                     };
                 })
                 .ToArray();
@@ -99,10 +99,67 @@ namespace FotM.Cassandra.Tests
             return teams.ToArray();
         }
 
-        Dictionary<Leaderboard, HashSet<Team>> GenerateHistory(Team[] teams, LeaderboardEntry[] startingEntries, int length)
+        Leaderboard Play(Leaderboard leaderboard, Team[] playingTeams, Func<Team, int> ratingChange)
+        {
+            var updatedEntries = new List<LeaderboardEntry>();
+
+            foreach (var playingTeam in playingTeams)
+            {
+                var previousPlayerEntries =
+                    playingTeam.Players.Select(
+                        player => leaderboard.Rows.FirstOrDefault(r => r.Player().Equals(player)))
+                        .OrderByDescending(p => p.Rating)
+                        .ToArray();
+
+                int teamRatingChange = ratingChange(playingTeam);
+
+                for (int iPlayer = 0; iPlayer < TeamSize; ++iPlayer)
+                {
+                    var previousEntry = previousPlayerEntries[iPlayer];
+
+                    // higher rated players gain less rating and lose more
+                    int playerRatingChange = teamRatingChange;
+
+                    if (playerRatingChange > 0)
+                    {
+                        playerRatingChange += iPlayer; // add 0, 1 or 2
+                    }
+                    else
+                    {
+                        playerRatingChange -= TeamSize - iPlayer; // decrease rating more
+                    }
+
+                    var updatedEntry = UpdateEntry(previousEntry, playerRatingChange);
+                    updatedEntries.Add(updatedEntry);
+                }
+            }
+
+            // Fill it
+            var updatedPlayers = playingTeams.SelectMany(t => t.Players).ToHashSet();
+            var oldEntries = leaderboard.Rows.Where(r => !updatedPlayers.Contains(r.Player()));
+
+            var newLeaderboard = new Leaderboard
+            {
+                Time = DateTime.Now,
+                Bracket = this.Bracket,
+                Rows = oldEntries.Union(updatedEntries).ToArray()
+            };
+
+            newLeaderboard.Order();
+            return newLeaderboard;
+        }
+
+        Dictionary<Leaderboard, HashSet<Team>> GenerateHistory(Team[] teams, LeaderboardEntry[] startingEntries, int length, int nGamesBefore)
         {
             var leaderboard = CreateLeaderboard(startingEntries);
 
+            // make all teams play X games before simulation
+            for (int i = 0; i < nGamesBefore; ++i)
+            {
+                leaderboard = Play(leaderboard, teams, team => Rng.Next(-30, 30));
+            }
+            
+            // recorded simulation history
             var results = new Dictionary<Leaderboard, HashSet<Team>>();
             results[leaderboard] = new HashSet<Team>();
 
@@ -113,58 +170,13 @@ namespace FotM.Cassandra.Tests
 
                 Team[] playingTeams = teams.Shuffle(Rng).Take(nTeamsPlayedThisTurn).ToArray();
 
+                bool win = Rng.Next(2) == 0;
+
                 // For each of them generate rating change, update players and create new leaderboard
-                var updatedEntries = new List<LeaderboardEntry>();
-
-                int winLose = Rng.Next(2);
-
-                foreach (var playingTeam in playingTeams)
-                {
-                    var previousPlayerEntries =
-                        playingTeam.Players.Select(
-                            player => leaderboard.Rows.FirstOrDefault(r => r.Player().Equals(player)))
-                            .OrderByDescending(p => p.Rating)
-                            .ToArray();
-
-                    int teamRatingChange =
-                        winLose == 0
-                            ? Rng.Next(-30, -10)
-                            : Rng.Next(10, 30);
-
-                    for (int iPlayer = 0; iPlayer < TeamSize; ++iPlayer)
-                    {
-                        var previousEntry = previousPlayerEntries[iPlayer];
-
-                        // higher rated players gain less rating and lose more
-                        int ratingChange = teamRatingChange;
-
-                        if (ratingChange > 0)
-                        {
-                            ratingChange += iPlayer; // add 0, 1 or 2
-                        }
-                        else
-                        {
-                            ratingChange -= TeamSize-iPlayer; // decrease rating more
-                        }
-
-                        var updatedEntry = UpdateEntry(previousEntry, ratingChange);
-                        updatedEntries.Add(updatedEntry);
-                    }
-                }
-
-                // Fill it
-                var updatedPlayers = playingTeams.SelectMany(t => t.Players).ToHashSet();
-                var oldEntries = leaderboard.Rows.Where(r => !updatedPlayers.Contains(r.Player()));
-
-                var newLeaderboard = new Leaderboard
-                {
-                    Time = DateTime.Now, 
-                    Bracket = this.Bracket,
-                    Rows = oldEntries.Union(updatedEntries).ToArray()
-                };
-
-                newLeaderboard.Order();
-
+                var newLeaderboard = Play(leaderboard, playingTeams, team => win
+                        ? Rng.Next(-30, -10)
+                        : Rng.Next(10, 30));
+                
                 // Remember who really played this turn
                 results[newLeaderboard] = playingTeams.ToHashSet();
 
@@ -189,7 +201,7 @@ namespace FotM.Cassandra.Tests
         {
             LeaderboardEntry[] startingEntries = GeneratePlayers(1000);
             Team[] teams = GenerateTeams(startingEntries);
-            var history = GenerateHistory(teams, startingEntries, 500);
+            var history = GenerateHistory(teams, startingEntries, 500, 40);
 
             int totalChanges = 0;
             int correctlyDerived = 0;
