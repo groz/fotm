@@ -18,7 +18,6 @@ Backlog:
 - Add AWS SNS/SQS
 
 Machine learning:
-- Create separate SuperTest for the case when all playing teams are winning/losing in the same turn
-- Create separate SuperTests per KMeans algorithm, make algorithm optionally injectable to Cassandra
-- Apply mean normalization/feature scaling
+- Simulate data per week
+- Introduce some team jumping in test data
 - Learn feature weights for k-means for normalized features on generated training set
