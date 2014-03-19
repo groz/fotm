@@ -39,6 +39,8 @@ namespace FotM.Cassandra.Tests
 
         public static LeaderboardEntry[] GeneratePlayers(int nPlayers)
         {
+            var specs = CollectionExtensions.GetValues<CharacterSpec>();
+
             return Enumerable.Range(0, nPlayers)
                 .Select(i =>
                 {
@@ -61,8 +63,9 @@ namespace FotM.Cassandra.Tests
                         RealmSlug = Realms[nRealm].RealmSlug,
                         WeeklyWins = 0,
                         WeeklyLosses = 0,
-                        SeasonLosses = 0,
-                        SeasonWins = 0
+                        SeasonLosses = Rng.Next(20),
+                        SeasonWins = Rng.Next(20),
+                        SpecId = (int)specs[Rng.Next(specs.Length)],
                     };
                 })
                 .ToArray();
@@ -216,7 +219,7 @@ namespace FotM.Cassandra.Tests
             LeaderboardEntry[] startingEntries = GeneratePlayers(999);
             Team[] teams = GenerateTeams(startingEntries);
             var history = GenerateHistory(teams, startingEntries, 
-                length: 500, nWeeksBefore: 2, nMaxGamesPerWeek:40);
+                length: 500, nWeeksBefore: 3, nMaxGamesPerWeek:40);
 
             foreach (var clusterer in Clusterers)
             {

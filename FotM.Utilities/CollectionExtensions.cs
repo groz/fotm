@@ -33,5 +33,11 @@ namespace FotM.Utilities
                 arr[j] = arr[i];    // mini-swap
             }
         }
+
+        public static T[] GetValues<T>() where T: struct
+        {
+            return Enum.GetValues(typeof (T)).Cast<T>().ToArray();
+        }
+        
     }
 }
