@@ -191,9 +191,15 @@ namespace FotM.Cassandra.Tests
             return 0;
         }
 
-        readonly IKMeans<PlayerDiff> _kmeans = 
-            new AccordKMeans();
-            //new NumlKMeans(new numl.Math.Metrics.ManhattanDistance());
+        readonly static Dictionary<string, IKMeans<PlayerDiff>> Clusterers = new Dictionary<string,IKMeans<PlayerDiff>>
+        {
+            {"Accord no normalization", new AccordKMeans(normalize: false)},
+            {"Accord with normalization", new AccordKMeans(normalize: true)},
+            {"Numl non-normalized Manhattan distance", new NumlKMeans(new numl.Math.Metrics.ManhattanDistance())},
+            {"Numl non-normalized Euclidean distance", new NumlKMeans(new numl.Math.Metrics.EuclidianDistance())},
+            {"Numl non-normalized Hamming distance", new NumlKMeans(new numl.Math.Metrics.HammingDistance())},
+            {"Numl non-normalized Cosine distance", new NumlKMeans(new numl.Math.Metrics.CosineDistance())},
+        };
 
         [Test]
         [TestMethod]
@@ -201,31 +207,34 @@ namespace FotM.Cassandra.Tests
         {
             LeaderboardEntry[] startingEntries = GeneratePlayers(1000);
             Team[] teams = GenerateTeams(startingEntries);
-            var history = GenerateHistory(teams, startingEntries, 500, 40);
+            var history = GenerateHistory(teams, startingEntries, length: 500, nGamesBefore: 40);
 
-            int totalChanges = 0;
-            int correctlyDerived = 0;
-
-            var previousLeaderboard = history.First().Key;
-
-            foreach (var step in history.Skip(1))
+            foreach (var clusterer in Clusterers)
             {
-                var leaderboard = step.Key;
-                var expectedTeams = step.Value;
+                int totalChanges = 0;
+                int correctlyDerived = 0;
 
-                totalChanges += expectedTeams.Count;
+                var previousLeaderboard = history.First().Key;
 
-                var cassandra = new Cassandra(_kmeans);
-                var derivedTeams = cassandra.FindTeams(previousLeaderboard, leaderboard);
+                foreach (var step in history.Skip(1))
+                {
+                    var leaderboard = step.Key;
+                    var expectedTeams = step.Value;
 
-                correctlyDerived += derivedTeams.Intersect(expectedTeams).Count();
+                    totalChanges += expectedTeams.Count;
 
-                previousLeaderboard = leaderboard;
+                    var cassandra = new Cassandra(clusterer.Value);
+                    var derivedTeams = cassandra.FindTeams(previousLeaderboard, leaderboard);
+
+                    correctlyDerived += derivedTeams.Intersect(expectedTeams).Count();
+
+                    previousLeaderboard = leaderboard;
+                }
+
+                double accuracy = correctlyDerived / (double)totalChanges;
+                string msg = string.Format("Cassandra accuracy with {0}: {0:F2}%", accuracy * 100);
+                Trace.WriteLine(msg);
             }
-
-            double accuracy = correctlyDerived/(double) totalChanges;
-            string msg = string.Format("Cassandra accuracy: {0:F2}%", accuracy*100);
-            Trace.WriteLine(msg);
         }
     }
 }

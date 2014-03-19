@@ -9,21 +9,7 @@ namespace FotM.Cassandra
     {
         private readonly IDistance _distanceMetric;
 
-        private static readonly Descriptor DiffDescriptor = Descriptor
-            .For<PlayerDiff>()
-            //.With(d => d.RealmId)
-            .With(d => d.Ranking)
-            .With(d => d.Rating)
-            .With(d => d.WeeklyWins)
-            .With(d => d.WeeklyLosses)
-            .With(d => d.SeasonWins)
-            .With(d => d.SeasonLosses)
-            .With(d => d.RankingDiff)
-            .With(d => d.WeeklyWinsDiff)
-            .With(d => d.WeeklyLossesDiff)
-            .With(d => d.SeasonWinsDiff)
-            .With(d => d.SeasonLossesDiff)
-            .With(d => d.RatingDiff);
+        private static readonly Descriptor DiffDescriptor = Descriptor.Create<PlayerDiff>();
 
         public NumlKMeans(IDistance distanceMetric = null)
         {
@@ -35,8 +21,9 @@ namespace FotM.Cassandra
             var kMeans = new KMeans();
             kMeans.Descriptor = DiffDescriptor;
 
-            // I have no idea why, but HammingDistance brings prediction accuracy from 33% to whooping 90%
+            if (_distanceMetric != null) 
             return kMeans.Generate(dataSet, nGroups, _distanceMetric);
+            else return kMeans.Generate(dataSet, nGroups);
         }
     }
 }

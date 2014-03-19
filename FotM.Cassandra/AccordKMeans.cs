@@ -8,9 +8,11 @@ namespace FotM.Cassandra
     public class AccordKMeans : IKMeans<PlayerDiff>
     {
         private readonly Func<double[], double[], double> _distance;
+        private readonly bool _normalize;
 
-        public AccordKMeans(Func<double[], double[], double> distance = null)
+        public AccordKMeans(bool normalize = false, Func<double[], double[], double> distance = null)
         {
+            _normalize = normalize;
             _distance = distance;
         }
 
@@ -22,7 +24,10 @@ namespace FotM.Cassandra
 
             IFeatureDescriptor<PlayerDiff> descriptor = new FeatureAttributeDescriptor<PlayerDiff>();
 
-            descriptor = new FeatureScalerNormalizer<PlayerDiff>(descriptor, dataSet);
+            if (_normalize)
+            {
+                descriptor = new FeatureScalerNormalizer<PlayerDiff>(descriptor, dataSet);
+            }
 
             return kmeans.Compute(dataSet, descriptor);
         }
