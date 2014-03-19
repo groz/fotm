@@ -49,6 +49,7 @@
     <Compile Include="CharacterSpec.cs" />
     <Compile Include="Faction.cs" />
     <Compile Include="Gender.cs" />
+    <Compile Include="Healers.cs" />
     <Compile Include="Leaderboard.cs" />
     <Compile Include="LeaderboardEntry.cs" />
     <Compile Include="Player.cs" />

@@ -48,8 +48,8 @@ namespace FotM.Cassandra
 
         public string RealmSlug { get; set; }
 
-        [numl.Model.Feature]
-        [AccordFeature(Weight = 1)]
+        //[numl.Model.Feature]
+        //[AccordFeature(Weight = 1)]
         public int SpecId { get; set; }
 
         //[Feature]

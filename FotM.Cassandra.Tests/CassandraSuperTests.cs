@@ -106,20 +106,11 @@ namespace FotM.Cassandra.Tests
             return teams.ToArray();
         }
 
-        private static readonly Dictionary<CharacterSpec, CharacterClass> Healers =
-            new Dictionary<CharacterSpec, CharacterClass>
-            {
-                {CharacterSpec.Druid_Restoration, CharacterClass.Druid},
-                {CharacterSpec.Priest_Holy, CharacterClass.Priest},
-                {CharacterSpec.Priest_Discipline, CharacterClass.Priest},
-                {CharacterSpec.Shaman_Restoration, CharacterClass.Shaman},
-                {CharacterSpec.Monk_Mistweaver, CharacterClass.Monk},
-                {CharacterSpec.Paladin_Holy, CharacterClass.Paladin},
-            };
-
         private static void MakeHealer(LeaderboardEntry player)
         {
-            var specClass = Healers.ElementAt(Rng.Next(Healers.Count));
+            int specNum = Rng.Next(Healers.Specs.Count);
+
+            var specClass = Healers.Specs.ElementAt(specNum);
             player.ClassId = (int) specClass.Value;
             player.SpecId = (int) specClass.Key;
         }

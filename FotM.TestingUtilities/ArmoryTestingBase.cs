@@ -27,13 +27,15 @@ namespace FotM.TestingUtilities
                 previous.SeasonLosses + (change > 0 ? 0 : 1),
                 previous.RealmName,
                 previous.RealmId,
-                previous.RealmSlug
+                previous.RealmSlug,
+                previous.SpecId,
+                previous.ClassId
             );
         }
 
         protected static LeaderboardEntry CreateEntry(int ranking, string name, int rating,
             int weeklyWins = 0, int weeklyLosses = 0, int seasonWins = 0, int seasonLosses = 0,
-            string realmName = null, int realmId = -1, string realmSlug = null)
+            string realmName = null, int realmId = -1, string realmSlug = null, int specId = -1, int classId = -1)
         {
             return new LeaderboardEntry()
             {
@@ -42,8 +44,8 @@ namespace FotM.TestingUtilities
                 SeasonLosses = seasonLosses,
                 SeasonWins = seasonWins,
                 Name = name,
-                ClassId = 0,
-                SpecId = 0,
+                ClassId = classId,
+                SpecId = specId,
                 Rating = rating,
                 Ranking = ranking,
                 RealmId = realmId == -1 ? 1 : realmId,
