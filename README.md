@@ -5,6 +5,8 @@ World of Warcraft arena FotM monitor.
 
 TODO
 
+I. Refactor the horrible code made while trying to create minimum viable product
+
 Infrastructure:
 - Delete expired (1 week?) entries from leaderboard
 - Add correct setup per region
