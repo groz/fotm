@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace FotM.Utilities
@@ -26,7 +27,7 @@ namespace FotM.Utilities
 
         public static double Squared(this double x)
         {
-            return x*x;
+            return x * x;
         }
 
         public static int NumberOfCombinations(int n, int k)
@@ -41,7 +42,7 @@ namespace FotM.Utilities
                 result *= n - i;
             }
 
-            return (int) (result/Factorial(k));
+            return (int)(result / Factorial(k));
         }
 
         public static IEnumerable<T[]> Combinations<T>(this IEnumerable<T> source, int k)
@@ -53,13 +54,13 @@ namespace FotM.Utilities
 
         public static IEnumerable<IEnumerable<T>> CartesianProduct<T>(this IEnumerable<IEnumerable<T>> sequences)
         {
-            IEnumerable<IEnumerable<T>> emptyProduct = new[] {Enumerable.Empty<T>()};
+            IEnumerable<IEnumerable<T>> emptyProduct = new[] { Enumerable.Empty<T>() };
             return sequences.Aggregate(
                 emptyProduct,
                 (accumulator, sequence) =>
                     from accseq in accumulator
                     from item in sequence
-                    select accseq.Concat(new[] {item})
+                    select accseq.Concat(new[] { item })
                 );
         }
 
@@ -90,34 +91,28 @@ namespace FotM.Utilities
         public static double[] FindMinimum(
             Func<double[], double> f,
             double[] q, double learningRate,
-            Action<int, double[], double> reportProgress = null)
+            double eps,
+            int nMaxIterations)
         {
-            const double dx = 1e-12;
-
             double[] qnext = q.ToArray();
-
-            double diff = 0;
 
             // if we are not descending after N iterations break
             int iteration = 0;
 
             do
             {
+                Trace.WriteLine(iteration);
+
                 q = qnext.ToArray();
 
                 for (int i = 0; i < q.Length; ++i)
                 {
-                    qnext[i] = q[i] - learningRate*PartialDerivative(f, q, i, dx);
+                    qnext[i] = q[i] - learningRate * PartialDerivative(f, q, i, eps);
                 }
 
-                if (reportProgress != null)
-                {
-                    reportProgress(iteration, qnext, f(qnext));
-                }
+            } while (iteration++ < nMaxIterations);
 
-                diff = f(qnext) - f(q);
-                iteration++;
-            } while (diff < 0); // while we are actually descending
+            Trace.WriteLine(iteration);
 
             return q;
         }
@@ -141,17 +136,17 @@ namespace FotM.Utilities
             var fNext = f(q);
 
             q[nParam] = paramValue;
-            return (fNext - fCurrent)/dv;
+            return (fNext - fCurrent) / dv;
         }
 
         public static double Derivative(Func<double, double> f, double x, double dx)
         {
-            return (f(x + dx) - f(x))/dx;
+            return (f(x + dx) - f(x)) / dx;
         }
 
         public static double Length(double[] vector)
         {
-            return Math.Sqrt(vector.Sum(x => x*x));
+            return Math.Sqrt(vector.Sum(x => x * x));
         }
     }
 }

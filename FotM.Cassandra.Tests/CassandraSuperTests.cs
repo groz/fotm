@@ -34,6 +34,7 @@ namespace FotM.Cassandra.Tests
         };
 
         private readonly Dictionary<string, IKMeans<PlayerChange>> _clusterers;
+        private Dictionary<Leaderboard, HashSet<Team>> _history;
 
         public CassandraSuperTests() : base(Bracket.Threes)
         {
@@ -46,6 +47,11 @@ namespace FotM.Cassandra.Tests
                 {"Numl non-normalized Hamming distance", new NumlKMeans(new numl.Math.Metrics.HammingDistance())},
                 {"Numl non-normalized Cosine distance", new NumlKMeans(new numl.Math.Metrics.CosineDistance())},
             };
+
+            LeaderboardEntry[] startingEntries = GeneratePlayers(999);
+            Team[] teams = GenerateTeams(startingEntries);
+            _history = GenerateHistory(teams, startingEntries,
+                length: 500, nWeeksBefore: 3, nMaxGamesPerWeek: 40);
         }
 
         public static LeaderboardEntry[] GeneratePlayers(int nPlayers)
@@ -221,49 +227,43 @@ namespace FotM.Cassandra.Tests
 
             return results;
         }
-        
-        [Test]
-        [TestMethod]
-        public void CalculateDerivationAccuracy()
+
+        private double RunCassandra(int historyLength, string clustererName, IKMeans<PlayerChange> clusterer,
+            bool traceOn)
         {
-            LeaderboardEntry[] startingEntries = GeneratePlayers(999);
-            Team[] teams = GenerateTeams(startingEntries);
-            var history = GenerateHistory(teams, startingEntries, 
-                length: 500, nWeeksBefore: 3, nMaxGamesPerWeek:40);
+            var cassandra = new Cassandra(clusterer);
 
-            foreach (var clusterer in _clusterers)
+            int nTotalTeams = 0;
+            int numerator = 0;
+            int nRetrievedTeams = 0;
+
+            var previousLeaderboard = _history.First().Key;
+
+            foreach (var step in _history.Skip(1).Take(historyLength))
             {
-                var cassandra = new Cassandra(clusterer.Value);
+                var leaderboard = step.Key;
+                var relevantTeams = step.Value;
 
-                int nTotalTeams = 0;
-                int numerator = 0;
-                int nRetrievedTeams = 0;
+                nTotalTeams += relevantTeams.Count;
 
-                var previousLeaderboard = history.First().Key;
+                var retrievedTeams = cassandra.FindTeams(previousLeaderboard, leaderboard);
 
-                foreach (var step in history.Skip(1))
-                {
-                    var leaderboard = step.Key;
-                    var relevantTeams = step.Value;
+                nRetrievedTeams += retrievedTeams.Count();
+                numerator += retrievedTeams.Intersect(relevantTeams).Count();
 
-                    nTotalTeams += relevantTeams.Count;
+                previousLeaderboard = leaderboard;
+            }
 
-                    var retrievedTeams = cassandra.FindTeams(previousLeaderboard, leaderboard);
+            double precision = numerator / (double)nRetrievedTeams;
+            double recall = numerator / (double)nTotalTeams;
 
-                    nRetrievedTeams += retrievedTeams.Count();
-                    numerator += retrievedTeams.Intersect(relevantTeams).Count();
+            double f1 = 2 * precision * recall / (precision + recall);
+            double f2 = 5 * precision * recall / (4 * precision + recall);
 
-                    previousLeaderboard = leaderboard;
-                }
-
-                double precision = numerator/(double) nRetrievedTeams;
-                double recall = numerator / (double)nTotalTeams;
-
-                double f1 = 2*precision*recall/(precision + recall);
-                double f2 = 5 * precision * recall / (4*precision + recall);
-
-                string msg = string.Format("Cassandra ({0}):\nPrecision {1:F2}, Recall {2:F2}, F1: {3:F2}, F2: {4:F2}", 
-                    clusterer.Key, 
+            if (traceOn)
+            {
+                string msg = string.Format("Cassandra ({0}):\nPrecision {1:F2}, Recall {2:F2}, F1: {3:F2}, F2: {4:F2}",
+                    clustererName,
                     precision,
                     recall,
                     f1,
@@ -273,6 +273,56 @@ namespace FotM.Cassandra.Tests
                 Trace.WriteLine(cassandra.Stats);
                 Trace.WriteLine("");
             }
+
+            return f2;
+        }
+
+        [Test]
+        [TestMethod]
+        public void CalculateDerivationAccuracy()
+        {
+            foreach (var clusterer in _clusterers)
+            {
+                RunCassandra(_history.Count, clusterer.Key, clusterer.Value, true);
+            }
+        }
+
+        [Test]
+        [TestMethod]
+        public void CalculateWeights()
+        {
+            int historyLength = 100;
+            const double learningRate = 1e-1;
+
+            var descriptor = new FeatureAttributeDescriptor<PlayerChange>();
+
+            var seedWeights = descriptor.Features.Select(f => 1.0).ToArray();
+
+            var results = new Dictionary<double, double[]>();
+
+            int i = 0;
+
+            var result = Functional.FindMinimum(
+                weights =>
+                {
+                    descriptor.SetWeights(weights);
+                    var f2 = RunCassandra(historyLength, "WeightSearch", new AccordKMeans(true), false);
+
+                    results[f2] = weights.ToArray();
+
+                    return f2;
+                },
+                seedWeights,
+                learningRate,
+                1e-2,
+                100);
+
+            var bestResult = results.MaxBy(p => p.Key);
+
+            string weightStr = string.Join(",", bestResult.Value.Select(w => w.ToString("F2")));
+
+            string msg = string.Format("Best F2={0}, W=[{1}]", bestResult.Key, weightStr);
+            Trace.WriteLine(msg);
         }
     }
 }

@@ -136,7 +136,7 @@ namespace FotM.Utilities.Tests
 
             Func<double[], double> f = c => 5 + c[0] + c[0]*c[0];
             
-            var solution = Functional.FindMinimum(f, seed, learningRate);
+            var solution = Functional.FindMinimum(f, seed, learningRate, 1e-10, 100);
 
             Assert.AreEqual(-0.5, solution[0], 0.01);
         }

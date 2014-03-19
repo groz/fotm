@@ -43,6 +43,14 @@ namespace FotM.Cassandra
             }
         }
 
+        public void SetWeights(double[] weights)
+        {
+            for (int i = 0; i < weights.Length; ++i)
+            {
+                _attributeValues[i].Weight = weights[i];
+            }
+        }
+
         public void NormalizeFor(T[] trainingSet)
         {
             for (int i = 0; i < TotalFeatures; ++i)
