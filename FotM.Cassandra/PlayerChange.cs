@@ -3,14 +3,14 @@ using FotM.Domain;
 
 namespace FotM.Cassandra
 {
-    public class PlayerDiff
+    public class PlayerChange
     {
-        public PlayerDiff(Player player, LeaderboardEntry previous, LeaderboardEntry current)
+        public PlayerChange(Player player, LeaderboardEntry previous, LeaderboardEntry current)
         {
             this.Player = player;
 
             if (previous.RealmId != current.RealmId || previous.Name != current.Name)
-                throw new InvalidOperationException("PlayerDiff should target single player");
+                throw new InvalidOperationException("PlayerChange should target single player");
 
             this.RankingDiff = current.Ranking - previous.Ranking;
             this.WeeklyWinsDiff = current.WeeklyWins - previous.WeeklyWins;

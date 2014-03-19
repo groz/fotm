@@ -33,11 +33,11 @@ namespace FotM.Cassandra.Tests
             new Realm() { RealmId = 4, RealmSlug = "4", RealmName = "Five"},
         };
 
-        private readonly Dictionary<string, IKMeans<PlayerDiff>> _clusterers;
+        private readonly Dictionary<string, IKMeans<PlayerChange>> _clusterers;
 
         public CassandraSuperTests() : base(Bracket.Threes)
         {
-            _clusterers = new Dictionary<string, IKMeans<PlayerDiff>>
+            _clusterers = new Dictionary<string, IKMeans<PlayerChange>>
             {
                 {"Accord with normalization", new AccordKMeans(normalize: true)},
                 {"Accord no normalization", new AccordKMeans(normalize: false)},
@@ -264,13 +264,15 @@ namespace FotM.Cassandra.Tests
                 double precision = numerator/(double) nRetrievedTeams;
                 double recall = numerator / (double)nTotalTeams;
 
-                double fMetric = 2*precision*recall/(precision + recall);
+                double f1 = 2*precision*recall/(precision + recall);
+                double f2 = 5 * precision * recall / (4*precision + recall);
 
-                string msg = string.Format("Cassandra ({0}): Precision {1:F2}, Recall {2:F2}, F: {3:F2}", 
+                string msg = string.Format("Cassandra ({0}):\nPrecision {1:F2}, Recall {2:F2}, F1: {3:F2}, F2: {4:F2}", 
                     clusterer.Key, 
                     precision,
                     recall,
-                    fMetric);
+                    f1,
+                    f2);
 
                 Trace.WriteLine(msg);
                 Trace.WriteLine(cassandra.Stats);

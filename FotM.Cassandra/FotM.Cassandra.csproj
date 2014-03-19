@@ -80,7 +80,7 @@
     <Compile Include="FeatureAttributeDescriptor.cs" />
     <Compile Include="IKMeans.cs" />
     <Compile Include="NumlKMeans.cs" />
-    <Compile Include="PlayerDiff.cs" />
+    <Compile Include="PlayerChange.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

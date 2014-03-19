@@ -15,10 +15,10 @@ namespace FotM.Cassandra
     public class Cassandra
     {
         private static readonly ILog Logger = LoggingExtensions.GetLogger<Cassandra>();
-        private readonly IKMeans<PlayerDiff> _kmeans;
+        private readonly IKMeans<PlayerChange> _kmeans;
         private readonly CassandraStats _stats;
 
-        public Cassandra(IKMeans<PlayerDiff> kmeans = null)
+        public Cassandra(IKMeans<PlayerChange> kmeans = null)
         {
             _stats = new CassandraStats();
             //_kmeans = kmeans ?? new NumlKMeans();
@@ -30,29 +30,29 @@ namespace FotM.Cassandra
             throw new NotImplementedException();
         }
 
-        private List<Player>[] FindTeams(int bracketSize, PlayerDiff[] diffs)
+        private List<Player>[] FindTeams(int bracketSize, PlayerChange[] changes)
         {
-            Logger.DebugFormat("Total changed rankings: {0}", diffs.Length);
+            Logger.DebugFormat("Total changed rankings: {0}", changes.Length);
 
-            int nPossibleTeams = diffs.Length / bracketSize;
+            int nPossibleTeams = changes.Length / bracketSize;
             _stats.TeamsPossible += nPossibleTeams;
 
-            int nGroups = (int)Math.Ceiling((double)diffs.Length / bracketSize);
+            int nGroups = (int)Math.Ceiling((double)changes.Length / bracketSize);
 
-            //return diffs.Shuffle(new Random(15)).Select(d => d.Player).Batch(3).Select(batch => batch.ToList()).ToArray();
+            //return changes.Shuffle(new Random(15)).Select(d => d.Player).Batch(3).Select(batch => batch.ToList()).ToArray();
 
             if (nGroups <= 1)
-                return new[] { diffs.Select(d => d.Player).ToList() };
+                return new[] { changes.Select(d => d.Player).ToList() };
 
             Logger.InfoFormat("Starting K-Means for {0} groups...", nGroups);
 
             var teamLists = Enumerable.Range(0, nGroups).Select(i => new List<Player>()).ToArray();
 
-            int[] playerGroups = _kmeans.ComputeGroups(diffs, nGroups);
+            int[] playerGroups = _kmeans.ComputeGroups(changes, nGroups);
 
             for (int i = 0; i < playerGroups.Length; ++i)
             {
-                Player player = diffs[i].Player;
+                Player player = changes[i].Player;
                 int nTeam = playerGroups[i];
 
                 teamLists[nTeam].Add(player);
@@ -70,7 +70,7 @@ namespace FotM.Cassandra
             Logger.InfoFormat("Previous leaderboard has {0} entries, current - {1}",
                 previousLeaderboard.Rows.Length, currentLeaderboard.Rows.Length);
 
-            // prepare player diffs for players in both leaderboards
+            // prepare player changes for players in both leaderboards
             var previousSet = previousLeaderboard.Rows.ToDictionary(r => r.Player(), r => r);
             var currentSet = currentLeaderboard.Rows.ToDictionary(r => r.Player(), r => r);
 
@@ -78,16 +78,16 @@ namespace FotM.Cassandra
 
             Logger.InfoFormat("Players in common: {0}", players.Count);
 
-            PlayerDiff[] diffs = (
+            PlayerChange[] changes = (
                 from p in players
                 let previousStat = previousSet[p]
                 let currentStat = currentSet[p]
-                let diff = new PlayerDiff(p, previousStat, currentStat)
+                let diff = new PlayerChange(p, previousStat, currentStat)
                 where diff.HasChanges
                 select diff).ToArray();
 
-            var alliance = diffs.Where(d => d.FactionId == 0).ToArray();
-            var horde = diffs.Where(d => d.FactionId == 1).ToArray();
+            var alliance = changes.Where(d => d.FactionId == 0).ToArray();
+            var horde = changes.Where(d => d.FactionId == 1).ToArray();
 
             var allianceWinners = alliance.Where(d => d.RatingDiff > 0).ToArray();
             var allianceLosers = alliance.Where(d => d.RatingDiff <= 0).ToArray();

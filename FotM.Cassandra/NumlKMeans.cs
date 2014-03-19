@@ -7,18 +7,18 @@ using numl.Unsupervised;
 
 namespace FotM.Cassandra
 {
-    public class NumlKMeans: IKMeans<PlayerDiff>
+    public class NumlKMeans: IKMeans<PlayerChange>
     {
         private readonly IDistance _distanceMetric;
 
-        private static readonly Descriptor DiffDescriptor = Descriptor.Create<PlayerDiff>();
+        private static readonly Descriptor DiffDescriptor = Descriptor.Create<PlayerChange>();
 
         public NumlKMeans(IDistance distanceMetric = null)
         {
             _distanceMetric = distanceMetric ?? new HammingDistance();
         }
 
-        public int[] ComputeGroups(PlayerDiff[] dataSet, int nGroups)
+        public int[] ComputeGroups(PlayerChange[] dataSet, int nGroups)
         {
             var kMeans = new KMeans();
             kMeans.Descriptor = DiffDescriptor;

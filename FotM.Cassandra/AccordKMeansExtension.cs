@@ -36,7 +36,7 @@ namespace FotM.Cassandra
             //string str = JsonConvert.SerializeObject(matrix, Formatting.Indented); 
             //File.WriteAllText(@"c:\dev\kmeans.txt", str);
 
-            var specs = source.Select(s => (CharacterSpec)(s as PlayerDiff).SpecId).ToArray();
+            var specs = source.Select(s => (CharacterSpec)(s as PlayerChange).SpecId).ToArray();
 
             foreach (var s in specs)
             {

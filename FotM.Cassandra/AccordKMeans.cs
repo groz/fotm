@@ -5,7 +5,7 @@ using Accord.MachineLearning;
 
 namespace FotM.Cassandra
 {
-    public class AccordKMeans : IKMeans<PlayerDiff>
+    public class AccordKMeans : IKMeans<PlayerChange>
     {
         private readonly Func<double[], double[], double> _distance;
         private readonly bool _normalize;
@@ -16,13 +16,13 @@ namespace FotM.Cassandra
             _distance = distance;
         }
 
-        public int[] ComputeGroups(PlayerDiff[] dataSet, int nGroups)
+        public int[] ComputeGroups(PlayerChange[] dataSet, int nGroups)
         {
             var kmeans = (_distance == null)
                 ? new KMeans(nGroups)
                 : new KMeans(nGroups, _distance);
 
-            var descriptor = new FeatureAttributeDescriptor<PlayerDiff>();
+            var descriptor = new FeatureAttributeDescriptor<PlayerChange>();
 
             if (_normalize)
             {
