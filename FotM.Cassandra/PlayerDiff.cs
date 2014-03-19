@@ -30,6 +30,7 @@ namespace FotM.Cassandra
 
             this.RealmId = this.Player.Realm.RealmId;
             this.RealmSlug = this.Player.Realm.RealmSlug;
+            this.SpecId = this.Player.SpecId;
         }
 
         public bool HasChanges
@@ -46,6 +47,10 @@ namespace FotM.Cassandra
         public int FactionId { get; private set; }
 
         public string RealmSlug { get; set; }
+
+        [numl.Model.Feature]
+        [AccordFeature(Weight = 1)]
+        public int SpecId { get; set; }
 
         //[Feature]
         public int RealmId { get; private set; }

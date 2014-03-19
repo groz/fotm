@@ -74,9 +74,7 @@ namespace FotM.Cassandra.Tests
         public static Team[] GenerateTeams(LeaderboardEntry[] entries)
         {
             /* Generate teams from players of the same realm */
-            var playersPerRealm = entries
-                .Select(e => e.Player())
-                .GroupBy(p => p.Realm);
+            var playersPerRealm = entries.GroupBy(p => p.RealmId);
 
             List<Team> teams = new List<Team>();
 
@@ -92,7 +90,13 @@ namespace FotM.Cassandra.Tests
 
                     for (int j = 0; j < TeamSize; ++j)
                     {
-                        teamPlayers.Add(players[i * TeamSize + j]);
+                        var playerEntry = players[i*TeamSize + j];
+
+                        // make first player play a healer
+                        if (j == 0)
+                            MakeHealer(playerEntry);
+
+                        teamPlayers.Add(playerEntry.Player());
                     }
 
                     teams.Add(new Team(teamPlayers));
@@ -100,6 +104,24 @@ namespace FotM.Cassandra.Tests
             }
 
             return teams.ToArray();
+        }
+
+        private static readonly Dictionary<CharacterSpec, CharacterClass> Healers =
+            new Dictionary<CharacterSpec, CharacterClass>
+            {
+                {CharacterSpec.Druid_Restoration, CharacterClass.Druid},
+                {CharacterSpec.Priest_Holy, CharacterClass.Priest},
+                {CharacterSpec.Priest_Discipline, CharacterClass.Priest},
+                {CharacterSpec.Shaman_Restoration, CharacterClass.Shaman},
+                {CharacterSpec.Monk_Mistweaver, CharacterClass.Monk},
+                {CharacterSpec.Paladin_Holy, CharacterClass.Paladin},
+            };
+
+        private static void MakeHealer(LeaderboardEntry player)
+        {
+            var specClass = Healers.ElementAt(Rng.Next(Healers.Count));
+            player.ClassId = (int) specClass.Value;
+            player.SpecId = (int) specClass.Key;
         }
 
         Leaderboard Play(Leaderboard leaderboard, Team[] playingTeams, 
