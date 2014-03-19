@@ -291,16 +291,14 @@ namespace FotM.Cassandra.Tests
         [TestMethod]
         public void CalculateWeights()
         {
-            int historyLength = 100;
-            const double learningRate = 1e-1;
+            int historyLength = 40;
+            const double learningRate = 1e-2;
 
             var descriptor = new FeatureAttributeDescriptor<PlayerChange>();
 
             var seedWeights = descriptor.Features.Select(f => 1.0).ToArray();
 
             var results = new Dictionary<double, double[]>();
-
-            int i = 0;
 
             var result = Functional.FindMinimum(
                 weights =>

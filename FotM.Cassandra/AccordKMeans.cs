@@ -29,6 +29,8 @@ namespace FotM.Cassandra
                 descriptor.NormalizeFor(dataSet);
             }
 
+            //descriptor.SetWeights(new[] { 0.46, 0.87, 0.99, 1.00, 0.57, 1.21, 0.92 });
+
             return kmeans.Compute(dataSet, descriptor);
         }
     }
