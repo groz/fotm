@@ -53,7 +53,7 @@ namespace FotM.Cassandra
                 int featureIdx = i;
 
                 double[] values = trainingSet
-                    .Select(x => GetFeatureValue(featureIdx, x))
+                    .Select(x => GetRawFeatureValue(featureIdx, x))
                     .ToArray();
 
                 double min, max;
@@ -90,20 +90,20 @@ namespace FotM.Cassandra
             throw new ArgumentException(msg);
         }
 
-        public double GetFeatureValue(string featureName, T obj)
+        private double GetRawFeatureValue(int idx, T obj)
         {
-            var idx = GetFeatureIndex(featureName);
-            return GetFeatureValue(idx, obj);
+            var prop = _featureProperties[idx];
+
+            return Convert.ToDouble(prop.GetValue(obj));
         }
 
         public double GetFeatureValue(int idx, T obj)
         {
-            var prop = _featureProperties[idx];
+            var value = GetRawFeatureValue(idx, obj);
 
-            //double w = _attributeValues[idx].Weight;
+            double w = _attributeValues[idx].Weight;
 
-            var value = Convert.ToDouble(prop.GetValue(obj));
-            return (value - _means[idx]) / _scales[idx];
+            return w*(value - _means[idx])/_scales[idx];
         }
     }
 }

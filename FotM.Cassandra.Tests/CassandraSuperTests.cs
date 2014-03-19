@@ -222,11 +222,6 @@ namespace FotM.Cassandra.Tests
             return results;
         }
         
-        double EuclideanDistance(double[] a, double[] b)
-        {
-            return a.Select((v, i) => (v - b[i]).Squared()).Sum();
-        }
-
         [Test]
         [TestMethod]
         public void CalculateDerivationAccuracy()

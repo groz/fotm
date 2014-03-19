@@ -31,18 +31,6 @@ namespace FotM.Cassandra
                 }
             }
 
-            //string str = File.ReadAllText(@"c:\dev\kmeans.txt");
-            //matrix = JsonConvert.DeserializeObject<double[][]>(str); 
-            //string str = JsonConvert.SerializeObject(matrix, Formatting.Indented); 
-            //File.WriteAllText(@"c:\dev\kmeans.txt", str);
-
-            var specs = source.Select(s => (CharacterSpec)(s as PlayerChange).SpecId).ToArray();
-
-            foreach (var s in specs)
-            {
-                Healers.IsHealingSpec(s);
-            }
-            
             return kmeans.Compute(matrix, 1e-5);
         }
     }
