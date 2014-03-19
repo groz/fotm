@@ -219,7 +219,7 @@ namespace FotM.Cassandra.Tests
             return results;
         }
 
-        public double Distance(double[] a, double[] b)
+        public double HealerAwareDistance(double[] a, double[] b)
         {
             return 0;
         }

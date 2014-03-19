@@ -10,11 +10,48 @@ namespace FotM.Cassandra.Tests
     [TestFixture]
     public class CassandraUtilsTests
     {
-        [Test]
-        public void TeamCombinationsTest()
+        class Temp
         {
-            var players = CassandraSuperTests.GeneratePlayers(9).Select(p => p.Player()).ToArray();
+            [AccordFeature]
+            public int Feature1 { get; set; }
 
+            [AccordFeature]
+            public int Feature2 { get; set; }
+
+            public int NonFeature { get; set; } 
         }
+
+        [Test]
+        public void FeatureAttributeDescriptor_GetFeatureIndex()
+        {
+            var descriptor = new FeatureAttributeDescriptor<Temp>();
+
+            Assert.DoesNotThrow(() => descriptor.GetFeatureIndex("Feature1"));
+            Assert.DoesNotThrow(() => descriptor.GetFeatureIndex("Feature2"));
+            Assert.Throws<ArgumentException>(() => descriptor.GetFeatureIndex("NonFeature"));
+        }
+
+        [Test]
+        public void FeatureAttributeDescriptor_GetFeatureValueString()
+        {
+            var descriptor = new FeatureAttributeDescriptor<Temp>();
+
+            var obj = new Temp {Feature1 = 35};
+
+            Assert.AreEqual(35, descriptor.GetFeatureValue("Feature1", obj));
+        }
+
+        [Test]
+        public void FeatureAttributeDescriptor_GetFeatureValueByIndex()
+        {
+            var descriptor = new FeatureAttributeDescriptor<Temp>();
+
+            var obj = new Temp { Feature1 = 35, Feature2 = 70};
+
+            var idx = descriptor.GetFeatureIndex("Feature2");
+
+            Assert.AreEqual(70, descriptor.GetFeatureValue(idx, obj));
+        }
+
     }
 }

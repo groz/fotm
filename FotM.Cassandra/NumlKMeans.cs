@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using numl.Math.LinearAlgebra;
 using numl.Math.Metrics;
 using numl.Model;
 using numl.Unsupervised;
@@ -24,6 +26,21 @@ namespace FotM.Cassandra
             if (_distanceMetric != null) 
             return kMeans.Generate(dataSet, nGroups, _distanceMetric);
             else return kMeans.Generate(dataSet, nGroups);
+        }
+    }
+
+    public class FuncMetric : IDistance
+    {
+        private readonly Func<double[], double[], double> _func;
+
+        public FuncMetric(Func<double[], double[], double> func)
+        {
+            _func = func;
+        }
+
+        public double Compute(Vector x, Vector y)
+        {
+            return _func(x.ToArray(), y.ToArray());
         }
     }
 }
