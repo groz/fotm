@@ -56,6 +56,9 @@
     <Reference Include="MoreLinq">
       <HintPath>..\packages\morelinq.1.0.16006\lib\net35\MoreLinq.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="numl">
       <HintPath>..\packages\numl.0.7.6\lib\net40\numl.dll</HintPath>
     </Reference>
@@ -75,8 +78,6 @@
     <Compile Include="CassandraStats.cs" />
     <Compile Include="CassandraUtils.cs" />
     <Compile Include="FeatureAttributeDescriptor.cs" />
-    <Compile Include="FeatureScalerNormalizer.cs" />
-    <Compile Include="IFeatureDescriptor.cs" />
     <Compile Include="IKMeans.cs" />
     <Compile Include="NumlKMeans.cs" />
     <Compile Include="PlayerDiff.cs" />

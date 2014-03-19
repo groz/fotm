@@ -25,6 +25,11 @@ namespace FotM.Utilities
             avg /= array.Length;
         }
 
+        public static double Squared(this double x)
+        {
+            return x * x;
+        }
+
         public static int NumberOfCombinations(int n, int k)
         {
             if (k > n)

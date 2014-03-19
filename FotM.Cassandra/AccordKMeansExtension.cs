@@ -1,5 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Accord.MachineLearning;
+using FotM.Domain;
+using Newtonsoft.Json;
 
 namespace FotM.Cassandra
 {
@@ -7,7 +11,7 @@ namespace FotM.Cassandra
     {
         public static int[] Compute<T>(this IClusteringAlgorithm<double[]> kmeans, 
             T[] source,
-            IFeatureDescriptor<T> featureDescriptor)
+            FeatureAttributeDescriptor<T> featureDescriptor)
         {
             int nFeatures = featureDescriptor.TotalFeatures;
             
@@ -27,7 +31,19 @@ namespace FotM.Cassandra
                 }
             }
 
-            return kmeans.Compute(matrix, 1e-05);
+            //string str = File.ReadAllText(@"c:\dev\kmeans.txt");
+            //matrix = JsonConvert.DeserializeObject<double[][]>(str); 
+            //string str = JsonConvert.SerializeObject(matrix, Formatting.Indented); 
+            //File.WriteAllText(@"c:\dev\kmeans.txt", str);
+
+            var specs = source.Select(s => (CharacterSpec)(s as PlayerDiff).SpecId).ToArray();
+
+            foreach (var s in specs)
+            {
+                Healers.IsHealingSpec(s);
+            }
+            
+            return kmeans.Compute(matrix, 1e-5);
         }
     }
 }

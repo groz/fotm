@@ -112,18 +112,6 @@ namespace FotM.Cassandra
 
             _stats.FullTeamsDetected += fullTeams.Length;
 
-            foreach (var fullTeam in fullTeams)
-            {
-                if (fullTeam.Players.Any(Healers.IsHealer))
-                {
-                    ++_stats.TeamsWithHealers;
-                }
-                else
-                {
-                    ++_stats.TeamsWithoutHealers;
-                }
-            }
-
             return fullTeams;
         }
 

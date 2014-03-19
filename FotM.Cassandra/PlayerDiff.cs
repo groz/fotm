@@ -30,7 +30,7 @@ namespace FotM.Cassandra
 
             this.RealmId = this.Player.Realm.RealmId;
             this.RealmSlug = this.Player.Realm.RealmSlug;
-            this.SpecId = this.Player.SpecId;
+            this.SpecId = current.SpecId;
         }
 
         public bool HasChanges
@@ -49,7 +49,8 @@ namespace FotM.Cassandra
         public string RealmSlug { get; set; }
 
         //[numl.Model.Feature]
-        //[AccordFeature(Weight = 1)]
+        //[AccordFeature(Weight = 1, Normalize = false)]
+        // Labels can't be features
         public int SpecId { get; set; }
 
         //[Feature]
