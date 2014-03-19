@@ -223,6 +223,8 @@ namespace FotM.Cassandra.Tests
 
             foreach (var clusterer in Clusterers)
             {
+                var cassandra = new Cassandra(clusterer.Value);
+
                 int totalChanges = 0;
                 int correctlyDerived = 0;
 
@@ -235,7 +237,6 @@ namespace FotM.Cassandra.Tests
 
                     totalChanges += expectedTeams.Count;
 
-                    var cassandra = new Cassandra(clusterer.Value);
                     var derivedTeams = cassandra.FindTeams(previousLeaderboard, leaderboard);
 
                     correctlyDerived += derivedTeams.Intersect(expectedTeams).Count();
@@ -246,6 +247,8 @@ namespace FotM.Cassandra.Tests
                 double accuracy = correctlyDerived / (double)totalChanges;
                 string msg = string.Format("Cassandra accuracy ({0}): {1:F2}%", clusterer.Key, accuracy * 100);
                 Trace.WriteLine(msg);
+                Trace.WriteLine(cassandra.Stats);
+                Trace.WriteLine("");
             }
         }
     }

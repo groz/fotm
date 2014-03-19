@@ -16,11 +16,13 @@ namespace FotM.Cassandra
     {
         private static readonly ILog Logger = LoggingExtensions.GetLogger<Cassandra>();
         private readonly IKMeans<PlayerDiff> _kmeans;
+        private readonly CassandraStats _stats;
 
         public Cassandra(IKMeans<PlayerDiff> kmeans = null)
         {
-            _kmeans = kmeans ?? new NumlKMeans();
-            //_kmeans = kmeans ?? new AccordKMeans();
+            _stats = new CassandraStats();
+            //_kmeans = kmeans ?? new NumlKMeans();
+            _kmeans = kmeans ?? new AccordKMeans(normalize: true);
         }
 
         public IEnumerable<Team> FindTeams(IEnumerable<Leaderboard> history)
@@ -32,12 +34,15 @@ namespace FotM.Cassandra
         {
             Logger.DebugFormat("Total changed rankings: {0}", diffs.Length);
 
+            int nPossibleTeams = diffs.Length / bracketSize;
+            _stats.TeamsPossible += nPossibleTeams;
+
             int nGroups = (int)Math.Ceiling((double)diffs.Length / bracketSize);
 
             //return diffs.Shuffle(new Random(15)).Select(d => d.Player).Batch(3).Select(batch => batch.ToList()).ToArray();
 
             if (nGroups <= 1)
-                return new[] {diffs.Select(d => d.Player).ToList()};
+                return new[] { diffs.Select(d => d.Player).ToList() };
 
             Logger.InfoFormat("Starting K-Means for {0} groups...", nGroups);
 
@@ -58,6 +63,8 @@ namespace FotM.Cassandra
 
         public Team[] FindTeams(Leaderboard previousLeaderboard, Leaderboard currentLeaderboard)
         {
+            ++_stats.TotalCalls;
+
             int bracketSize = currentLeaderboard.Bracket.Size();
 
             Logger.InfoFormat("Previous leaderboard has {0} entries, current - {1}",
@@ -99,36 +106,36 @@ namespace FotM.Cassandra
                 .Union(hordeLoserTeams)
                 .Where(team => team != null && team.Any()).ToArray();
 
-            var incompleteTeams = FindIncompleteTeams(allTeams, bracketSize);
-            var overbookedTeams = FindOverbookedTeams(allTeams, bracketSize);
+            var incorrectTeams = FindIncorrectTeams(allTeams, bracketSize);
 
-            return allTeams.Except(overbookedTeams).Except(incompleteTeams).Select(lst => new Team(lst)).ToArray();
+            var fullTeams = allTeams.Except(incorrectTeams).Select(lst => new Team(lst)).ToArray();
+
+            _stats.FullTeamsDetected += fullTeams.Length;
+
+            return fullTeams;
         }
 
-        private List<Player>[] FindOverbookedTeams(List<Player>[] teamLists, int bracketSize)
+        private List<Player>[] FindIncorrectTeams(List<Player>[] teamLists, int bracketSize)
         {
-            var overbookedTeams = teamLists.Where(lst => lst.Count > bracketSize).ToArray();
+            var incorrectTeams = teamLists.Where(lst => lst.Count != bracketSize).ToArray();
 
-            foreach (var team in overbookedTeams)
+            foreach (var team in incorrectTeams)
             {
                 string roster = string.Join(",", team);
-                Logger.ErrorFormat("Team roster [{0}] is overbooked for bracket {1}x{1} and discarded.", roster, bracketSize);
+                Logger.ErrorFormat("Team roster [{0}] has incorrect size for bracket {1}x{1} and is discarded.", roster, bracketSize);
+
+                if (team.Count < bracketSize)
+                    ++_stats.IncompleteTeams;
+                else
+                    ++_stats.OverbookedTeams;
             }
 
-            return overbookedTeams;
+            return incorrectTeams;
         }
 
-        private List<Player>[] FindIncompleteTeams(List<Player>[] teamLists, int bracketSize)
+        public CassandraStats Stats
         {
-            var incompleteTeams = teamLists.Where(lst => lst.Count < bracketSize).ToArray();
-
-            foreach (var team in incompleteTeams)
-            {
-                string roster = string.Join(",", team);
-                Logger.InfoFormat("Team roster [{0}] is incomplete for bracket {1}x{1} and discarded.", roster, bracketSize);
-            }
-
-            return incompleteTeams;
+            get { return _stats; }
         }
     }
 }

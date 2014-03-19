@@ -72,6 +72,7 @@
     <Compile Include="AccordKMeansExtension.cs" />
     <Compile Include="Cassandra.cs" />
     <Compile Include="AccordFeatureAttribute.cs" />
+    <Compile Include="CassandraStats.cs" />
     <Compile Include="CassandraUtils.cs" />
     <Compile Include="FeatureAttributeDescriptor.cs" />
     <Compile Include="FeatureScalerNormalizer.cs" />
