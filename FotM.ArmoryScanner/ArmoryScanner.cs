@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using FotM.Domain;
 using FotM.Messaging;
 using FotM.Utilities;
@@ -115,8 +116,9 @@ namespace FotM.ArmoryScanner
                 }
 
                 TimeSpan waitPeriod = TimeSpan.FromSeconds(10);
-                Logger.InfoFormat("Checking for messages/sleeping for {0}...", waitPeriod);
+                Logger.InfoFormat("Checking for messages/sleeping for {0}/{0}...", waitPeriod);
                 _queryLatestStatsClient.Receive(OnQueryLatestStatsMessage, waitPeriod);
+                Thread.Sleep(waitPeriod);
             }
             catch (Exception ex)
             {

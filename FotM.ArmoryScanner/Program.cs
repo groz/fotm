@@ -35,7 +35,7 @@ namespace FotM.ArmoryScanner
 
             Logger.Info("App started");
 
-            var puller = new ArmoryPuller(ArmoryConstants.Europe);
+            var puller = new ArmoryPuller(ArmoryConstants.Korea);
             var usArmoryScanner = new ArmoryScanner(Bracket.Threes, puller, maxHistorySize: 100);
 
             while (true)
