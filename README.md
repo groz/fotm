@@ -20,7 +20,7 @@ Backlog:
 - Add AWS SNS/SQS
 
 III. Machine learning:
-- Setup different predictor injections into CassandraSuperTest and simultaneous run for all of them
-- Simulate data per week
 - Introduce some team jumping in test data
-- Learn feature weights for k-means for normalized features on generated training set
+- Compute several clusterings and rank them against each other based on following rules: 
+  - Lower score for teams with double/triple healers
+  - Lower score for teams with class stacking
