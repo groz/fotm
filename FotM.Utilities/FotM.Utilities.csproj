@@ -67,6 +67,7 @@
     <Compile Include="MathUtils.cs" />
     <Compile Include="MemberCompare.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RatingUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

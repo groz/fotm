@@ -126,5 +126,20 @@ namespace FotM.Utilities.Tests
 
             CollectionAssert.AreEquivalent(expected, combinations);
         }
+
+        [Test]
+        public void GradientDescentTest()
+        {
+            const double learningRate = 1e-2;
+
+            var seed = new []{ 1.0, 1.0 };
+
+            Func<double[], double> f = c => 5 + c[0] + c[0]*c[0];
+            
+            var solution = Functional.FindMinimum(f, seed, learningRate);
+
+            Assert.AreEqual(-0.5, solution[0], 0.01);
+        }
+
     }
 }

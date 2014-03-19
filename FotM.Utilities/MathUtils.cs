@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using MoreLinq;
 
 namespace FotM.Utilities
 {
@@ -27,7 +26,7 @@ namespace FotM.Utilities
 
         public static double Squared(this double x)
         {
-            return x * x;
+            return x*x;
         }
 
         public static int NumberOfCombinations(int n, int k)
@@ -42,7 +41,7 @@ namespace FotM.Utilities
                 result *= n - i;
             }
 
-            return (int)(result/Factorial(k));
+            return (int) (result/Factorial(k));
         }
 
         public static IEnumerable<T[]> Combinations<T>(this IEnumerable<T> source, int k)
@@ -78,19 +77,81 @@ namespace FotM.Utilities
 
             return fact[n];
         }
+
+        public static double EuclideanDistance(double[] vectorX, double[] vectorY)
+        {
+            return vectorX.Select((x, i) => (x - vectorY[i]).Squared()).Sum();
+        }
+
     }
 
-    public static class RatingUtils
+    public static class Functional
     {
-        public static int EstimatedRatingChange(double playerRating, double opponentRating, bool playerWon)
+        public static double[] FindMinimum(
+            Func<double[], double> f,
+            double[] q, double learningRate,
+            Action<int, double[], double> reportProgress = null)
         {
-            const double k = 32.0;
+            const double dx = 1e-12;
 
-            double playerWinChance = 1 / (1 + Math.Pow(10, (opponentRating - playerRating) / 400.0));
+            double[] qnext = q.ToArray();
 
-            int pw = playerWon ? 1 : 0;
+            double diff = 0;
 
-            return (int)(k * (pw - playerWinChance));
+            // if we are not descending after N iterations break
+            int iteration = 0;
+
+            do
+            {
+                q = qnext.ToArray();
+
+                for (int i = 0; i < q.Length; ++i)
+                {
+                    qnext[i] = q[i] - learningRate*PartialDerivative(f, q, i, dx);
+                }
+
+                if (reportProgress != null)
+                {
+                    reportProgress(iteration, qnext, f(qnext));
+                }
+
+                diff = f(qnext) - f(q);
+                iteration++;
+            } while (diff < 0); // while we are actually descending
+
+            return q;
+        }
+
+        public static double PartialDerivative(Func<double[], double> f, double[] q, int nParam, double dv)
+        {
+            //Func<double, double> g = p =>
+            //{
+            //    var @params = q.ToArray();
+            //    @params[nParam] = p;
+            //    return f(@params);
+            //};
+
+            //return Derivative(g, q[nParam], dv);
+
+            // Only for optimization :(
+            var paramValue = q[nParam];
+
+            var fCurrent = f(q);
+            q[nParam] += dv;
+            var fNext = f(q);
+
+            q[nParam] = paramValue;
+            return (fNext - fCurrent)/dv;
+        }
+
+        public static double Derivative(Func<double, double> f, double x, double dx)
+        {
+            return (f(x + dx) - f(x))/dx;
+        }
+
+        public static double Length(double[] vector)
+        {
+            return Math.Sqrt(vector.Sum(x => x*x));
         }
     }
 }
