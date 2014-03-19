@@ -99,35 +99,23 @@ namespace FotM.Cassandra.Tests
             return teams.ToArray();
         }
 
-        Leaderboard Play(Leaderboard leaderboard, Team[] playingTeams, Func<Team, int> ratingChange)
+        Leaderboard Play(Leaderboard leaderboard, Team[] playingTeams, 
+            Func<LeaderboardEntry, int> ratingChange)
         {
             var updatedEntries = new List<LeaderboardEntry>();
 
             foreach (var playingTeam in playingTeams)
             {
                 var previousPlayerEntries =
-                    playingTeam.Players.Select(
-                        player => leaderboard.Rows.FirstOrDefault(r => r.Player().Equals(player)))
+                    playingTeam.Players.Select(player => leaderboard[player])
                         .OrderByDescending(p => p.Rating)
                         .ToArray();
-
-                int teamRatingChange = ratingChange(playingTeam);
 
                 for (int iPlayer = 0; iPlayer < TeamSize; ++iPlayer)
                 {
                     var previousEntry = previousPlayerEntries[iPlayer];
 
-                    // higher rated players gain less rating and lose more
-                    int playerRatingChange = teamRatingChange;
-
-                    if (playerRatingChange > 0)
-                    {
-                        playerRatingChange += iPlayer; // add 0, 1 or 2
-                    }
-                    else
-                    {
-                        playerRatingChange -= TeamSize - iPlayer; // decrease rating more
-                    }
+                    int playerRatingChange = ratingChange(previousEntry);
 
                     var updatedEntry = UpdateEntry(previousEntry, playerRatingChange);
                     updatedEntries.Add(updatedEntry);
@@ -149,14 +137,33 @@ namespace FotM.Cassandra.Tests
             return newLeaderboard;
         }
 
-        Dictionary<Leaderboard, HashSet<Team>> GenerateHistory(Team[] teams, LeaderboardEntry[] startingEntries, int length, int nGamesBefore)
+        Dictionary<Leaderboard, HashSet<Team>> GenerateHistory(Team[] teams, LeaderboardEntry[] startingEntries,
+            int length, int nWeeksBefore, int nMaxGamesPerWeek)
         {
             var leaderboard = CreateLeaderboard(startingEntries);
 
-            // make all teams play X games before simulation
-            for (int i = 0; i < nGamesBefore; ++i)
+            // make all teams play some number of games for several weeks before simulation
+            for (int i = 0; i < nWeeksBefore; ++i)
             {
-                leaderboard = Play(leaderboard, teams, team => Rng.Next(-30, 30));
+                var teamsGroupedByGamesPerWeek = teams.GroupBy(t => Rng.Next(nMaxGamesPerWeek));
+
+                foreach (var teamGrouping in teamsGroupedByGamesPerWeek)
+                {
+                    for (int j = 0; j < teamGrouping.Key; ++j)
+                    {
+                        bool win = Rng.Next(2) == 0;
+                        int opponentRating = 2300 + Rng.Next(-100, 100);
+
+                        leaderboard = Play(leaderboard, teamGrouping.ToArray(),
+                            player => RatingUtils.EstimatedRatingChange(player.Rating, opponentRating, win));
+                    }
+                }
+            }
+
+            foreach (var entry in leaderboard.Rows)
+            {
+                entry.WeeklyLosses /= nWeeksBefore*2;
+                entry.WeeklyWins /= nWeeksBefore*2;
             }
             
             // recorded simulation history
@@ -171,11 +178,12 @@ namespace FotM.Cassandra.Tests
                 Team[] playingTeams = teams.Shuffle(Rng).Take(nTeamsPlayedThisTurn).ToArray();
 
                 bool win = Rng.Next(2) == 0;
+                int opponentRating = 2300 + Rng.Next(-100, 100);
 
                 // For each of them generate rating change, update players and create new leaderboard
-                var newLeaderboard = Play(leaderboard, playingTeams, team => win
-                        ? Rng.Next(-30, -10)
-                        : Rng.Next(10, 30));
+                var newLeaderboard = Play(leaderboard, playingTeams,
+                    player => RatingUtils.EstimatedRatingChange(player.Rating, opponentRating, win)
+                );
                 
                 // Remember who really played this turn
                 results[newLeaderboard] = playingTeams.ToHashSet();
@@ -205,9 +213,10 @@ namespace FotM.Cassandra.Tests
         [TestMethod]
         public void CalculateDerivationAccuracy()
         {
-            LeaderboardEntry[] startingEntries = GeneratePlayers(1000);
+            LeaderboardEntry[] startingEntries = GeneratePlayers(999);
             Team[] teams = GenerateTeams(startingEntries);
-            var history = GenerateHistory(teams, startingEntries, length: 500, nGamesBefore: 40);
+            var history = GenerateHistory(teams, startingEntries, 
+                length: 500, nWeeksBefore: 2, nMaxGamesPerWeek:40);
 
             foreach (var clusterer in Clusterers)
             {
@@ -232,7 +241,7 @@ namespace FotM.Cassandra.Tests
                 }
 
                 double accuracy = correctlyDerived / (double)totalChanges;
-                string msg = string.Format("Cassandra accuracy with {0}: {0:F2}%", accuracy * 100);
+                string msg = string.Format("Cassandra accuracy ({0}): {1:F2}%", clusterer.Key, accuracy * 100);
                 Trace.WriteLine(msg);
             }
         }

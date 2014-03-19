@@ -15,7 +15,6 @@ namespace FotM.Cassandra.Tests
         {
             var players = CassandraSuperTests.GeneratePlayers(9).Select(p => p.Player()).ToArray();
 
-            var teams = CassandraUtils.GenerateTeamCombinations(players, 3);
         }
     }
 }
