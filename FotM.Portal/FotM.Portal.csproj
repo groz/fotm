@@ -146,6 +146,7 @@
     <Compile Include="ViewModels\ArmoryViewModel.cs" />
     <Compile Include="ViewModels\MediaLinks.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
+    <Compile Include="ViewModels\SpecViewModel.cs" />
     <Compile Include="ViewModels\TeamSetupViewModel.cs" />
     <Compile Include="ViewModels\TeamStatsViewModel.cs" />
     <Compile Include="Global.asax.cs">

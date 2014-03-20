@@ -13,10 +13,11 @@ namespace FotM.Portal.ViewModels
         private readonly TeamSetupViewModel[] _teamSetupsViewModels;
 
         public ArmoryViewModel(IEnumerable<TeamStats> teamStats, 
+            TimeSpan playingNowPeriod,
             int nTeamsToShow, 
             int nSetupsToShow,
             int nPlayingNowMax,
-            TimeSpan playingNowPeriod)
+            int nTeamsPerSpec)
         {
             var verifiedTeams = teamStats
                 .Where(t => t.IsVerified)
@@ -29,16 +30,6 @@ namespace FotM.Portal.ViewModels
                 .ToArray();
 
             var setupGroups = verifiedTeams.GroupBy(t => t.Setup).ToArray();
-
-            var teamSetups = setupGroups
-                .Select(setupGroup => new
-                {
-                    Setup = setupGroup.Key,
-                    Percent = setupGroup.Count()/(double)setupGroups.Length
-                })
-                .OrderByDescending(ts => ts.Percent)
-                .Take(nSetupsToShow)
-                .ToArray();
 
             _allTimeViewModels = verifiedTeams
                 .OrderByDescending(t => t.Stats.Rating)
@@ -56,8 +47,22 @@ namespace FotM.Portal.ViewModels
                 .Select((ts, i) => new TeamStatsViewModel(i + 1, ts.Stats))
                 .ToArray();
 
+            var teamSetups = setupGroups
+                .Select(setupGroup => new
+                {
+                    Setup = setupGroup.Key,
+                    Percent = setupGroup.Count()/(double) setupGroups.Length,
+                    Teams = setupGroup
+                        .OrderByDescending(sg => sg.Stats.Rating)
+                        .Take(nTeamsPerSpec)
+                        .Select((sg, i) => new TeamStatsViewModel(i + 1, sg.Stats)).ToArray()
+                })
+                .OrderByDescending(ts => ts.Percent)
+                .Take(nSetupsToShow)
+                .ToArray();
+
             _teamSetupsViewModels = teamSetups
-                .Select((ts, i) => new TeamSetupViewModel(i+1, ts.Setup, ts.Percent))
+                .Select((ts, i) => new TeamSetupViewModel(i+1, ts.Setup, ts.Percent, ts.Teams))
                 .ToArray();
         }
 

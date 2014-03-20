@@ -66,7 +66,11 @@ namespace FotM.Portal.Infrastructure
 
         private ArmoryViewModel CreateViewModel(StatsUpdateMessage msg)
         {
-            return new ArmoryViewModel(msg.Stats, 20, 10, 10, TimeSpan.FromHours(2));
+            return new ArmoryViewModel(msg.Stats, TimeSpan.FromHours(2),
+                nTeamsToShow: 20, 
+                nSetupsToShow: 10, 
+                nPlayingNowMax: 10,
+                nTeamsPerSpec: 10);
         }
 
         public ArmoryViewModel GetLatestViewModel()

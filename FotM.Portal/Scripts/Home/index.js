@@ -36,14 +36,24 @@ function ArmoryViewModel(data) {
         self.model().PlayingNow(msg.PlayingNow);
         self.model().TeamSetupsViewModels(msg.TeamSetupsViewModels);
     };
-    
+
+    self.selectedTeams = ko.observable();
+
+    self.showTeams = function (setup) {
+        console.log("Selected setup", setup);
+        
+        self.showFotMHint(false);
+        self.selectedTeams(setup.Teams);
+    };
+
+    self.showFotMHint = ko.observable(true);
+
     if ((typeof data === "undefined") || (data === null)) {
         console.log("Initialization data was not provided. Waiting for updates...");
     } else {
         console.log("Initializing with", data);
         self.update(data);
     }
-    
 }
 
 function initializePage(data) {
