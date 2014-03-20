@@ -15,6 +15,7 @@ Frontend:
 
 
 Infrastructure:
+- ASAP: setup test queue/environment to not break production with every change to Scanner
 - Add proper deployment configuration per region and setup queues/websites for US & KR
 - Delete expired (1 week?) entries from leaderboard
 - Add correct setup per region
