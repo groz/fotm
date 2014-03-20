@@ -10,6 +10,7 @@ Frontend:
 - Move links from server viewmodel to client view objects
 - Add NavBar for FotM section to choose fotms by class, not spec
 - Show fotm setups for current playing teams if appropriate section is selected
+- Visually separate classes and specs in FotM section
 
 
 Infrastructure:
