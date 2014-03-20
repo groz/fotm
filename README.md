@@ -6,7 +6,7 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Iconfor the site
+- Icon for the site
 - Move generation of image links from server viewmodel to js client view objects
 - Add NavBar for FotM section to choose fotms by class, not spec
 - Show fotm setups for current playing teams if appropriate section is selected
