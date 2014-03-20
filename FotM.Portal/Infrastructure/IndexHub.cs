@@ -22,5 +22,11 @@ namespace FotM.Portal.Infrastructure
             ReactiveUpdateManager.Instance.ClientLeft();
             return base.OnDisconnected();
         }
+
+        public override System.Threading.Tasks.Task OnReconnected()
+        {
+            ReactiveUpdateManager.Instance.ClientJoined();
+            return base.OnReconnected();
+        }
     }
 }
