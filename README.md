@@ -13,7 +13,7 @@ Frontend:
 Infrastructure:
 - Delete expired (1 week?) entries from leaderboard
 - Add correct setup per region
-- Deploy per region
+- Add proper deployment configuration per region
 - Set smaller expiration date for teams that were seen only once
 - Divide ratings update per number of games if diff is more than 1 to avoid showing 30+ rating changes
 - Google analytics
