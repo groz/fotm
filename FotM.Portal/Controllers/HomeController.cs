@@ -4,7 +4,9 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using FotM.Domain;
+using FotM.Portal.Infrastructure;
 using FotM.Portal.ViewModels;
+using Newtonsoft.Json;
 
 namespace FotM.Portal.Controllers
 {
@@ -12,7 +14,8 @@ namespace FotM.Portal.Controllers
     {
         public ActionResult Index()
         {
-            return View();
+            ArmoryViewModel latestArmoryViewModel = ReactiveUpdateManager.Instance.GetLatestViewModel();
+            return View(latestArmoryViewModel);
         }
 
         public ActionResult About()

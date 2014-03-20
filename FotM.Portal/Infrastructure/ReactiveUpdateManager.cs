@@ -42,13 +42,13 @@ namespace FotM.Portal.Infrastructure
 
         public void Start()
         {
+            _statsUpdateListener.Listen();
+
             _queryLastStatsClient.Send(new QueryLatestStatsMessage()
             {
                 QueryingHost = Dns.GetHostName()
                 // TODO: create private queue, send it in message and listen to it for response
             });
-
-            _statsUpdateListener.Listen();
         }
 
         public void SendLatestUpdate(dynamic caller)
@@ -67,6 +67,13 @@ namespace FotM.Portal.Infrastructure
         private ArmoryViewModel CreateViewModel(StatsUpdateMessage msg)
         {
             return new ArmoryViewModel(msg.Stats, 20, 10, 10, TimeSpan.FromHours(2));
+        }
+
+        public ArmoryViewModel GetLatestViewModel()
+        {
+            return _latestMessage != null
+                ? CreateViewModel(_latestMessage)
+                : null;
         }
     }
 }

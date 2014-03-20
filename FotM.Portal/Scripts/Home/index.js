@@ -1,6 +1,6 @@
-﻿// Code-behind for Home/Index action
+﻿// Code-behind viewmodel for /Home/Index action
 
-function ArmoryViewModel() {
+function ArmoryViewModel(data) {
     var self = this;
     
     self.bracket = ko.observable("3v3");
@@ -21,21 +21,43 @@ function ArmoryViewModel() {
             return self.model().PlayingNow();
         }
     });
+
+    self.update = function(msg) {
+        // convert server times to local time
+        $(msg.PlayingNow).each(function (idx) {
+            this.LocalUpdateTime = asLocalTime(this.Updated);
+        });
+
+        $(msg.AllTimeLeaders).each(function (idx) {
+            this.LocalUpdateTime = asLocalTime(this.Updated);
+        });
+
+        self.model().AllTimeLeaders(msg.AllTimeLeaders);
+        self.model().PlayingNow(msg.PlayingNow);
+        self.model().TeamSetupsViewModels(msg.TeamSetupsViewModels);
+    };
+    
+    if ((typeof data === "undefined") || (data === null)) {
+        console.log("Initialization data was not provided. Waiting for updates...");
+    } else {
+        console.log("Initializing with", data);
+        self.update(data);
+    }
+    
 }
 
-$(function () {
-
-    var armory = new ArmoryViewModel();
+function initializePage(data) {
+    var armory = new ArmoryViewModel(data);
     ko.applyBindings(armory);
-    
+
     armory.leaderboardSelected(true);
     armory.playingNowSelected(false);
-    
+
     $("#leaderboardBtn").click(function () {
         armory.leaderboardSelected(true);
         armory.playingNowSelected(false);
     });
-    
+
     $("#playingNowBtn").click(function () {
         armory.leaderboardSelected(false);
         armory.playingNowSelected(true);
@@ -44,23 +66,11 @@ $(function () {
     var hub = $.connection.indexHub;
 
     hub.client.update = function (msg) {
-        console.log(msg);
-
-        $(msg.PlayingNow).each(function (idx) {
-            this.LocalUpdateTime = asLocalTime(this.Updated);
-        });
-        
-        $(msg.AllTimeLeaders).each(function (idx) {
-            this.LocalUpdateTime = asLocalTime(this.Updated);
-        });
-
-        armory.model().AllTimeLeaders(msg.AllTimeLeaders);
-        armory.model().PlayingNow(msg.PlayingNow);
-        armory.model().TeamSetupsViewModels(msg.TeamSetupsViewModels);
+        console.log("Msg received", msg);
+        armory.update(msg);
     };
 
     $.connection.hub.start().done(function () {
         hub.server.queryLatestUpdate();
     });
-
-});
+}

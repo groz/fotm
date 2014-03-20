@@ -1,4 +1,5 @@
-﻿@{
+﻿@model FotM.Portal.ViewModels.ArmoryViewModel
+@{
     ViewBag.Title = "FotM";
 }
 
@@ -9,6 +10,11 @@
     <script src="~/Scripts/jquery.signalR-2.0.2.js"></script>
     <script src="~/signalr/hubs"></script>
     <script src="~/Scripts/Home/index.js"></script>
+}
+
+@section onReady
+{
+    initializePage(@Html.Raw(Json.Encode(Model)))
 }
 
 <br/>
