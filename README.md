@@ -7,7 +7,7 @@ TODO
 
 Frontend:
 - Pass latest saved data on site load from /home/index action (it will be queried from a shared singleton ReactiveUpdateManager, so think about multithreading here)
-- Move links from server viewmodel to client view objects
+- Move generation of image links from server viewmodel to js client view objects
 - Add NavBar for FotM section to choose fotms by class, not spec
 - Show fotm setups for current playing teams if appropriate section is selected
 - Visually separate classes and specs in FotM section
