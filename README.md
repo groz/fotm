@@ -7,6 +7,7 @@ TODO
 
 Frontend:
 - Pass latest saved data on site load from /home/index action (it will be queried from a shared singleton ReactiveUpdateManager, so think about multithreading here)
+- Move links from server viewmodel to client view objects
 
 
 Infrastructure:
