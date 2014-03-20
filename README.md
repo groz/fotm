@@ -14,9 +14,9 @@ Frontend:
 - If user clicks on the row/hovers over fotm setup - show all teams with this setup.
 
 Infrastructure:
+- Add proper deployment configuration per region and setup queues/websites for US & KR
 - Delete expired (1 week?) entries from leaderboard
 - Add correct setup per region
-- Add proper deployment configuration per region
 - Set smaller expiration date for teams that were seen only once
 - Divide ratings update per number of games if diff is more than 1 to avoid showing 30+ rating changes
 - Google analytics
