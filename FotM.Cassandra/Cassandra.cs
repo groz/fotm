@@ -34,8 +34,7 @@ namespace FotM.Cassandra
         {
             Logger.DebugFormat("Total changed rankings: {0}", changes.Length);
 
-            int nPossibleTeams = changes.Length / bracketSize;
-            _stats.TeamsPossible += nPossibleTeams;
+            _stats.TeamsPossible += changes.Length / bracketSize;
 
             int nGroups = (int)Math.Ceiling((double)changes.Length / bracketSize);
 
@@ -78,14 +77,29 @@ namespace FotM.Cassandra
 
             Logger.InfoFormat("Players in common: {0}", players.Count);
 
-            PlayerChange[] changes = (
-                from p in players
-                let previousStat = previousSet[p]
-                let currentStat = currentSet[p]
-                let diff = new PlayerChange(p, previousStat, currentStat)
-                where diff.HasChanges
-                select diff).ToArray();
+            var changes = from player in players
+                          let diff = new PlayerChange(player, previousSet[player], currentSet[player])
+                          where diff.HasChanges
+                          select diff;
 
+            var parts = Partition(changes.ToArray());
+
+            var allTeams = parts
+                .SelectMany(p => FindTeams(bracketSize, p))
+                .Where(team => team != null && team.Any())
+                .ToArray();
+
+            var incorrectTeams = FindIncorrectTeams(allTeams, bracketSize);
+
+            var fullTeams = allTeams.Except(incorrectTeams).Select(lst => new Team(lst)).ToArray();
+
+            _stats.FullTeamsDetected += fullTeams.Length;
+
+            return fullTeams;
+        }
+
+        private PlayerChange[][] Partition(PlayerChange[] changes)
+        {
             var alliance = changes.Where(d => d.FactionId == 0).ToArray();
             var horde = changes.Where(d => d.FactionId == 1).ToArray();
 
@@ -95,24 +109,7 @@ namespace FotM.Cassandra
             var hordeWinners = horde.Where(d => d.RatingDiff > 0).ToArray();
             var hordeLosers = horde.Where(d => d.RatingDiff <= 0).ToArray();
 
-            var allianceWinnerTeams = FindTeams(bracketSize, allianceWinners);
-            var allianceLoserTeams = FindTeams(bracketSize, allianceLosers);
-            var hordeWinnerTeams = FindTeams(bracketSize, hordeWinners);
-            var hordeLoserTeams = FindTeams(bracketSize, hordeLosers);
-
-            var allTeams = allianceWinnerTeams
-                .Union(allianceLoserTeams)
-                .Union(hordeWinnerTeams)
-                .Union(hordeLoserTeams)
-                .Where(team => team != null && team.Any()).ToArray();
-
-            var incorrectTeams = FindIncorrectTeams(allTeams, bracketSize);
-
-            var fullTeams = allTeams.Except(incorrectTeams).Select(lst => new Team(lst)).ToArray();
-
-            _stats.FullTeamsDetected += fullTeams.Length;
-
-            return fullTeams;
+            return new[] { allianceWinners, allianceLosers, hordeWinners, hordeLosers };
         }
 
         private List<Player>[] FindIncorrectTeams(List<Player>[] teamLists, int bracketSize)
