@@ -6,14 +6,12 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Pass latest saved data on site load from /home/index action (it will be queried from a shared singleton ReactiveUpdateManager, so think about multithreading here)
 - Move generation of image links from server viewmodel to js client view objects
 - Add NavBar for FotM section to choose fotms by class, not spec
 - Show fotm setups for current playing teams if appropriate section is selected
 - Visually separate classes and specs in FotM section
 - Add armory links to players
 - If user clicks on the row/hovers over fotm setup - show all teams with this setup.
-
 
 Infrastructure:
 - Delete expired (1 week?) entries from leaderboard
