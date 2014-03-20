@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FotM.Utilities;
+using System.Configuration;
 
 namespace FotM.Messaging
 {
@@ -11,9 +12,16 @@ namespace FotM.Messaging
     {
         static Constants()
         {
-            var cfg = ConfigHelpers.LoadConfig();
-            var appSettings = cfg.AppSettings.Settings;
-            ConnectionString = appSettings["Microsoft.ServiceBus.ConnectionString"].Value;
+            string key = "Microsoft.ServiceBus.ConnectionString";
+            ConnectionString = ConfigurationManager.AppSettings[key];
+
+            if (ConnectionString == null)
+            {
+                // only load library specific config if the key is not found in current AppSettings
+                var cfg = ConfigHelpers.LoadConfig();
+                var appSettings = cfg.AppSettings.Settings;
+                ConnectionString = appSettings[key].Value;
+            }
         }
 
         public static readonly string ConnectionString;

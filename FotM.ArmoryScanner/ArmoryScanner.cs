@@ -118,7 +118,6 @@ namespace FotM.ArmoryScanner
                 TimeSpan waitPeriod = TimeSpan.FromSeconds(10);
                 Logger.InfoFormat("Checking for messages/sleeping for {0}/{0}...", waitPeriod);
                 _queryLatestStatsClient.Receive(OnQueryLatestStatsMessage, waitPeriod);
-                Thread.Sleep(waitPeriod);
             }
             catch (Exception ex)
             {
@@ -181,6 +180,23 @@ namespace FotM.ArmoryScanner
                 LogStats();
                 PublishStats();
                 SaveToDb();
+            }
+
+            RemoveHealers();
+            SaveToDb();
+        }
+
+        private void RemoveHealers()
+        {
+            var overhealingTeams = _teamStats.Values
+                .Where(ts => ts.Team.Players.Count(Healers.IsHealer) >= 2)  // fuck the double healers
+                .Select(ts => ts.Team)
+                .ToArray();
+
+            foreach (var overhealers in overhealingTeams)
+            {
+                _teamStats.Remove(overhealers);
+                Logger.InfoFormat("Overhealing team {0} removed", overhealers);
             }
         }
 

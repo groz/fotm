@@ -41,8 +41,8 @@ namespace FotM.Portal.ViewModels
                 .ToArray();
 
             _allTimeViewModels = verifiedTeams
-                .Take(nTeamsToShow)
                 .OrderByDescending(t => t.Stats.Rating)
+                .Take(nTeamsToShow)
                 .Select((ts, i) => new TeamStatsViewModel(i + 1, ts.Stats))
                 .ToArray();
 
