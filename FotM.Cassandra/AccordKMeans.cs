@@ -29,7 +29,11 @@ namespace FotM.Cassandra
                 descriptor.NormalizeFor(dataSet);
             }
 
-            //descriptor.SetWeights(new[] {1.79, -1.13, -1.40, 0.32, 2.15, 2.28, 1.07});
+            /*
+             * history size: 80, steps 1000
+            Best F2=0.639566395663957, W=[1.32,1.39,-0.50,0.03,1.34,3.01,3.49]
+             */
+            //descriptor.SetWeights(new[] {1.32,1.39,-0.50,0.03,1.34,3.01,3.49});
 
             return kmeans.Compute(dataSet, descriptor);
         }

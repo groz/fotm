@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using FotM.Messaging;
 using FotM.Portal.ViewModels;
 using Microsoft.AspNet.SignalR;
@@ -43,8 +44,10 @@ namespace FotM.Portal.Infrastructure
         {
             _queryLastStatsClient.Send(new QueryLatestStatsMessage()
             {
+                QueryingHost = Dns.GetHostName()
                 // TODO: create private queue, send it in message and listen to it for response
             });
+
             _statsUpdateListener.Listen();
         }
 

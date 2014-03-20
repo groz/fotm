@@ -291,7 +291,7 @@ namespace FotM.Cassandra.Tests
         [TestMethod]
         public void CalculateWeights()
         {
-            int historyLength = 20;
+            int historyLength = 80;
             const double learningRate = 1e-2;
 
             var descriptor = new FeatureAttributeDescriptor<PlayerChange>();
@@ -313,7 +313,7 @@ namespace FotM.Cassandra.Tests
                 seedWeights,
                 learningRate,
                 1e-2,
-                400);
+                1000);
 
             var bestResult = results.MaxBy(p => p.Key);
 
