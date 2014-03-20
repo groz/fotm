@@ -15,18 +15,17 @@ namespace FotM.Messaging
             string key = "Microsoft.ServiceBus.ConnectionString";
             ConnectionString = ConfigurationManager.AppSettings[key];
 
+            // only load library specific config if the key is not found in current AppSettings
             if (ConnectionString == null)
             {
-                // only load library specific config if the key is not found in current AppSettings
                 var cfg = ConfigHelpers.LoadConfig();
                 var appSettings = cfg.AppSettings.Settings;
                 ConnectionString = appSettings[key].Value;
             }
         }
 
-        public static readonly string ConnectionString;
-        public static readonly string Namespace = "fotm-test";
-        public static readonly string StatsUpdateTopic = "stats-update-topic";
-        public static readonly string QueryLatestStatsQueue = "query-latest-stats-queue";
+        internal static readonly string ConnectionString;
+        internal static readonly string StatsUpdateTopic = "stats-update-topic";
+        internal static readonly string QueryLatestStatsQueue = "query-latest-stats-queue";
     }
 }

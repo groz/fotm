@@ -80,6 +80,10 @@ function initializePage(data) {
         armory.update(msg);
     };
 
+    hub.client.updateViewerCount = function (n) {
+        console.log("Current viewers", n);
+    };
+
     $.connection.hub.start().done(function () {
         hub.server.queryLatestUpdate();
     });

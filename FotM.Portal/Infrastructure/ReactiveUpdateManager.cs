@@ -5,6 +5,7 @@ using FotM.Messaging;
 using FotM.Portal.ViewModels;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
+using System.Threading;
 
 namespace FotM.Portal.Infrastructure
 {
@@ -21,6 +22,7 @@ namespace FotM.Portal.Infrastructure
         private readonly StatsUpdateListener _statsUpdateListener;
         private StatsUpdateMessage _latestMessage = null;
         private readonly QueryLatestStatsClient _queryLastStatsClient;
+        private int nCurrentViewers = 0;
 
         private ReactiveUpdateManager()
         {
@@ -61,6 +63,8 @@ namespace FotM.Portal.Infrastructure
                 {
                     caller.update(armoryViewModel);
                 }
+
+                caller.updateViewerCount(nCurrentViewers);
             }
         }
 
@@ -78,6 +82,18 @@ namespace FotM.Portal.Infrastructure
             return _latestMessage != null
                 ? CreateViewModel(_latestMessage)
                 : null;
+        }
+
+        public void ClientJoined()
+        {
+            int n = Interlocked.Increment(ref nCurrentViewers);
+            _clients.All.updateViewerCount(n);
+        }
+
+        public void ClientLeft()
+        {
+            int n = Interlocked.Decrement(ref nCurrentViewers);
+            _clients.All.updateViewerCount(n);
         }
     }
 }

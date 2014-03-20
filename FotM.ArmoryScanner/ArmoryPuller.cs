@@ -7,13 +7,10 @@ namespace FotM.ArmoryScanner
     public class ArmoryPuller: IArmoryPuller
     {
         private readonly Uri _baseAddress;
-        public string Host { get; private set; }
 
-        public ArmoryPuller(string host, string locale = Locale.EnUs)
+        public ArmoryPuller(string apiRoot, string locale = Locale.EnUs)
         {
-            Host = host;
-
-            var builder = new UriBuilder(Uri.UriSchemeHttp, host) {Path = "api/wow"};
+            var builder = new UriBuilder(Uri.UriSchemeHttp, apiRoot) {Path = "api/wow"};
             _baseAddress = builder.Uri;
         }
 
