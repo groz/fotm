@@ -6,12 +6,11 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
+- Iconfor the site
 - Move generation of image links from server viewmodel to js client view objects
 - Add NavBar for FotM section to choose fotms by class, not spec
 - Show fotm setups for current playing teams if appropriate section is selected
-- Visually separate classes and specs in FotM section
 - Add armory links to players
-- If user clicks on the row/hovers over fotm setup - show all teams with this setup.
 
 
 Infrastructure:
