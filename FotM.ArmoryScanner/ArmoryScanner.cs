@@ -17,7 +17,7 @@ namespace FotM.ArmoryScanner
     {
         private static readonly ILog Logger = LoggingExtensions.GetLogger<ArmoryScanner>();
 
-        private readonly string _dbFile = RegionalConfig.Instance.Region; // TODO: add real DB
+        private readonly string _dbFile = RegionalConfig.Instance.Region+"_data.txt"; // TODO: add real DB
 
         private readonly Bracket _bracket;
         private readonly IArmoryPuller _dataPuller;

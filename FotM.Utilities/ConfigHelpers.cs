@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Hosting;
 
 namespace FotM.Utilities
 {
@@ -26,8 +27,13 @@ namespace FotM.Utilities
         {
             if (!File.Exists(configFileName))
             {
-                string msg = string.Format("Config file {0} not found. The name is case-sensitive.", configFileName);
-                throw new ArgumentException(msg);
+                configFileName = Path.Combine(HostingEnvironment.ApplicationPhysicalPath, "bin", configFileName); // TODO: find out how to do it properly
+
+                if (!File.Exists(configFileName))
+                {
+                    string msg = string.Format("Config file {0} not found. The name is case-sensitive.", configFileName);
+                    throw new ArgumentException(msg);
+                }
             }
 
             var configMap = new ExeConfigurationFileMap

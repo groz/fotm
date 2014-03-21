@@ -202,6 +202,10 @@
     <Content Include="Scripts\jquery-2.1.0.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FotM.Config\FotM.Config.csproj">
+      <Project>{d8399bb4-4e53-472b-af8d-cfc8b07c6219}</Project>
+      <Name>FotM.Config</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FotM.Domain\FotM.Domain.csproj">
       <Project>{a9f666c5-47c6-45f7-9dc1-61126140a7e0}</Project>
       <Name>FotM.Domain</Name>
