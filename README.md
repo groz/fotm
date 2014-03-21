@@ -14,6 +14,7 @@ Frontend:
 
 
 Infrastructure:
+- Start US ArmoryScanner
 - Add proper deployment configuration per region and setup queues/websites for US & KR
   - Test it deploying for US
 - Delete expired (1 week?) entries from leaderboard
