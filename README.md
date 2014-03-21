@@ -6,6 +6,7 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
+- ASAP: Fix % calculation for fotm team specs
 - Icon for the site
 - Move generation of image links from server viewmodel to js client view objects
 - Add NavBar for FotM section to choose fotms by class, not spec
