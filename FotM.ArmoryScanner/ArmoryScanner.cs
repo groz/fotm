@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using FotM.Config;
 using FotM.Domain;
 using FotM.Messaging;
 using FotM.Utilities;
@@ -16,7 +17,7 @@ namespace FotM.ArmoryScanner
     {
         private static readonly ILog Logger = LoggingExtensions.GetLogger<ArmoryScanner>();
 
-        private const string DbFile = "data.txt"; // TODO: add real DB
+        private readonly string _dbFile = RegionalConfig.Instance.Region; // TODO: add real DB
 
         private readonly Bracket _bracket;
         private readonly IArmoryPuller _dataPuller;
@@ -40,12 +41,12 @@ namespace FotM.ArmoryScanner
 
         private void SaveToDb()
         {
-            Logger.InfoFormat("Saving all data to file {0}", DbFile);
+            Logger.InfoFormat("Saving all data to file {0}", _dbFile);
 
             try
             {
                 string serializedStats = SerializeStats();
-                File.WriteAllText(DbFile, serializedStats);
+                File.WriteAllText(_dbFile, serializedStats);
             }
             catch (Exception ex)
             {
@@ -55,13 +56,13 @@ namespace FotM.ArmoryScanner
 
         private void LoadFromDb()
         {
-            if (File.Exists(DbFile))
+            if (File.Exists(_dbFile))
             {
                 try
                 {
-                    Logger.InfoFormat("File {0} found, trying to load persisted data...", DbFile);
+                    Logger.InfoFormat("File {0} found, trying to load persisted data...", _dbFile);
 
-                    string json = File.ReadAllText(DbFile);
+                    string json = File.ReadAllText(_dbFile);
 
                     TeamStats[] persistedStats = DeserializeStats(json);
 
@@ -79,7 +80,7 @@ namespace FotM.ArmoryScanner
             }
             else
             {
-                Logger.InfoFormat("File {0} not found. Initializing anew.", DbFile);
+                Logger.InfoFormat("File {0} not found. Initializing anew.", _dbFile);
             }
         }
 

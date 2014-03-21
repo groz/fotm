@@ -8,10 +8,9 @@ namespace FotM.ArmoryScanner
     {
         private readonly Uri _baseAddress;
 
-        public ArmoryPuller(string apiRoot, string locale = Locale.EnUs)
+        public ArmoryPuller(Uri apiRoot, string locale = Locale.EnUs)
         {
-            var builder = new UriBuilder(Uri.UriSchemeHttp, apiRoot) {Path = "api/wow"};
-            _baseAddress = builder.Uri;
+            _baseAddress = new Uri(apiRoot, "api/wow");
         }
 
         public Leaderboard DownloadLeaderboard(Bracket bracket, string locale = Locale.EnUs)

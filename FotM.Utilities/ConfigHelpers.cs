@@ -59,7 +59,7 @@ namespace FotM.Utilities
                     if (cfgElement != null)
                     {
                         string strValue = cfgElement.Value;
-                        object value = Convert.ChangeType(strValue, attributedProperty.PropertyInfo.PropertyType);
+                        var value = strValue.ConvertTo(attributedProperty.PropertyInfo.PropertyType);
                         attributedProperty.PropertyInfo.SetValue(obj, value);
                     }
                 }
@@ -72,9 +72,31 @@ namespace FotM.Utilities
                 string strValue = ConfigurationManager.AppSettings[key];
                 if (strValue != null)
                 {
-                    object value = Convert.ChangeType(strValue, attributedProperty.PropertyInfo.PropertyType);
+                    var value = strValue.ConvertTo(attributedProperty.PropertyInfo.PropertyType);
                     attributedProperty.PropertyInfo.SetValue(obj, value);
                 }
+            }
+        }
+
+        public static TResult ConvertTo<TResult>(this object value)
+        {
+            return (TResult)value.ConvertTo(typeof (TResult));
+        }
+
+        public static object ConvertTo(this object value, Type t)
+        {
+            try
+            {
+                return Convert.ChangeType(value, t);
+            }
+            catch (Exception ex)
+            {
+                if (ex is InvalidCastException || ex is FormatException)
+                {
+                    // try invoking ctor for the type
+                    return Activator.CreateInstance(t, value);
+                }
+                throw;
             }
         }
     }

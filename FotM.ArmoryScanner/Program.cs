@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Linq;
+using FotM.Config;
 using FotM.Domain;
 using FotM.Utilities;
 using log4net;
@@ -15,16 +16,6 @@ namespace FotM.ArmoryScanner
      * http://blizzard.github.io/api-wow-docs/#pvp-api/leaderboard-api
      */
 
-    public static class ArmoryConstants
-    {
-        // Hardcoded stuff for now
-        public static readonly string US = "us.battle.net";
-        public static readonly string Europe = "eu.battle.net";
-        public static readonly string Korea = "kr.battle.net";
-        public static readonly string Taiwan = "tw.battle.net";
-        public static readonly string China = "www.battlenet.com.cn";
-    }
-
     class Program
     {
         private static readonly ILog Logger = LoggingExtensions.GetLogger<Program>();
@@ -35,7 +26,7 @@ namespace FotM.ArmoryScanner
 
             Logger.Info("App started");
 
-            var puller = new ArmoryPuller(ArmoryConstants.Europe);
+            var puller = new ArmoryPuller(RegionalConfig.Instance.BlizzardApiEndPoint);
             var usArmoryScanner = new ArmoryScanner(Bracket.Threes, puller, maxHistorySize: 100);
 
             while (true)

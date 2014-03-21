@@ -26,9 +26,12 @@ namespace FotM.Config
         }
 
         [FromConfig(ConfigFile = "Regional.config")]
+        public string Region { get; private set; }
+
+        [FromConfig(ConfigFile = "Regional.config")]
         public string ServiceBusConnectionString { get; private set; }
 
         [FromConfig(ConfigFile = "Regional.config")]
-        public string BlizzardApiEndPoint { get; private set; }
+        public Uri BlizzardApiEndPoint { get; private set; }
     }
 }
