@@ -48,10 +48,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CompressionTests.cs" />
+    <Compile Include="ConfigHelpersTests.cs" />
+    <Compile Include="ReflectionUtilsTests.cs" />
     <Compile Include="MathUtilsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
+    <None Include="Custom.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

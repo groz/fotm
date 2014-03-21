@@ -21,17 +21,13 @@ namespace FotM.Cassandra
 
         public FeatureAttributeDescriptor()
         {
-            _featureProperties = typeof (T).GetProperties()
-                .Where(p => p.IsDefined(typeof (AccordFeatureAttribute), false))
-                .ToArray();
+            var attributedProperties = ReflectionUtils.GetAttributedProperties<T, AccordFeatureAttribute>();
+            _featureProperties = attributedProperties.Select(ap => ap.PropertyInfo).ToArray();
+            _attributeValues = attributedProperties.Select(ap => ap.Attribute).ToArray();
 
             _featureIndices = _featureProperties
                 .Select((prop, idx) => new { prop, idx })
                 .ToDictionary(pi => pi.prop.Name, pi => pi.idx);
-
-            _attributeValues = _featureProperties
-                .Select(p => p.GetCustomAttribute<AccordFeatureAttribute>(false))
-                .ToArray();
 
             _means = new double[TotalFeatures];
             _scales = new double[TotalFeatures];

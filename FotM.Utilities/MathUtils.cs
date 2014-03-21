@@ -112,8 +112,6 @@ namespace FotM.Utilities
 
             } while (iteration++ < nMaxIterations);
 
-            Trace.WriteLine(iteration);
-
             return q;
         }
 
