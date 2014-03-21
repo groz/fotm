@@ -6,7 +6,6 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- ASAP: Fix % calculation for fotm team specs
 - Icon for the site
 - Move generation of image links from server viewmodel to js client view objects
 - Add NavBar for FotM section to choose fotms by class, not spec
@@ -15,11 +14,10 @@ Frontend:
 
 
 Infrastructure:
-- ASAP: setup test queue/environment to not break production with every change to Scanner
 - Add proper deployment configuration per region and setup queues/websites for US & KR
 - Delete expired (1 week?) entries from leaderboard
 - Add correct setup per region
-- Set smaller expiration date for teams that were seen only once
+- Set smaller expiration date for teams that were seen only a few times
 - Divide ratings update per number of games if diff is more than 1 to avoid showing 30+ rating changes
 - Google analytics
 
