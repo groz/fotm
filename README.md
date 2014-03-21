@@ -14,8 +14,10 @@ Frontend:
 
 
 Infrastructure:
+- Investigate why website doesn't receive update message sometimes
 - Start US ArmoryScanner
 - Add proper deployment configuration per region and setup queues/websites for US & KR
+  - Add test environment (use EU data)
   - Test it deploying for US
 - Delete expired (1 week?) entries from leaderboard
 - Add correct setup per region
