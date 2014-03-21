@@ -47,11 +47,13 @@ namespace FotM.Portal.ViewModels
                 .Select((ts, i) => new TeamStatsViewModel(i + 1, ts.Stats))
                 .ToArray();
 
+            int totalSetups = setupGroups.Sum(sg => sg.Count());
+
             var teamSetups = setupGroups
                 .Select(setupGroup => new
                 {
                     Setup = setupGroup.Key,
-                    Percent = setupGroup.Count()/(double) setupGroups.Length,
+                    Percent = setupGroup.Count()/(double)totalSetups,
                     Teams = setupGroup
                         .OrderByDescending(sg => sg.Stats.Rating)
                         .Take(nTeamsPerSpec)
