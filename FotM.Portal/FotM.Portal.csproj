@@ -170,6 +170,8 @@
     <Content Include="Content\bootstrap.css.map" />
     <None Include="Properties\PublishProfiles\fotm-eu.pubxml" />
     <None Include="Properties\PublishProfiles\fotm-eu__staging.pubxml" />
+    <None Include="Properties\PublishProfiles\fotm.pubxml" />
+    <None Include="Properties\PublishProfiles\fotm__staging.pubxml" />
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
