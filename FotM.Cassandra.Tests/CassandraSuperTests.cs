@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Accord.Math;
 using FotM.Domain;
 using FotM.TestingUtilities;
 using FotM.Utilities;
@@ -50,8 +51,12 @@ namespace FotM.Cassandra.Tests
 
             LeaderboardEntry[] startingEntries = GeneratePlayers(999);
             Team[] teams = GenerateTeams(startingEntries);
-            _history = GenerateHistory(teams, startingEntries,
-                length: 500, nWeeksBefore: 3, nMaxGamesPerWeek: 40);
+            _history = GenerateHistory(
+                teams, 
+                startingEntries,
+                length: 500, 
+                nWeeksBefore: 3,
+                nMaxGamesPerWeek: 40);
         }
 
         public static LeaderboardEntry[] GeneratePlayers(int nPlayers)
@@ -171,9 +176,16 @@ namespace FotM.Cassandra.Tests
             return newLeaderboard;
         }
 
-        Dictionary<Leaderboard, HashSet<Team>> GenerateHistory(Team[] teams, LeaderboardEntry[] startingEntries,
-            int length, int nWeeksBefore, int nMaxGamesPerWeek)
+        Dictionary<Leaderboard, HashSet<Team>> GenerateHistory(
+            Team[] teams, 
+            LeaderboardEntry[] startingEntries,
+            int length, 
+            int nWeeksBefore, 
+            int nMaxGamesPerWeek,
+            double jumpRatePerTurn = 0.05)
         {
+            Trace.WriteLine("Seeding history data...");
+
             var leaderboard = CreateLeaderboard(startingEntries);
 
             // make all teams play some number of games for several weeks before simulation
@@ -206,6 +218,9 @@ namespace FotM.Cassandra.Tests
 
             for (int i = 0; i < length; ++i)
             {
+                // team jumping
+                TeamJump(teams, jumpRatePerTurn);
+
                 // Select subset of teams that will play
                 int nTeamsPlayedThisTurn = 5;// 8 + Rng.Next(4);
 
@@ -225,10 +240,43 @@ namespace FotM.Cassandra.Tests
                 leaderboard = newLeaderboard;
             }
 
+            Trace.WriteLine("History data is ready.");
             return results;
         }
 
-        private double RunCassandra(int historyLength, string clustererName, IKMeans<PlayerChange> clusterer,
+        private void TeamJump(Team[] teams, double teamJumpingPerTurn)
+        {
+            int nTeams = (int)(teamJumpingPerTurn*teams.Length*Bracket.Size());
+
+            Team[] leftTeams = teams.Take(nTeams).ToArray();
+            Team[] rightTeams = teams.TakeLast(nTeams).ToArray();
+
+            for (int i = 0; i < nTeams; ++i)
+            {
+                Team l = leftTeams[i];
+                Team r = rightTeams[i];
+
+                int lPos = Array.FindIndex(l.Players, p => !Healers.IsHealer(p));
+                int rPos = Array.FindIndex(r.Players, p => !Healers.IsHealer(p));
+
+                if (lPos != -1 && rPos != -1)
+                {
+                    Player temp = l.Players[lPos];
+                    l.Players[lPos] = r.Players[rPos];
+                    r.Players[rPos] = temp;
+                }
+                else
+                {
+                    var msg = string.Format("Couldn't find non-healers {0}.", ++nJumpsFailed);
+                    Trace.WriteLine(msg);
+                }
+            }
+        }
+
+        private int nJumpsFailed = 0;
+
+        private double RunCassandra(int historyLength, 
+            string clustererName, IKMeans<PlayerChange> clusterer,
             bool traceOn)
         {
             var cassandra = new Cassandra(clusterer);
@@ -286,7 +334,7 @@ namespace FotM.Cassandra.Tests
                 RunCassandra(_history.Count, clusterer.Key, clusterer.Value, true);
             }
         }
-
+/*
         [Test]
         [TestMethod]
         public void CalculateWeights()
@@ -322,5 +370,6 @@ namespace FotM.Cassandra.Tests
             string msg = string.Format("Best F2={0}, W=[{1}]", bestResult.Key, weightStr);
             Trace.WriteLine(msg);
         }
+ */
     }
 }
