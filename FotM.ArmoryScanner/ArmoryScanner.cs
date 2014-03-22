@@ -211,6 +211,7 @@ namespace FotM.ArmoryScanner
 
             if (!string.IsNullOrEmpty(queueName))
             {
+                Logger.InfoFormat("Publishing update message to {0}...", queueName);
                 IPublisher<StatsUpdateMessage> publisher = 
                     new AzureQueueClient<StatsUpdateMessage>(queueName, false);
                 publisher.Publish(updateMessage);
