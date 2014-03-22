@@ -6,6 +6,10 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
+- Add event tracking for Google Analytics (Virtual Page Views)
+- Create admin method mechanism
+- Create admin method polling number of current connected users
+- Upload ResourceMap to client on page load to avoid sending image urls with each viewModel update
 - Icon for the site
 - Move generation of image links from server viewmodel to js client view objects
 - Add NavBar for FotM section to choose fotms by class, not spec
@@ -14,7 +18,7 @@ Frontend:
 
 
 Infrastructure:
-- Investigate why website doesn't receive update message sometimes
+- Investigate why website doesn't receive update message on init sometimes (switch to private queues?)
 - Setup easy deployment for website to US/EU
 - Setup easy deployment for scanner to US/EU
 - Add proper deployment configuration per region and setup queues/websites for US & KR
@@ -38,3 +42,4 @@ Backlog:
 - Refactor Messaging
 - Add AWS SNS/SQS
 - Refactor the horrible code made while trying to create minimum viable product
+- Make FotM.Config rebuild on each update to Regional.config
