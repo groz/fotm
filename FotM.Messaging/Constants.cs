@@ -17,7 +17,9 @@ namespace FotM.Messaging
         }
 
         internal static readonly string ConnectionString;
-        internal static readonly string StatsUpdateTopic = "stats-update-topic";
-        internal static readonly string QueryLatestStatsQueue = "query-latest-stats-queue";
+        internal static readonly TimeSpan DefaultMessageLifespan = TimeSpan.FromMinutes(10);
+
+        public static readonly string StatsUpdateTopic = "stats-update-topic";
+        public static readonly string QueryLatestStatsQueue = "query-latest-stats-queue";
     }
 }

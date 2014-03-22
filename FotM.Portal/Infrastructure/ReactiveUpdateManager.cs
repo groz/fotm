@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using FotM.Messaging;
+using FotM.Messaging.Messages;
 using FotM.Portal.ViewModels;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
@@ -19,56 +20,50 @@ namespace FotM.Portal.Infrastructure
         }
 
         private readonly IHubConnectionContext _clients;
-        private readonly StatsUpdateListener _statsUpdateListener;
+        private readonly ISubscriber<StatsUpdateMessage> _statsUpdateListener;
+
         private StatsUpdateMessage _latestMessage = null;
-        private readonly QueryLatestStatsClient _queryLastStatsClient;
-        private int nCurrentViewers = 0;
 
         private ReactiveUpdateManager()
         {
             _clients = GlobalHost.ConnectionManager.GetHubContext<IndexHub>().Clients;
-            _statsUpdateListener = new StatsUpdateListener(OnStatsUpdateReceived);
-            _queryLastStatsClient = new QueryLatestStatsClient();
+            _statsUpdateListener = new AzureTopicSubscriber<StatsUpdateMessage>(Constants.StatsUpdateTopic, true);
         }
 
-        private void OnStatsUpdateReceived(StatsUpdateMessage msg)
+        public void Start()
         {
-            _latestMessage = msg;
+            // listen to regular topic updates
+            _statsUpdateListener.Subscribe(OnStatsUpdateReceived);
+
+            // create private queue, send it in message and listen to it for response
+            var hostName = Dns.GetHostName();
+
+            var receiver = new AzureQueueClient<StatsUpdateMessage>(hostName, true);
+            receiver.Subscribe(OnStatsUpdateReceived);
+
+            var requester = new AzureQueueClient<QueryLatestStatsMessage>(Constants.QueryLatestStatsQueue, true);
+
+            requester.Publish(new QueryLatestStatsMessage()
+            {
+                QueryingHost = hostName
+            });
+        }
+
+        private bool OnStatsUpdateReceived(StatsUpdateMessage msg)
+        {
             var armoryViewModel = CreateViewModel(msg);
 
             if (armoryViewModel.AllTimeLeaders.Any())
             {
                 _clients.All.update(armoryViewModel);
             }
+
+            _latestMessage = msg;
+
+            return true;
         }
 
-        public void Start()
-        {
-            _statsUpdateListener.Listen();
-
-            _queryLastStatsClient.Send(new QueryLatestStatsMessage()
-            {
-                QueryingHost = Dns.GetHostName()
-                // TODO: create private queue, send it in message and listen to it for response
-            });
-        }
-
-        public void SendLatestUpdate(dynamic caller)
-        {
-            if (_latestMessage != null)
-            {
-                var armoryViewModel = CreateViewModel(_latestMessage);
-
-                if (armoryViewModel.AllTimeLeaders.Any())
-                {
-                    caller.update(armoryViewModel);
-                }
-
-                caller.updateViewerCount(nCurrentViewers);
-            }
-        }
-
-        private ArmoryViewModel CreateViewModel(StatsUpdateMessage msg)
+        private static ArmoryViewModel CreateViewModel(StatsUpdateMessage msg)
         {
             return new ArmoryViewModel(msg.Stats, TimeSpan.FromHours(2),
                 nTeamsToShow: 20, 

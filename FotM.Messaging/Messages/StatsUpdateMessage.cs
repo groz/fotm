@@ -1,7 +1,7 @@
 ﻿using System;
 using FotM.Domain;
 
-namespace FotM.Messaging
+namespace FotM.Messaging.Messages
 {
     [Serializable]
     public class StatsUpdateMessage

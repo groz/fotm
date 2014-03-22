@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using FotM.Config;
 using FotM.Domain;
 using FotM.Messaging;
+using FotM.Messaging.Messages;
 using FotM.Utilities;
 using log4net;
 using Newtonsoft.Json;
@@ -27,8 +27,11 @@ namespace FotM.ArmoryScanner
         private Leaderboard _previousLeaderboard = null;
         private readonly Dictionary<Team, TeamStats> _teamStats = new Dictionary<Team, TeamStats>();
 
-        private readonly StatsUpdatePublisher _statsUpdatePublisher = new StatsUpdatePublisher();
-        private readonly QueryLatestStatsClient _queryLatestStatsClient = new QueryLatestStatsClient();
+        private readonly IPublisher<StatsUpdateMessage> _statsUpdatePublisher = 
+            new AzureTopicPublisher<StatsUpdateMessage>(Constants.StatsUpdateTopic, true);
+
+        private readonly ISubscriber<QueryLatestStatsMessage> _queryLatestStatsSubscriber = 
+            new AzureQueueClient<QueryLatestStatsMessage>(Constants.QueryLatestStatsQueue, true);
 
         public ArmoryScanner(Bracket bracket, IArmoryPuller dataPuller, int maxHistorySize)
         {
@@ -90,13 +93,11 @@ namespace FotM.ArmoryScanner
 
             if (_teamStats.Any())
             {
-                // TODO: refactor to publish to the private queue of requester instead of all topic listeners
                 PublishStats();
                 return true;
             }
 
             Logger.InfoFormat("No stats to send to {0}.", msg.QueryingHost);
-
             return false;
         }
 
@@ -117,8 +118,8 @@ namespace FotM.ArmoryScanner
                 }
 
                 TimeSpan waitPeriod = TimeSpan.FromSeconds(10);
-                Logger.InfoFormat("Checking for messages/sleeping for {0}/{0}...", waitPeriod);
-                _queryLatestStatsClient.Receive(OnQueryLatestStatsMessage, waitPeriod);
+                Logger.InfoFormat("Checking for messages/sleeping for {0}...", waitPeriod);
+                _queryLatestStatsSubscriber.Receive(OnQueryLatestStatsMessage, waitPeriod);
             }
             catch (Exception ex)
             {
@@ -201,15 +202,24 @@ namespace FotM.ArmoryScanner
             }
         }
 
-        public void PublishStats()
+        public void PublishStats(string queueName = null)
         {
             var updateMessage = new StatsUpdateMessage()
             {
                 Stats = _teamStats.Values.ToArray()
             };
 
-            Logger.InfoFormat("Publishing update message...");
-            _statsUpdatePublisher.Publish(updateMessage);
+            if (!string.IsNullOrEmpty(queueName))
+            {
+                IPublisher<StatsUpdateMessage> publisher = 
+                    new AzureQueueClient<StatsUpdateMessage>(queueName, false);
+                publisher.Publish(updateMessage);
+            }
+            else
+            {
+                Logger.InfoFormat("Publishing update message...");
+                _statsUpdatePublisher.Publish(updateMessage);
+            }
         }
 
         public string SerializeStats()

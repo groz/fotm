@@ -91,18 +91,11 @@ function initializePage(region, data) {
     var armory = new ArmoryViewModel(region, data);
     ko.applyBindings(armory);
 
-    armory.leaderboardSelected(true);
-    armory.playingNowSelected(false);
-
     var hub = $.connection.indexHub;
 
     hub.client.update = function (msg) {
         console.log("Msg received", msg);
         armory.update(msg);
-    };
-
-    hub.client.updateViewerCount = function (n) {
-        console.log("Current viewers", n);
     };
 
     $.connection.hub.start().done(function () {

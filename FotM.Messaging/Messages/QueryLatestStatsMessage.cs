@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FotM.Messaging
+namespace FotM.Messaging.Messages
 {
     [Serializable]
     public class QueryLatestStatsMessage
