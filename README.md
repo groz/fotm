@@ -6,9 +6,9 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- ASAP: inject GoogleAnalytics code into layout based on Region
-- Create admin notifications mechanism
-- Create polling current connected users through admin notifications
+- Add event tracking for Google Analytics (Virtual Page Views)
+- Create admin method mechanism
+- Create admin method polling number of current connected users
 - Upload ResourceMap to client on page load to avoid sending image urls with each viewModel update
 - Icon for the site
 - Move generation of image links from server viewmodel to js client view objects
