@@ -17,7 +17,7 @@ Frontend:
 
 
 Infrastructure:
-- Investigate why website doesn't receive update message sometimes
+- Investigate why website doesn't receive update message on init sometimes (switch to private queues?)
 - Setup easy deployment for website to US/EU
 - Setup easy deployment for scanner to US/EU
 - Add proper deployment configuration per region and setup queues/websites for US & KR
