@@ -31,11 +31,11 @@ namespace FotM.Portal.ViewModels
             get { return _model.Rating; }
         }
 
-        public string FactionImageLink
+        public string FactionId
         {
             get
             {
-                return MediaLinks.FactionImageLink(_factionId);
+                return _factionId.ToString();
             }
         }
 

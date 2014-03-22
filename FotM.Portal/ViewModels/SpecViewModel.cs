@@ -6,8 +6,8 @@ namespace FotM.Portal.ViewModels
     {
         private readonly CharacterClass _charClass;
         private readonly CharacterSpec _charSpec;
-        private readonly string _specImageLink;
-        private readonly string _classImageLink;
+        private readonly string _specId;
+        private readonly string _classId;
 
         public SpecViewModel(int classId, int specId)
             : this((CharacterClass) classId, (CharacterSpec) specId)
@@ -18,26 +18,26 @@ namespace FotM.Portal.ViewModels
         {
             _charClass = charClass;
             _charSpec = charSpec;
-            _specImageLink = MediaLinks.SpecImageLink(charSpec);
-            _classImageLink = MediaLinks.ClassImageLink(charClass);
+            _specId = ((int)charSpec).ToString();
+            _classId = ((int)charClass).ToString();
         }
 
-        public string SpecImageLink
+        public string SpecId
         {
-            get { return _specImageLink; }
+            get { return _specId; }
         }
 
-        public string ClassImageLink
+        public string ClassId
         {
-            get { return _classImageLink; }
+            get { return _classId; }
         }
 
-        public CharacterClass CharClass
+        internal CharacterClass CharClass
         {
             get { return _charClass; }
         }
 
-        public CharacterSpec CharSpec
+        internal CharacterSpec CharSpec
         {
             get { return _charSpec; }
         }

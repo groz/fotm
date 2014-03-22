@@ -145,6 +145,7 @@
     <Compile Include="Infrastructure\ReactiveUpdateManager.cs" />
     <Compile Include="ViewModels\ArmoryViewModel.cs" />
     <Compile Include="ViewModels\MediaLinks.cs" />
+    <Compile Include="ViewModels\MediaViewModel.cs" />
     <Compile Include="ViewModels\PlayerViewModel.cs" />
     <Compile Include="ViewModels\SpecViewModel.cs" />
     <Compile Include="ViewModels\TeamSetupViewModel.cs" />
@@ -184,6 +185,7 @@
     <Content Include="Scripts\knockout-3.1.0.js" />
     <Content Include="Scripts\modernizr-2.7.2.js" />
     <Content Include="Scripts\myUtils.js" />
+    <Content Include="Scripts\resourceMap.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
@@ -204,6 +206,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\jquery-2.1.0.min.map" />
     <Content Include="Views\Shared\GoogleAnalyticsTrackingCode.cshtml" />
+    <Content Include="Views\Home\PartialCharacterView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FotM.Config\FotM.Config.csproj">
@@ -217,6 +220,10 @@
     <ProjectReference Include="..\FotM.Messaging\FotM.Messaging.csproj">
       <Project>{56EE32B7-8222-4C10-8D38-2D0BC633294C}</Project>
       <Name>FotM.Messaging</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FotM.Utilities\FotM.Utilities.csproj">
+      <Project>{90d8a7e8-fbac-4b87-9ec2-a4e6f02b75c8}</Project>
+      <Name>FotM.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

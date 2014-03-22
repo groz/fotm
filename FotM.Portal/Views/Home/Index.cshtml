@@ -16,7 +16,9 @@
 
 @section onReady
 {
-    initializePage("@(RegionalConfig.Instance.Region)", @Html.Raw(Json.Encode(Model)))
+    var armory = @Html.Raw(Json.Encode(Model))
+    var media = @Html.Raw(Json.Encode(ViewBag.Media))
+    initializePage("@(RegionalConfig.Instance.Region)", armory, media)
 }
 
 <br />
@@ -55,17 +57,12 @@
                 <tr data-bind="css: DeltaType">
                     <td data-bind="text: Rank"></td>
                     <td>
-                        <img data-bind="attr:{src: FactionImageLink}" alt="FactionImage" />
+                        <img data-bind="attr:{src: $root.toFactionImage(FactionId)}" alt="FactionImage" />
                     </td>
 
                     <!-- ko foreach: Players -->
                     <td>
-                        <img data-bind="attr:{src: RaceImageLink}" alt="RaceImage" />
-                        <img data-bind="attr:{src: ClassImageLink}" alt="ClassImage" />
-                        <img data-bind="attr:{src: SpecImageLink}" alt="SpecImage" />
-                        <span data-bind="text: Name"></span>
-                        -
-                        <span data-bind="text: Realm"></span>
+                        @Html.Partial("PartialCharacterView")
                     </td>
                     <!-- /ko -->
 
@@ -87,8 +84,8 @@
                     <td data-bind="text: Rank"></td>
                     <!-- ko foreach: Specs -->
                     <td>
-                        <img data-bind="attr:{src: ClassImageLink}" alt="SpecImage" />
-                        <img data-bind="attr:{src: SpecImageLink}" alt="SpecImage" />
+                        <img data-bind="attr:{src: $root.toClassImage(ClassId)}" alt="SpecImage" />
+                        <img data-bind="attr:{src: $root.toSpecImage(SpecId)}" alt="SpecImage" />
                     </td>
                     <!-- /ko -->
                     <td data-bind="text: Percent"></td>
@@ -104,19 +101,14 @@
         <table class="table table-striped table-condensed table-responsive table-hover">
             <tbody data-bind="foreach: selectedTeams">
                 <tr>
-                    @*<td data-bind="text: Rank"></td>*@
+                    <td data-bind="text: Rank"></td>
                     <td>
-                        <img data-bind="attr:{src: FactionImageLink}" alt="FactionImage" />
+                        <img data-bind="attr:{src: $root.toFactionImage(FactionId)}" alt="FactionImage" />
                     </td>
 
                     <!-- ko foreach: Players -->
                     <td>
-                        <img data-bind="attr:{src: RaceImageLink}" alt="RaceImage" />
-                        <img data-bind="attr:{src: ClassImageLink}" alt="ClassImage" />
-                        <img data-bind="attr:{src: SpecImageLink}" alt="SpecImage" />
-                        <span data-bind="text: Name"></span>
-                        -
-                        <span data-bind="text: Realm"></span>
+                        @Html.Partial("PartialCharacterView")
                     </td>
                     <!-- /ko -->
                     

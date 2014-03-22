@@ -15,6 +15,9 @@ namespace FotM.Portal.Controllers
         public ActionResult Index()
         {
             ArmoryViewModel latestArmoryViewModel = ReactiveUpdateManager.Instance.GetLatestViewModel();
+
+            ViewBag.Media = new MediaViewModel();
+
             return View(latestArmoryViewModel);
         }
 

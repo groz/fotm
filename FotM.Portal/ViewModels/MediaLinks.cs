@@ -8,6 +8,11 @@ namespace FotM.Portal.ViewModels
 {
     public static class MediaLinks // TODO: inject per region/locale
     {
+        public static string RaceImageLink(Race race, Gender gender)
+        {
+            return RaceImageLink((int) race, (int) gender);
+        }
+
         public static string RaceImageLink(int raceId, int genderId)
         {
                 return string.Format("http://media.blizzard.com/wow/icons/18/race_{0}_{1}.jpg",
@@ -124,6 +129,11 @@ namespace FotM.Portal.ViewModels
         public static string FactionImageLink(int factionId)
         {
             return string.Format("http://media.blizzard.com/wow/icons/18/faction_{0}.jpg", factionId);
+        }
+
+        public static string FactionImageLink(Faction faction)
+        {
+            return FactionImageLink((int) faction);
         }
     }
 }

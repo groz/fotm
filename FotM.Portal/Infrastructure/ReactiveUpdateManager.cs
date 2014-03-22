@@ -39,7 +39,7 @@ namespace FotM.Portal.Infrastructure
             var hostName = Dns.GetHostName();
 
             var receiver = new AzureQueueClient<StatsUpdateMessage>(hostName, true);
-            receiver.Subscribe(OnQueryStatsUpdateReceived);
+            receiver.Subscribe(OnStatsUpdateReceived);
 
             var requester = new AzureQueueClient<QueryLatestStatsMessage>(Constants.QueryLatestStatsQueue, true);
 
@@ -47,12 +47,6 @@ namespace FotM.Portal.Infrastructure
             {
                 QueryingHost = hostName
             });
-        }
-
-        private bool OnQueryStatsUpdateReceived(StatsUpdateMessage msg)
-        {
-            var armoryViewModel = CreateViewModel(msg);
-            return true;
         }
 
         private bool OnStatsUpdateReceived(StatsUpdateMessage msg)
@@ -90,7 +84,7 @@ namespace FotM.Portal.Infrastructure
             var viewModel = GetLatestViewModel();
 
             if (viewModel != null)
-                caller.update();
+                caller.update(viewModel);
         }
     }
 }

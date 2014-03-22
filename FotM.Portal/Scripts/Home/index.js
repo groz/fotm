@@ -1,6 +1,6 @@
 ﻿// Code-behind viewmodel for /Home/Index action
 
-function ArmoryViewModel(region, data) {
+function ArmoryViewModel(region, data, media) {
     var self = this;
     
     function virtualPageView(virtualPage) {
@@ -85,10 +85,28 @@ function ArmoryViewModel(region, data) {
             virtualPageView("/leaderboard");
         }
     };
+
+    self.toFactionImage = function (factionId) {
+        return media.FactionImages[factionId];
+    };
+    
+    self.toClassImage = function (classId) {
+        return media.ClassImages[classId];
+    };
+    
+    self.toSpecImage = function (specId) {
+        return media.SpecImages[specId];
+    };
+    
+    self.toRaceImage = function (raceId) {
+        return media.RaceImages[raceId];
+    };
 }
 
-function initializePage(region, data) {
-    var armory = new ArmoryViewModel(region, data);
+function initializePage(region, data, media) {
+    console.log(media);
+    
+    var armory = new ArmoryViewModel(region, data, media);
     ko.applyBindings(armory);
 
     var hub = $.connection.indexHub;

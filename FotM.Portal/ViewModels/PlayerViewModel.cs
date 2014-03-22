@@ -22,27 +22,27 @@ namespace FotM.Portal.ViewModels
             get { return _model.Realm.RealmName; }
         }
 
-        public string RaceImageLink
+        public string RaceId
         {
             get
             {
-                return MediaLinks.RaceImageLink(_model.RaceId, _model.GenderId);
+                return string.Format("{0}_{1}", _model.RaceId, _model.GenderId);
             }
         }
 
-        public string ClassImageLink
+        public string ClassId
         {
             get
             {
-                return MediaLinks.ClassImageLink(_model.ClassId);
+                return _model.ClassId.ToString();
             }
         }
 
-        public string SpecImageLink
+        public string SpecId
         {
             get
             {
-                return MediaLinks.SpecImageLink(_model.Spec);
+                return _model.SpecId.ToString();
             }
         }
     }
