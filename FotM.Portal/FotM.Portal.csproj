@@ -203,6 +203,7 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\jquery-2.1.0.min.map" />
+    <Content Include="Views\Shared\GoogleAnalyticsTrackingCode.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FotM.Config\FotM.Config.csproj">

@@ -83,17 +83,5 @@ namespace FotM.Portal.Infrastructure
                 ? CreateViewModel(_latestMessage)
                 : null;
         }
-
-        public void ClientJoined()
-        {
-            int n = Interlocked.Increment(ref nCurrentViewers);
-            _clients.All.updateViewerCount(n);
-        }
-
-        public void ClientLeft()
-        {
-            int n = Interlocked.Decrement(ref nCurrentViewers);
-            _clients.All.updateViewerCount(n);
-        }
     }
 }

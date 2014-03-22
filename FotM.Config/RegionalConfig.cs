@@ -33,5 +33,11 @@ namespace FotM.Config
 
         [FromConfig(ConfigFile = "Regional.config")]
         public Uri BlizzardApiEndPoint { get; private set; }
+
+        [FromConfig(ConfigFile = "Regional.config")]
+        public string GoogleAnalyticsPropertyCode  { get; private set; }
+
+        [FromConfig(ConfigFile = "Regional.config")]
+        public string GoogleAnalyticsWebsite { get; private set; }
     }
 }

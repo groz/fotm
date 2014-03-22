@@ -10,23 +10,5 @@ namespace FotM.Portal.Infrastructure
         {
             ReactiveUpdateManager.Instance.SendLatestUpdate(Clients.Caller);
         }
-
-        public override System.Threading.Tasks.Task OnConnected()
-        {
-            ReactiveUpdateManager.Instance.ClientJoined();
-            return base.OnConnected();
-        }
-
-        public override System.Threading.Tasks.Task OnDisconnected()
-        {
-            ReactiveUpdateManager.Instance.ClientLeft();
-            return base.OnDisconnected();
-        }
-
-        public override System.Threading.Tasks.Task OnReconnected()
-        {
-            ReactiveUpdateManager.Instance.ClientJoined();
-            return base.OnReconnected();
-        }
     }
 }
