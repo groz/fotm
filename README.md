@@ -6,16 +6,14 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Add event tracking for Google Analytics (Virtual Page Views)
-- Create admin method mechanism
-- Create admin method polling number of current connected users
 - Upload ResourceMap to client on page load to avoid sending image urls with each viewModel update
-- Icon for the site
 - Move generation of image links from server viewmodel to js client view objects
+- Icon for the site
+- Create admin push mechanism
+- Create admin method polling number of current connected users
 - Add NavBar for FotM section to choose fotms by class, not spec
 - Show fotm setups for current playing teams if appropriate section is selected
 - Add armory links to players
-
 
 Infrastructure:
 - Investigate why website doesn't receive update message on init sometimes (switch to private queues?)
@@ -25,11 +23,8 @@ Infrastructure:
   - Add test environment (use EU data)
   - Test it deploying for US
 - Delete expired (1 week?) entries from leaderboard
-- Add correct setup per region
 - Set smaller expiration date for teams that were seen only a few times
 - Divide ratings update per number of games if diff is more than 1 to avoid showing 30+ rating changes
-- Google analytics
-
 
 Machine learning:
 - Introduce some team jumping in test data
