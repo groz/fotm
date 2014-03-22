@@ -6,7 +6,7 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Move generation of image links from server viewmodel to js client view objects
+- ASAP: Optimize site applying GA suggestions
 - Icon for the site
 - Create admin push mechanism
 - Create admin method polling number of current connected users
