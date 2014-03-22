@@ -6,6 +6,7 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
+- Create admin notifications mechanism
 - Upload ResourceMap to client on page load to avoid sending image urls with each viewModel update
 - Icon for the site
 - Move generation of image links from server viewmodel to js client view objects
