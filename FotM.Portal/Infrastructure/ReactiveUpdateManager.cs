@@ -78,5 +78,13 @@ namespace FotM.Portal.Infrastructure
                 ? CreateViewModel(_latestMessage)
                 : null;
         }
+
+        public void SendLatestUpdate(dynamic caller)
+        {
+            var viewModel = GetLatestViewModel();
+
+            if (viewModel != null)
+                caller.update();
+        }
     }
 }
