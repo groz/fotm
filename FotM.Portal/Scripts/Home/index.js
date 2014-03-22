@@ -3,6 +3,11 @@
 function ArmoryViewModel(region, data) {
     var self = this;
     
+    function virtualPageView(virtualPage) {
+        console.log(virtualPage);
+        ga('send', 'pageview', virtualPage);
+    }
+    
     self.bracket = ko.observable("3v3");
     self.region = ko.observable(region);
     
@@ -49,10 +54,11 @@ function ArmoryViewModel(region, data) {
     self.selectedTeams = ko.observable();
 
     self.showTeams = function (setup) {
-        console.log("Selected setup", setup);
-        
         self.showFotMHint(false);
         self.selectedTeams(setup.Teams);
+
+        var virtualPage = '/fotm?rank=' + setup.Rank;
+        virtualPageView(virtualPage);
     };
 
     self.showFotMHint = ko.observable(true);
@@ -63,6 +69,22 @@ function ArmoryViewModel(region, data) {
         console.log("Initializing with", data);
         self.update(data);
     }
+
+    self.playingNowClicked = function () {
+        if (!self.playingNowSelected()) {
+            self.leaderboardSelected(false);
+            self.playingNowSelected(true);
+            virtualPageView("/now");
+        }
+    };
+    
+    self.leaderboardClicked = function () {
+        if (!self.leaderboardSelected()) {
+            self.leaderboardSelected(true);
+            self.playingNowSelected(false);
+            virtualPageView("/leaderboard");
+        }
+    };
 }
 
 function initializePage(region, data) {
@@ -71,16 +93,6 @@ function initializePage(region, data) {
 
     armory.leaderboardSelected(true);
     armory.playingNowSelected(false);
-
-    $("#leaderboardBtn").click(function () {
-        armory.leaderboardSelected(true);
-        armory.playingNowSelected(false);
-    });
-
-    $("#playingNowBtn").click(function () {
-        armory.leaderboardSelected(false);
-        armory.playingNowSelected(true);
-    });
 
     var hub = $.connection.indexHub;
 

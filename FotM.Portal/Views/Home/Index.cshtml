@@ -23,12 +23,12 @@
 
 <div class="row">
     <button type="button" class="btn btn-lg btn-default"
-            data-bind="css: { active: leaderboardSelected }"
+            data-bind="css: { active: leaderboardSelected }, click: leaderboardClicked"
             id="leaderboardBtn">
         Leaderboard
     </button>
     <button type="button" class="btn btn-lg btn-default"
-            data-bind="css: { active: playingNowSelected }"
+            data-bind="css: { active: playingNowSelected }, click: playingNowClicked"
             id="playingNowBtn">
         Playing now
     </button>
