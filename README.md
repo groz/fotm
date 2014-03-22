@@ -6,7 +6,6 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Make FotM.Config rebuild on each update to Regional.config
 - Add event tracking for Google Analytics (Virtual Page Views)
 - Create admin method mechanism
 - Create admin method polling number of current connected users
@@ -43,3 +42,4 @@ Backlog:
 - Refactor Messaging
 - Add AWS SNS/SQS
 - Refactor the horrible code made while trying to create minimum viable product
+- Make FotM.Config rebuild on each update to Regional.config
