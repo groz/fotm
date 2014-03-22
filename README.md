@@ -6,7 +6,6 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Upload ResourceMap to client on page load to avoid sending image urls with each viewModel update
 - Move generation of image links from server viewmodel to js client view objects
 - Icon for the site
 - Create admin push mechanism
@@ -32,3 +31,4 @@ Backlog:
 - Add AWS SNS/SQS
 - Refactor the horrible code made while trying to create minimum viable product
 - Make FotM.Config rebuild on each update to Regional.config
+- Investigate compressing all SignalR communication
