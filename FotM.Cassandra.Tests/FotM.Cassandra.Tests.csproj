@@ -81,6 +81,7 @@
     <Compile Include="CassandraTests2v2.cs" />
     <Compile Include="CassandraTests3v3.cs" />
     <Compile Include="CassandraUtilsTests.cs" />
+    <Compile Include="FixedSizeKMeansTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
