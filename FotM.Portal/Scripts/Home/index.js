@@ -1,10 +1,19 @@
 ﻿// Code-behind viewmodel for /Home/Index action
 
-function ArmoryViewModel(data) {
+function ArmoryViewModel(region, data) {
     var self = this;
     
     self.bracket = ko.observable("3v3");
-    self.region = ko.observable("US");
+    self.region = ko.observable(region);
+    
+    self.US = ko.computed(function() {
+        return self.region() == "US";
+    });
+    
+    self.EU = ko.computed(function () {
+        return self.region() == "EU";
+    });
+    
     self.leaderboardSelected = ko.observable(true);
     self.playingNowSelected = ko.observable(false);
 
@@ -56,8 +65,8 @@ function ArmoryViewModel(data) {
     }
 }
 
-function initializePage(data) {
-    var armory = new ArmoryViewModel(data);
+function initializePage(region, data) {
+    var armory = new ArmoryViewModel(region, data);
     ko.applyBindings(armory);
 
     armory.leaderboardSelected(true);

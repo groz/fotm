@@ -1,4 +1,6 @@
-﻿@model FotM.Portal.ViewModels.ArmoryViewModel
+﻿@using FotM.Config
+@model FotM.Portal.ViewModels.ArmoryViewModel
+
 @{
     ViewBag.Title = "FotM";
 }
@@ -14,7 +16,7 @@
 
 @section onReady
 {
-    initializePage(@Html.Raw(Json.Encode(Model)))
+    initializePage("@(RegionalConfig.Instance.Region)", @Html.Raw(Json.Encode(Model)))
 }
 
 <br />
