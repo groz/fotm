@@ -6,8 +6,7 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Add event tracking for Google Analytics (Virtual Page Views)
-- Create admin method mechanism
+- Create admin push mechanism
 - Create admin method polling number of current connected users
 - Upload ResourceMap to client on page load to avoid sending image urls with each viewModel update
 - Icon for the site
