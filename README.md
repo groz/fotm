@@ -6,6 +6,7 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
+- ASAP: inject GoogleAnalytics code based on Region
 - Create admin notifications mechanism
 - Create polling current connected users through admin notifications
 - Upload ResourceMap to client on page load to avoid sending image urls with each viewModel update
