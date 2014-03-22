@@ -93,7 +93,7 @@ namespace FotM.ArmoryScanner
 
             if (_teamStats.Any())
             {
-                PublishStats();
+                PublishStats(msg.QueryingHost);
                 return true;
             }
 
