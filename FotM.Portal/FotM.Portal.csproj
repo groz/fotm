@@ -133,7 +133,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Content\Images\" />
-    <Folder Include="Content\Themes\Slate\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +164,8 @@
     <Content Include="Content\Themes\Cyborg\bootstrap.min.css" />
     <Content Include="Content\Themes\Darkly\bootstrap.css" />
     <Content Include="Content\Themes\Darkly\bootstrap.min.css" />
+    <Content Include="Content\Themes\Slate\bootstrap.css" />
+    <Content Include="Content\Themes\Slate\bootstrap.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
