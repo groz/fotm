@@ -41,42 +41,38 @@
     <div class="col-lg-12">
         <table class="table table-striped table-condensed table-responsive">
             <thead>
-                <tr class="hidden-xs">
+                <tr class="hidden-xs hidden-sm">
                     <th>#</th>
-                    <th class="hidden-sm">Side</th>
-
-                    <th>
-                        <div class="col-lg-4 col-md-4 col-sm-4">Player 1</div>
-                        <div class="col-lg-4 col-md-4 col-sm-4">Player 2</div>
-                        <div class="col-lg-4 col-md-4 col-sm-4">Player 3</div>
-                    </th>
-                    <th>Rating</th>
+                    <th class="hidden-xs hidden-sm">Side</th>
                     <th></th>
-                    <th class="hidden-sm">Time</th>
+                    <th>Rating</th>
+                    <th class="hidden-xs hidden-sm">Change</th>
+                    <th class="hidden-xs hidden-sm">Seen</th>
                 </tr>
             </thead>
 
             <tbody data-bind="foreach: selectedPage">
-                <tr data-bind="css: DeltaType">
+                <tr>
                     <td class="centered" data-bind="text: Rank"></td>
                     <td class="hidden-xs hidden-sm vcentered">
                         <img data-bind="attr:{src: $root.toFactionImage(FactionId)}" alt="FactionImage" />
                     </td>
 
                     <td>
-                        <!-- ko foreach: Players -->
-                        <div class="col-lg-4 col-md-4 col-sm-4">
-                            @Html.Partial("PartialCharacterView")
-                            <span class="hidden-sm hidden-md">-</span>
-                            <span class="hidden-sm hidden-md" data-bind="text: Realm"></span>
+                        <div class="row">
+                            <!-- ko foreach: Players -->
+                            <div class="col-lg-4 col-md-4 col-sm-4 nopadding">
+                                @Html.Partial("PartialCharacterView")
+                                <span class="hidden-sm hidden-md">-</span>
+                                <span class="hidden-sm hidden-md" data-bind="text: Realm"></span>
+                            </div>
+                            <!-- /ko -->
                         </div>
-                        <!-- /ko -->
                     </td>
 
-
-                    <td class="centered" data-bind="text: Rating"></td>
-                    <td class="hidden-xs centered" data-bind="text: RatingChange"></td>
-                    <td class="hidden-xs hidden-sm centered" data-bind="text: LocalUpdateTime"></td>
+                    <td class="centered" data-bind="text: Rating, css: DeltaType"></td>
+                    <td class="hidden-xs centered" data-bind="text: RatingChange, css: DeltaType"></td>
+                    <td class="hidden-xs hidden-sm" data-bind="text: $root.toLocal(Updated), css: DeltaType"></td>
                 </tr>
             </tbody>
         </table>
@@ -88,11 +84,11 @@
         <h2>FotM</h2>
         <table class="table table-striped table-condensed table-responsive table-hover">
             <tbody data-bind="foreach: model().TeamSetupsViewModels">
-                <tr data-bind="click: $parent.showTeams">
+                <tr data-bind="click: $parent.showTeams, css: {info: $parent.isSetupSelected($data)}" class="notext">
                     <td class="hidden-md" data-bind="text: Rank"></td>
                     <!-- ko foreach: Specs -->
                     <td>
-                        <img data-bind="attr:{src: $root.toClassImage(ClassId)}" alt="SpecImage" />
+                        <img data-bind="attr:{src: $root.toClassImage(ClassId)}" alt="ClassImage" />
                         <img data-bind="attr:{src: $root.toSpecImage(SpecId)}" alt="SpecImage" />
                     </td>
                     <!-- /ko -->
@@ -107,26 +103,24 @@
             <strong>Select</strong> setup to browse teams.
         </div>
         <table class="table table-striped table-condensed table-responsive table-hover">
-            <tbody data-bind="foreach: selectedTeams">
+            <tbody data-bind="foreach: selectedSetup().Teams">
                 <tr>
-                    <td class="hidden-md centered" data-bind="text: Rank"></td>
-                    <td class="hidden-xs hidden-sm hidden-md hidden-lg">
-                        <img data-bind="attr:{src: $root.toFactionImage(FactionId)}" alt="FactionImage" />
-                    </td>
-
                     <td>
-                        <!-- ko foreach: Players -->
-                        <div class="col-lg-4 col-md-4 col-sm-4">
-                            <img data-bind="attr:{src: $root.toRaceImage(RaceId)}" alt="RaceImage" />
-                            <img data-bind="attr:{src: $root.toSpecImage(SpecId)}" alt="SpecImage" />
-                            <span data-bind="text: Name"></span>
-                            <span class="hidden-sm hidden-md">-</span>
-                            <span class="hidden-sm hidden-md" data-bind="text: Realm"></span>
+                        <div class="row">
+                            <!-- ko foreach: Players -->
+                            <div class="col-lg-4 col-md-4 col-sm-4 nopadding">
+                                <img data-bind="attr:{src: $root.toRaceImage(RaceId)}" alt="RaceImage" />
+                                <img class="hidden-xs"
+                                     data-bind="attr:{src: $root.toClassImage(ClassId)}" alt="ClassImage" />
+                                <img data-bind="attr:{src: $root.toSpecImage(SpecId)}" alt="SpecImage" />
+                                <span data-bind="text: Name"></span>
+                                <span class="hidden-sm hidden-md">-</span>
+                                <span class="hidden-sm hidden-md" data-bind="text: Realm"></span>
+                            </div>
+                            <!-- /ko -->
                         </div>
-                        <!-- /ko -->
                     </td>
-
-                    <td class="centered" data-bind="text: Rating"></td>
+                    <td data-bind="text: Rating"></td>
                 </tr>
             </tbody>
         </table>

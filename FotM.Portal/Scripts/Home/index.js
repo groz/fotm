@@ -37,25 +37,16 @@ function ArmoryViewModel(region, data, media) {
     });
 
     self.update = function(msg) {
-        // convert server times to local time
-        $(msg.PlayingNow).each(function (idx) {
-            this.LocalUpdateTime = asLocalTime(this.Updated);
-        });
-
-        $(msg.AllTimeLeaders).each(function (idx) {
-            this.LocalUpdateTime = asLocalTime(this.Updated);
-        });
-
         self.model().AllTimeLeaders(msg.AllTimeLeaders);
         self.model().PlayingNow(msg.PlayingNow);
         self.model().TeamSetupsViewModels(msg.TeamSetupsViewModels);
     };
 
-    self.selectedTeams = ko.observable();
+    self.selectedSetup = ko.observable({});
 
     self.showTeams = function (setup) {
         self.showFotMHint(false);
-        self.selectedTeams(setup.Teams);
+        self.selectedSetup(setup);
 
         var virtualPage = '/fotm?rank=' + setup.Rank;
         virtualPageView(virtualPage);
@@ -100,6 +91,20 @@ function ArmoryViewModel(region, data, media) {
     
     self.toRaceImage = function (raceId) {
         return media.RaceImages[raceId];
+    };
+
+    self.toLocal = function(utcTime) {
+        var d = new Date(utcTime + " UTC");
+        
+        if (self.leaderboardSelected()) {
+            return d.toLocaleDateString() + " " + d.toLocaleTimeString();
+        } else {
+            return d.toLocaleTimeString();
+        }
+    };
+
+    self.isSetupSelected = function (teamSetup) {
+        return self.selectedSetup() == teamSetup;
     };
 }
 
