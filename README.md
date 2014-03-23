@@ -15,6 +15,7 @@ Frontend:
 - Add armory links to players
 
 Infrastructure:
+- Setup private topic for initialization instead of private queue to account for staged environments eating up messages
 - Setup easy deployment for website to US/EU
 - Setup easy deployment for scanner to US/EU
 - Add website for KR
