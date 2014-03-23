@@ -132,7 +132,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Content\Images\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +159,7 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Images\wow_mop_icon.png" />
     <Content Include="Content\Themes\Cyborg\bootstrap.css" />
     <Content Include="Content\Themes\Cyborg\bootstrap.min.css" />
     <Content Include="Content\Themes\Darkly\bootstrap.css" />

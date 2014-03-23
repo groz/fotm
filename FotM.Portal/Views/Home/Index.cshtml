@@ -80,7 +80,8 @@
         <h2>FotM</h2>
         <table class="table table-striped table-condensed table-responsive table-hover">
             <tbody data-bind="foreach: model().TeamSetupsViewModels">
-                <tr data-bind="click: $parent.showTeams, css: {success: $parent.isSetupSelected($data)}" class="notext">
+                <tr data-bind="click: $parent.showTeams, css: {success: $parent.isSetupSelected($data)}" 
+                    class="notext">
                     <td class="hidden-md" data-bind="text: Rank"></td>
                     <!-- ko foreach: Specs -->
                     <td>
