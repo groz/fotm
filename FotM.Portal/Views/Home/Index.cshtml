@@ -22,7 +22,7 @@
 
 <br />
 
-<div class="row nav nav-pills">
+<div class="row pager">
     <a role="button" class="btn btn-lg btn-default"
        data-bind="css: { active: leaderboardSelected }, click: leaderboardClicked"
        id="leaderboardBtn">
@@ -41,33 +41,42 @@
     <div class="col-lg-12">
         <table class="table table-striped table-condensed table-responsive">
             <thead>
-                <tr>
+                <tr class="hidden-xs">
                     <th>#</th>
-                    <th>Side</th>
-                    <th>Player 1</th>
-                    <th>Player 2</th>
-                    <th>Player 3</th>
+                    <th class="hidden-sm">Side</th>
+
+                    <th>
+                        <div class="col-lg-4 col-md-4 col-sm-4">Player 1</div>
+                        <div class="col-lg-4 col-md-4 col-sm-4">Player 2</div>
+                        <div class="col-lg-4 col-md-4 col-sm-4">Player 3</div>
+                    </th>
                     <th>Rating</th>
-                    <th>Change</th>
-                    <th>Time</th>
+                    <th></th>
+                    <th class="hidden-sm">Time</th>
                 </tr>
             </thead>
+
             <tbody data-bind="foreach: selectedPage">
                 <tr data-bind="css: DeltaType">
-                    <td data-bind="text: Rank"></td>
-                    <td>
+                    <td class="centered" data-bind="text: Rank"></td>
+                    <td class="hidden-xs hidden-sm vcentered">
                         <img data-bind="attr:{src: $root.toFactionImage(FactionId)}" alt="FactionImage" />
                     </td>
 
-                    <!-- ko foreach: Players -->
                     <td>
-                        @Html.Partial("PartialCharacterView")
+                        <!-- ko foreach: Players -->
+                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            @Html.Partial("PartialCharacterView")
+                            <span class="hidden-sm hidden-md">-</span>
+                            <span class="hidden-sm hidden-md" data-bind="text: Realm"></span>
+                        </div>
+                        <!-- /ko -->
                     </td>
-                    <!-- /ko -->
 
-                    <td data-bind="text: Rating"></td>
-                    <td data-bind="text: RatingChange"></td>
-                    <td data-bind="text: LocalUpdateTime"></td>
+
+                    <td class="centered" data-bind="text: Rating"></td>
+                    <td class="hidden-xs centered" data-bind="text: RatingChange"></td>
+                    <td class="hidden-xs hidden-sm centered" data-bind="text: LocalUpdateTime"></td>
                 </tr>
             </tbody>
         </table>
@@ -75,12 +84,12 @@
 </div>
 
 <div class="row">
-    <div class="col-lg-3">
+    <div class="col-lg-3 col-md-3 col-sm-5 col-xs-8">
         <h2>FotM</h2>
         <table class="table table-striped table-condensed table-responsive table-hover">
             <tbody data-bind="foreach: model().TeamSetupsViewModels">
                 <tr data-bind="click: $parent.showTeams">
-                    <td data-bind="text: Rank"></td>
+                    <td class="hidden-md" data-bind="text: Rank"></td>
                     <!-- ko foreach: Specs -->
                     <td>
                         <img data-bind="attr:{src: $root.toClassImage(ClassId)}" alt="SpecImage" />
@@ -92,7 +101,7 @@
             </tbody>
         </table>
     </div>
-    <div class="col-lg-9">
+    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
         <h2>Teams</h2>
         <div class="alert alert-info" data-bind="visible: showFotMHint">
             <strong>Select</strong> setup to browse teams.
@@ -100,18 +109,24 @@
         <table class="table table-striped table-condensed table-responsive table-hover">
             <tbody data-bind="foreach: selectedTeams">
                 <tr>
-                    <td data-bind="text: Rank"></td>
-                    <td>
+                    <td class="hidden-md centered" data-bind="text: Rank"></td>
+                    <td class="hidden-xs hidden-sm hidden-md hidden-lg">
                         <img data-bind="attr:{src: $root.toFactionImage(FactionId)}" alt="FactionImage" />
                     </td>
 
-                    <!-- ko foreach: Players -->
                     <td>
-                        @Html.Partial("PartialCharacterView")
+                        <!-- ko foreach: Players -->
+                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <img data-bind="attr:{src: $root.toRaceImage(RaceId)}" alt="RaceImage" />
+                            <img data-bind="attr:{src: $root.toSpecImage(SpecId)}" alt="SpecImage" />
+                            <span data-bind="text: Name"></span>
+                            <span class="hidden-sm hidden-md">-</span>
+                            <span class="hidden-sm hidden-md" data-bind="text: Realm"></span>
+                        </div>
+                        <!-- /ko -->
                     </td>
-                    <!-- /ko -->
 
-                    <td data-bind="text: Rating"></td>
+                    <td class="centered" data-bind="text: Rating"></td>
                 </tr>
             </tbody>
         </table>

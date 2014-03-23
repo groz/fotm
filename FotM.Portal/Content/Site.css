@@ -40,3 +40,16 @@ input[type="checkbox"].input-validation-error {
 .validation-summary-valid {
     display: none;
 }
+
+table {
+    max-width: none;
+}
+
+.centered {
+    vertical-align: middle !important;
+    text-align: center !important;
+}
+
+.vcentered {
+    vertical-align: middle !important;
+}
