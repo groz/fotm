@@ -6,8 +6,6 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- ASAP: Optimize site applying GA suggestions
-- Icon for the site
 - Create admin push mechanism
 - Create admin method polling number of current connected users
 - Add NavBar for FotM section to choose fotms by class, not spec
