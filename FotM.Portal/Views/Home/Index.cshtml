@@ -22,17 +22,17 @@
 
 <br />
 
-<div class="row">
-    <button type="button" class="btn btn-lg btn-default"
-            data-bind="css: { active: leaderboardSelected }, click: leaderboardClicked"
-            id="leaderboardBtn">
+<div class="row nav nav-pills">
+    <a role="button" class="btn btn-lg btn-default"
+       data-bind="css: { active: leaderboardSelected }, click: leaderboardClicked"
+       id="leaderboardBtn">
         Leaderboard
-    </button>
-    <button type="button" class="btn btn-lg btn-default"
-            data-bind="css: { active: playingNowSelected }, click: playingNowClicked"
-            id="playingNowBtn">
+    </a>
+    <a role="button" class="btn btn-lg btn-default"
+       data-bind="css: { active: playingNowSelected }, click: playingNowClicked"
+       id="playingNowBtn">
         Playing now
-    </button>
+    </a>
 </div>
 
 <br />
@@ -110,7 +110,7 @@
                         @Html.Partial("PartialCharacterView")
                     </td>
                     <!-- /ko -->
-                    
+
                     <td data-bind="text: Rating"></td>
                 </tr>
             </tbody>
