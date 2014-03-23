@@ -6,8 +6,7 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Upload ResourceMap to client on page load to avoid sending image urls with each viewModel update
-- Move generation of image links from server viewmodel to js client view objects
+- ASAP: Optimize site applying GA suggestions
 - Icon for the site
 - Create admin push mechanism
 - Create admin method polling number of current connected users
@@ -24,6 +23,7 @@ Infrastructure:
 - Divide ratings update per number of games if diff is more than 1 to avoid showing 30+ rating changes
 
 Machine learning:
+- ASAP: Equal sized k-means!
 - Compute several clusterings and rank them against each other based on following rules: 
   - Lower score for teams with double/triple healers
   - Lower score for teams with class stacking
@@ -32,3 +32,4 @@ Backlog:
 - Add AWS SNS/SQS
 - Refactor the horrible code made while trying to create minimum viable product
 - Make FotM.Config rebuild on each update to Regional.config
+- Investigate compressing all SignalR communication
