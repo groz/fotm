@@ -20,8 +20,17 @@ namespace FotM.Portal
                       "~/Scripts/bootstrap.js",
                       "~/Scripts/respond.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/my").Include(
-                      "~/Scripts/myUtils.js"));
+            bundles.Add(new ScriptBundle("~/bundles/my").Include("~/Scripts/myUtils.js"));
+
+#if DEBUG
+            bundles.Add(new ScriptBundle("~/bundles/activeView").Include(
+                "~/Scripts/knockout-3.1.0.debug.js",
+                "~/Scripts/jquery.signalR-2.0.2.js"));
+#else
+            bundles.Add(new ScriptBundle("~/bundles/activeView").Include(
+                "~/Scripts/knockout-3.1.0.js",
+                "~/Scripts/jquery.signalR-2.0.2.min.js"));
+#endif
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",

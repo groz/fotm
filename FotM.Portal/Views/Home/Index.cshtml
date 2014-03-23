@@ -1,5 +1,5 @@
-﻿@using FotM.Config
-@model FotM.Portal.ViewModels.ArmoryViewModel
+﻿@model FotM.Portal.ViewModels.ArmoryViewModel
+@using FotM.Config
 
 @{
     ViewBag.Title = "FotM";
@@ -8,8 +8,7 @@
 @section scripts
 {
     <!-- TODO: switch to release(minified) versions of scripts -->
-    <script src="~/Scripts/knockout-3.1.0.debug.js"></script>
-    <script src="~/Scripts/jquery.signalR-2.0.2.js"></script>
+    @Scripts.Render("~/bundles/activeView")
     <script src="~/signalr/hubs"></script>
     <script src="~/Scripts/Home/index.js"></script>
 }
