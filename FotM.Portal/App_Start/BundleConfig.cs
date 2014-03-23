@@ -33,7 +33,7 @@ namespace FotM.Portal
 #endif
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
+                      "~/Content/Themes/Slate/bootstrap.css",
                       "~/Content/site.css"));
         }
     }

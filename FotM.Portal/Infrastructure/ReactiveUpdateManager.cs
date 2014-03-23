@@ -36,7 +36,7 @@ namespace FotM.Portal.Infrastructure
             _statsUpdateListener.Subscribe(OnStatsUpdateReceived);
 
             // create private queue, send it in message and listen to it for response
-            var hostName = Dns.GetHostName();
+            var hostName = Dns.GetHostName()+Guid.NewGuid().ToString().Substring(0, 4);
 
             var receiver = new AzureQueueClient<StatsUpdateMessage>(hostName, true);
             receiver.Subscribe(OnStatsUpdateReceived);
