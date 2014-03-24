@@ -11,6 +11,7 @@ Feature requests from the users:
 - Click on the player to open armory
 
 Frontend:
+- When Playing now is empty show the time of latest update
 - Create admin push mechanism
 - Create admin method polling number of current connected users
 - Add NavBar for FotM section to choose fotms by class, not spec
