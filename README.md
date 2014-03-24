@@ -5,6 +5,10 @@ World of Warcraft arena FotM monitor.
 
 TODO
 
+Feature requests from the users:
+- More teams than top 20
+- Search fotm comps per spec
+
 Frontend:
 - Create admin push mechanism
 - Create admin method polling number of current connected users
