@@ -21,7 +21,8 @@ Infrastructure:
 - Setup easy deployment for website to US/EU
 - Setup easy deployment for scanner to US/EU
 - Add website for KR
-- Delete expired (1 week?) entries from leaderboard
+- Delete expired (1 game per day?) entries from leaderboard
+- Remember teams, add win/loss ratio to each team
 - Set smaller expiration date for teams that were seen only a few times
 - Divide ratings update per number of games if diff is more than 1 to avoid showing 30+ rating changes
 
