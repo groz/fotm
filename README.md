@@ -29,6 +29,9 @@ Infrastructure:
 - Set smaller expiration date for teams that were seen only a few times
 - Divide ratings update per number of games if diff is more than 1 to avoid showing 30+ rating changes
 
+Machine learning:
+- Remove/adjust HealersAndSize kmeans metric with distortion metric
+
 Backlog:
 - Add AWS SNS/SQS
 - Refactor the horrible code made while trying to create minimum viable product
