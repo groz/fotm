@@ -166,7 +166,6 @@
     <Content Include="Content\Themes\Darkly\bootstrap.min.css" />
     <Content Include="Content\Themes\Slate\bootstrap.css" />
     <Content Include="Content\Themes\Slate\bootstrap.min.css" />
-    <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -180,6 +179,7 @@
     <None Include="Properties\PublishProfiles\fotm.pubxml" />
     <None Include="Properties\PublishProfiles\fotm__staging.pubxml" />
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
+    <Content Include="favicon.ico" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\Home\index.js" />
