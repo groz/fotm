@@ -31,6 +31,7 @@ Infrastructure:
 
 Machine learning:
 - Remove/adjust HealersAndSize kmeans metric with distortion metric
+https://class.coursera.org/ml-004/lecture/80
 
 Backlog:
 - Add AWS SNS/SQS
