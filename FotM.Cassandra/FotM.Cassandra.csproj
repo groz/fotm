@@ -74,14 +74,17 @@
     <Compile Include="AccordKMeans.cs" />
     <Compile Include="AccordKMeansExtension.cs" />
     <Compile Include="Cassandra.cs" />
-    <Compile Include="AccordFeatureAttribute.cs" />
+    <Compile Include="CassandraFeatureAttribute.cs" />
     <Compile Include="CassandraStats.cs" />
     <Compile Include="CassandraUtils.cs" />
     <Compile Include="FeatureAttributeDescriptor.cs" />
+    <Compile Include="HealerAndSizeAwareKMeans.cs" />
+    <Compile Include="MyKMeans.cs" />
     <Compile Include="IKMeans.cs" />
     <Compile Include="NumlKMeans.cs" />
     <Compile Include="PlayerChange.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UpdatedKMeans.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

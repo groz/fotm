@@ -35,7 +35,9 @@ namespace FotM.TestingUtilities
 
         protected static LeaderboardEntry CreateEntry(int ranking, string name, int rating,
             int weeklyWins = 0, int weeklyLosses = 0, int seasonWins = 0, int seasonLosses = 0,
-            string realmName = null, int realmId = -1, string realmSlug = null, int specId = -1, int classId = -1)
+            string realmName = null, int realmId = -1, string realmSlug = null, 
+            int specId = (int)CharacterSpec.Priest_Shadow, 
+            int classId = -1)
         {
             return new LeaderboardEntry()
             {

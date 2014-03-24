@@ -79,11 +79,10 @@ namespace FotM.Utilities
             return fact[n];
         }
 
-        public static double EuclideanDistance(double[] vectorX, double[] vectorY)
+        public static double EuclideanDistance(IEnumerable<double> x, IEnumerable<double> y)
         {
-            return vectorX.Select((x, i) => (x - vectorY[i]).Squared()).Sum();
+            return x.Zip(y, (xi, yi) => Squared((xi - yi))).Sum();
         }
-
     }
 
     public static class Functional
@@ -145,6 +144,69 @@ namespace FotM.Utilities
         public static double Length(double[] vector)
         {
             return Math.Sqrt(vector.Sum(x => x * x));
+        }
+    }
+
+    public class Vector : List<double>
+    {
+        public Vector(params double[] arr)
+            : base(arr)
+        {
+        }
+
+        public Vector(IEnumerable<double> arr)
+            : base(arr)
+        {
+        }
+
+        public static Vector Zero(int size)
+        {
+            return new Vector(Enumerable.Repeat(0.0, size));
+        }
+
+        public static Vector Sum(Vector left, Vector right)
+        {
+            var result = Enumerable.Zip(left, right, (li, ri) => li + ri);
+            return new Vector(result);
+        }
+
+        public double Length
+        {
+            get { return Math.Sqrt(SquaredLength); }
+        }
+
+        public double SquaredLength
+        {
+            get { return this.Select(v => v.Squared()).Sum(); }
+        }
+
+        public override string ToString()
+        {
+            return "(" + string.Join(", ", this.Select(v => v.ToString("F1"))) + ")";
+        }
+
+        public static double SquaredDistance(Vector left, Vector right)
+        {
+            return MathUtils.EuclideanDistance(left, right);
+        }
+    }
+
+    public static class VectorExtensions
+    {
+        public static Vector Scale(this Vector v, double factor)
+        {
+            return new Vector(v.Select(vi => vi * factor));
+        }
+
+        public static Vector ToVector(this double[] arr)
+        {
+            return new Vector(arr);
+        }
+
+        public static Vector Mean(this Vector[] vectors)
+        {
+            int n = vectors.Length;
+            return vectors.Aggregate(Vector.Sum).Scale(1 / (double)n);
         }
     }
 }

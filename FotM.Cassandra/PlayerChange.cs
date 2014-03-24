@@ -57,34 +57,34 @@ namespace FotM.Cassandra
         public int RealmId { get; private set; }
 
         [numl.Model.Feature]
-        [AccordFeature(Weight = 1)]
+        [CassandraFeature(Weight = 1)]
         public int RatingDiff { get; private set; }
 
         //[AccordFeature(Weight = 5)]
         public int RankingDiff { get; private set; }
 
         [numl.Model.Feature]
-        [AccordFeature(Weight = 1)]
+        [CassandraFeature(Weight = 1)]
         public int Ranking { get; private set; }
 
         [numl.Model.Feature]
-        [AccordFeature(Weight = 1)]
+        [CassandraFeature(Weight = 1)]
         public int Rating { get; private set; }
 
         [numl.Model.Feature]
-        [AccordFeature(Weight = 1)]
+        [CassandraFeature(Weight = 1)]
         public int WeeklyWins { get; private set; }
 
         [numl.Model.Feature]
-        [AccordFeature(Weight = 1)]
+        [CassandraFeature(Weight = 1)]
         public int WeeklyLosses { get; private set; }
 
         [numl.Model.Feature]
-        [AccordFeature(Weight = 1)]
+        [CassandraFeature(Weight = 1)]
         public int SeasonWins { get; private set; }
 
         [numl.Model.Feature]
-        [AccordFeature(Weight = 1)]
+        [CassandraFeature(Weight = 1)]
         public int SeasonLosses { get; private set; }
        
         //[AccordFeature]

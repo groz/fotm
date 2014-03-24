@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using numl.Math.LinearAlgebra;
 using numl.Math.Metrics;
 using numl.Model;
 using numl.Unsupervised;
+using NumlVector = numl.Math.LinearAlgebra.Vector;
+
 
 namespace FotM.Cassandra
 {
@@ -38,7 +39,7 @@ namespace FotM.Cassandra
             _func = func;
         }
 
-        public double Compute(Vector x, Vector y)
+        public double Compute(NumlVector x, NumlVector y)
         {
             return _func(x.ToArray(), y.ToArray());
         }

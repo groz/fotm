@@ -13,7 +13,7 @@ namespace FotM.Cassandra
     {
         private readonly Dictionary<string, int> _featureIndices;
         private readonly PropertyInfo[] _featureProperties;
-        private readonly AccordFeatureAttribute[] _attributeValues;
+        private readonly CassandraFeatureAttribute[] _attributeValues;
 
         private readonly double[] _means;
         private readonly double[] _scales;
@@ -21,7 +21,7 @@ namespace FotM.Cassandra
 
         public FeatureAttributeDescriptor()
         {
-            var attributedProperties = ReflectionUtils.GetAttributedProperties<T, AccordFeatureAttribute>();
+            var attributedProperties = ReflectionUtils.GetAttributedProperties<T, CassandraFeatureAttribute>();
             _featureProperties = attributedProperties.Select(ap => ap.PropertyInfo).ToArray();
             _attributeValues = attributedProperties.Select(ap => ap.Attribute).ToArray();
 
@@ -108,6 +108,13 @@ namespace FotM.Cassandra
             double w = _attributeValues[idx].Weight;
 
             return w*(value - _means[idx])/_scales[idx];
+        }
+
+        public double[] GetFeatureVector(T obj)
+        {
+            return Enumerable.Range(0, TotalFeatures)
+                .Select(i => GetFeatureValue(i, obj))
+                .ToArray();
         }
     }
 }

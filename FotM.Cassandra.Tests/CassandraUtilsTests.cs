@@ -12,10 +12,10 @@ namespace FotM.Cassandra.Tests
     {
         class Temp
         {
-            [AccordFeature]
+            [CassandraFeature]
             public int Feature1 { get; set; }
 
-            [AccordFeature]
+            [CassandraFeature]
             public int Feature2 { get; set; }
 
             public int NonFeature { get; set; } 

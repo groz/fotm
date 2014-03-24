@@ -22,7 +22,7 @@ namespace FotM.Cassandra.Tests
     [TestClass]
     public class CassandraSuperTests: ArmoryTestingBase
     {
-        const int TeamSize = 3;
+        const int BracketTeamSize = 3;
         private static readonly Random Rng = new Random(367);
 
         private static readonly Realm[] Realms = new Realm[]
@@ -41,6 +41,10 @@ namespace FotM.Cassandra.Tests
         {
             _clusterers = new Dictionary<string, IKMeans<PlayerChange>>
             {
+                {"My kmeans with normalization custom metric", new HealerAndSizeAwareKMeans(true, 3)},
+                {"My kmeans custom metric", new HealerAndSizeAwareKMeans(false, 3)},
+                {"My kmeans with normalization", new MyKMeans<PlayerChange>(normalize: true)},
+                {"My kmeans without normalization", new MyKMeans<PlayerChange>(normalize: false)},
                 {"Accord with normalization", new AccordKMeans(normalize: true)},
                 {"Accord no normalization", new AccordKMeans(normalize: false)},
                 {"Numl non-normalized Manhattan distance", new NumlKMeans(new numl.Math.Metrics.ManhattanDistance())},
@@ -104,15 +108,15 @@ namespace FotM.Cassandra.Tests
             {
                 var players = realm.Shuffle(Rng).ToArray();
 
-                int nTeams = players.Length / TeamSize;
+                int nTeams = players.Length / BracketTeamSize;
 
                 for (int i = 0; i < nTeams; ++i)
                 {
                     var teamPlayers = new List<Player>();
 
-                    for (int j = 0; j < TeamSize; ++j)
+                    for (int j = 0; j < BracketTeamSize; ++j)
                     {
-                        var playerEntry = players[i*TeamSize + j];
+                        var playerEntry = players[i*BracketTeamSize + j];
 
                         teamPlayers.Add(playerEntry.Player());
                     }
@@ -120,7 +124,7 @@ namespace FotM.Cassandra.Tests
                     // if there are no healers in the team make first player play a healer
                     if (!teamPlayers.Any(Healers.IsHealer))
                     {
-                        MakeHealer(players[i*TeamSize]);
+                        MakeHealer(players[i*BracketTeamSize]);
                     }
 
                     teams.Add(new Team(teamPlayers));
@@ -150,7 +154,7 @@ namespace FotM.Cassandra.Tests
                         .OrderByDescending(p => p.Rating)
                         .ToArray();
 
-                for (int iPlayer = 0; iPlayer < TeamSize; ++iPlayer)
+                for (int iPlayer = 0; iPlayer < BracketTeamSize; ++iPlayer)
                 {
                     var previousEntry = previousPlayerEntries[iPlayer];
 

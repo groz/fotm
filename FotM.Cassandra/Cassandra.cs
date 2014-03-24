@@ -22,7 +22,8 @@ namespace FotM.Cassandra
         {
             _stats = new CassandraStats();
             //_kmeans = kmeans ?? new NumlKMeans();
-            _kmeans = kmeans ?? new AccordKMeans(normalize: true);
+            //_kmeans = kmeans ?? new AccordKMeans(normalize: true);
+            _kmeans = kmeans ?? new HealerAndSizeAwareKMeans(true, 3); // TODO: unhardcode bracket size
         }
 
         public IEnumerable<Team> FindTeams(IEnumerable<Leaderboard> history)

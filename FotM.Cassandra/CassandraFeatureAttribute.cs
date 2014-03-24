@@ -2,9 +2,9 @@
 
 namespace FotM.Cassandra
 {
-    public class AccordFeatureAttribute : Attribute
+    public class CassandraFeatureAttribute : Attribute
     {
-        public AccordFeatureAttribute()
+        public CassandraFeatureAttribute()
         {
             Weight = 1.0;
             Normalize = true;
