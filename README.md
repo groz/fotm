@@ -9,6 +9,7 @@ Feature requests from the users:
 - Search fotm comps per spec
 - More teams than top 20
 - Click on the player to open armory
+- Publish period for when the data was collected somewhere on the page
 
 Frontend:
 - When Playing now is empty show the time of latest update
