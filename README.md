@@ -15,6 +15,7 @@ Frontend:
 - Add NavBar for FotM section to choose fotms by class, not spec
 - Show fotm setups for current playing teams if appropriate section is selected
 - Add armory links to players
+- Shorten period for playing now
 
 Infrastructure:
 - Setup private topic for initialization instead of private queue to account for staged environments eating up messages
