@@ -6,8 +6,9 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Feature requests from the users:
-- More teams than top 20
 - Search fotm comps per spec
+- More teams than top 20
+- Click on the player to open armory
 
 Frontend:
 - Create admin push mechanism
