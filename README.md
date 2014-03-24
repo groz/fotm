@@ -28,12 +28,6 @@ Infrastructure:
 - Set smaller expiration date for teams that were seen only a few times
 - Divide ratings update per number of games if diff is more than 1 to avoid showing 30+ rating changes
 
-Machine learning:
-- ASAP: Equal sized k-means!
-- Compute several clusterings and rank them against each other based on following rules: 
-  - Lower score for teams with double/triple healers
-  - Lower score for teams with class stacking
-
 Backlog:
 - Add AWS SNS/SQS
 - Refactor the horrible code made while trying to create minimum viable product
