@@ -9,8 +9,10 @@ Feature requests from the users:
 - Search fotm comps per spec
 - More teams than top 20
 - Click on the player to open armory
+- Publish period for when the data was collected somewhere on the page
 
 Frontend:
+- When Playing now is empty show the time of latest update
 - Create admin push mechanism
 - Create admin method polling number of current connected users
 - Add NavBar for FotM section to choose fotms by class, not spec
@@ -19,7 +21,6 @@ Frontend:
 - Shorten period for playing now
 
 Infrastructure:
-- Setup private topic for initialization instead of private queue to account for staged environments eating up messages
 - Setup easy deployment for website to US/EU
 - Setup easy deployment for scanner to US/EU
 - Add website for KR
@@ -29,10 +30,8 @@ Infrastructure:
 - Divide ratings update per number of games if diff is more than 1 to avoid showing 30+ rating changes
 
 Machine learning:
-- ASAP: Equal sized k-means!
-- Compute several clusterings and rank them against each other based on following rules: 
-  - Lower score for teams with double/triple healers
-  - Lower score for teams with class stacking
+- Remove/adjust HealersAndSize kmeans metric with distortion metric
+https://class.coursera.org/ml-004/lecture/80
 
 Backlog:
 - Add AWS SNS/SQS
