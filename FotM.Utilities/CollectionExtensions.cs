@@ -66,6 +66,46 @@ namespace FotM.Utilities
             }
             return cnt.Values.All(c => c == 0);
         }
-        
+
+        public static Tuple<T, int> MinimumElement<T>(this IEnumerable<T> source)
+            where T : IComparable<T>
+        {
+            return source.MinimumElement(t => t);
+        }
+
+        public static Tuple<T, int> MinimumElement<T, TKey>(this IEnumerable<T> source, Func<T, TKey> selector)
+            where TKey: IComparable<TKey>
+        {
+            if (source == null)
+                throw new ArgumentException("Can't find minimum element in null collection");
+
+            T minValue = default (T);
+            int? minIdx = null;
+
+            int i = 0;
+
+            foreach (var element in source)
+            {
+                if (!minIdx.HasValue)
+                {
+                    minIdx = 0;
+                    minValue = element;
+                    ++i;
+                    continue;
+                }
+                else if (selector(element).CompareTo(selector(minValue)) < 0)
+                {
+                    minValue = element;
+                    minIdx = i;
+                }
+
+                ++i;
+            }
+
+            if (!minIdx.HasValue)
+                throw new ArgumentException("Can't find minimum element in empty collection");
+
+            return Tuple.Create(minValue, minIdx.Value);
+        }
     }
 }

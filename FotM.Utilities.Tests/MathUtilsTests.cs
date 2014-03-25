@@ -141,5 +141,34 @@ namespace FotM.Utilities.Tests
             Assert.AreEqual(-0.5, solution[0], 0.01);
         }
 
+        [Test]
+        public void MinByEmptyCollection()
+        {
+            double[] arr = {};
+            Assert.Throws<ArgumentException>(() => arr.MinimumElement(x => x * x));
+
+            arr = null;
+            Assert.Throws<ArgumentException>(() => arr.MinimumElement(x => x * x));
+        }
+
+        [Test]
+        public void MinBySingleElementCollection()
+        {
+            double[] arr = { -1 };
+
+            var min = arr.MinimumElement(x => x * x);
+            Assert.AreEqual(-1, min.Item1);
+            Assert.AreEqual(0, min.Item2);
+        }
+
+        [Test]
+        public void MinByRegular()
+        {
+            double[] arr = { -3, 2, -1, 2 };
+
+            var min = arr.MinimumElement(x => x * x);
+            Assert.AreEqual(-1, min.Item1);
+            Assert.AreEqual(2, min.Item2);
+        }
     }
 }

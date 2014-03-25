@@ -22,11 +22,33 @@ namespace FotM.Cassandra
 
             int nHealers = team.Count(Healers.IsHealer);
 
-            int sizePenalty = team.Length == _bracketSize
-                ? 0
-                : 5;
+            int sizePenalty = 0;
 
-            int healersPenalty = Math.Abs(nHealers - 1); // 0 for 1 healer, only valid for 3v3
+            if (team.Length < _bracketSize)
+            {
+                sizePenalty = 5;
+            } 
+            else if (team.Length > _bracketSize)
+            {
+                sizePenalty = 200;
+            }
+
+            int healersPenalty = 0;
+
+            if (_bracketSize == 2)
+            {
+                if (nHealers == 2)
+                    healersPenalty = 1;
+            }
+            else if (_bracketSize == 3)
+            {
+                healersPenalty = Math.Abs(nHealers - 1); // 0 for 1 healer
+            }
+            else if (_bracketSize == 5)
+            {
+                if (nHealers > 2)
+                    healersPenalty = Math.Abs(nHealers - 2); // 1 for 3 healers, 2 for 4 healers
+            }
 
             return healersPenalty + sizePenalty;
         }

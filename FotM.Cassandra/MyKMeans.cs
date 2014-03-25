@@ -11,25 +11,31 @@ namespace FotM.Cassandra
     {
         private readonly bool _normalize;
         private readonly Func<IEnumerable<T>, double> _regroupMetric;
-        readonly Random _rng = new Random(35250);
+        readonly Random _rng = new Random(15250);
         readonly FeatureAttributeDescriptor<T> _descriptor = new FeatureAttributeDescriptor<T>();
 
-        public MyKMeans(bool normalize, Func<IEnumerable<T>, double> groupMetric = null)
+        public MyKMeans(bool normalize, Func<IEnumerable<T>, double> regroupMetric = null)
         {
             _normalize = normalize;
-            _regroupMetric = groupMetric ?? SimpleGroupMetric;
+            _regroupMetric = regroupMetric;
         }
 
-        private double SimpleGroupMetric(IEnumerable<T> group)
+        private double Distortion(int[] grouping, Vector[] x, Vector[] centroids)
         {
-            Vector[] input = group
-                .Select(pt => _descriptor.GetFeatureVector(pt).ToVector())
-                .ToArray();
+            int m = x.Length;
 
-            return input.Mean().Length;
+            double sum = 0;
+
+            for (int i = 0; i < m; ++i)
+            {
+                int ci = grouping[i]; // index of cluster to which i-th point belongs
+                sum += Vector.SquaredDistance(x[i], centroids[ci]);
+            }
+
+            return sum / m;
         }
 
-        private int[] ComputeGroupsImpl(T[] dataSet, int k)
+        private int[] ComputeGroupsImpl(T[] dataSet, int k, int? initialPoint, out double distortion)
         {
             int m = dataSet.Length;
             int[] result = new int[m];
@@ -41,6 +47,7 @@ namespace FotM.Cassandra
                 {
                     result[i] = i;
                 }
+                distortion = 0;
                 return result;
             }
 
@@ -58,7 +65,7 @@ namespace FotM.Cassandra
             //Vector[] centroids = new Vector[k];
             //Vector[] centroids = DumbInit();
             //Vector[] centroids = FarthestInit(input, k);
-            Vector[] centroids = KmeansPlusPlusInit(input, k);
+            Vector[] centroids = KmeansPlusPlusInit(input, k, initialPoint);
 
             // Forgy initialization of centroids (as opposed to Random Partition)
 
@@ -74,13 +81,13 @@ namespace FotM.Cassandra
                 for (int i = 0; i < m; ++i)
                 {
                     // find the nearest centroid
-                    var nearestCentroid = centroids
-                        .Select((centroid, index) => new { centroid, index = index })
-                        .MinBy(cj => Vector.SquaredDistance(cj.centroid, input[i]));
+                    int nearestCentroid = centroids
+                        .MinimumElement(centroid => Vector.SquaredDistance(centroid, input[i]))
+                        .Item2;
 
                     // add point to that cluster
                     int previousClusterIndex = result[i];
-                    result[i] = nearestCentroid.index;
+                    result[i] = nearestCentroid;
 
                     if (previousClusterIndex != result[i])
                         changed = true;
@@ -106,23 +113,45 @@ namespace FotM.Cassandra
                 }
             }
 
+            distortion = Distortion(result, input, centroids);
+
             return result;
         }
 
         public int[] ComputeGroups(T[] dataSet, int k)
         {
             // call it number of times with different seeds and select the best according to some metric
-            const int nRuns = 20;
+            const int nRuns = 100;
+            const int nMinimum = 50;
 
-            int[][] runs = Enumerable.Range(0, nRuns)
-                .Select(i => ComputeGroupsImpl(dataSet, k))
-                .ToArray();
-
-            double[] distances = new double[nRuns];
+            int[][] runs = new int[nRuns][];
+            double[] distortions = new double[nRuns];
 
             for (int i = 0; i < nRuns; ++i)
             {
-                int[] runResult = runs[i];
+                runs[i] = ComputeGroupsImpl(dataSet, k, i%k, out distortions[i]);
+            }
+            
+            if (_regroupMetric == null)
+            {
+                // return the one with minimal distortion
+                Tuple<double, int> min = distortions.MinimumElement();
+                return runs[min.Item2];
+            }
+
+            // apply regroup metric to minimally distorted variations
+            int[][] minimallyDistorted = runs
+                .Select((runResult, idx) => new {runResult, idx})
+                .OrderBy(r => distortions[r.idx])
+                .Take(nMinimum)
+                .Select(r => r.runResult)
+                .ToArray();
+
+            double[] distances = new double[nMinimum];
+
+            for (int i = 0; i < nMinimum; ++i)
+            {
+                int[] runResult = minimallyDistorted[i];
 
                 var groups = dataSet
                     .Select((data, idx) => new {data, idx})
@@ -134,17 +163,17 @@ namespace FotM.Cassandra
                 distances[i] = totalDistance;
             }
 
-            int minIndex = Array.IndexOf(distances, distances.Min());
-            return runs[minIndex];
+            int minIndex = distances.MinimumElement().Item2;
+            return minimallyDistorted[minIndex];
         }
 
-        private Vector[] KmeansPlusPlusInit(Vector[] input, int k)
+        private Vector[] KmeansPlusPlusInit(Vector[] input, int k, int? initialPoint = null)
         {
             int m = input.Length;
 
             Vector[] centroids = new Vector[k];
 
-            centroids[0] = input[_rng.Next(m)];
+            centroids[0] = input[initialPoint ?? _rng.Next(m)];
 
             for (int i = 1; i < k; i++)
             {
@@ -177,14 +206,14 @@ namespace FotM.Cassandra
             return centroids;
         }
 
-        private Vector[] FarthestInit(Vector[] input, int k)
+        private Vector[] FarthestInit(Vector[] input, int k, int? initialPoint)
         {
             int m = input.Length;
             Vector[] centroids = new Vector[k];
 
             // Pick farthest initial points for clusters
             //centroids[0] = input[0];
-            centroids[0] = input[_rng.Next(m)];
+            centroids[0] = input[initialPoint ?? _rng.Next(m)];
 
             for (int i = 1; i < k; ++i)
             {
