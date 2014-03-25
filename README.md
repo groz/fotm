@@ -12,6 +12,8 @@ Feature requests from the users:
 - Publish period for when the data was collected somewhere on the page
 
 Frontend:
+- Remove particular teams information from preloaded team setups
+- Add querying for teams running fotm setup on fotm click
 - When Playing now is empty show the time of latest update
 - Create admin push mechanism
 - Create admin method polling number of current connected users
