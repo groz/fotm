@@ -12,7 +12,7 @@ namespace FotM.Messaging
         public AzureTopicSubscriber(string topicName, bool createIfNotExists) 
             : base(topicName, createIfNotExists)
         {
-            string subscriptionName = Dns.GetHostName();
+            string subscriptionName = Dns.GetHostName() + Guid.NewGuid().ToString().Substring(0, 4);
 
             var namespaceManager = NamespaceManager.CreateFromConnectionString(Constants.ConnectionString);
 
