@@ -4,10 +4,14 @@ namespace FotM.Portal.ViewModels
 {
     public class SpecViewModel
     {
-        private readonly CharacterClass _charClass;
-        private readonly CharacterSpec _charSpec;
-        private readonly string _specId;
-        private readonly string _classId;
+        public CharacterClass CharClass { get; set; }
+        public CharacterSpec CharSpec { get; set; }
+        public int SpecId { get; set; }
+        public int ClassId { get; set; }
+
+        public SpecViewModel()
+        {
+        }
 
         public SpecViewModel(int classId, int specId)
             : this((CharacterClass) classId, (CharacterSpec) specId)
@@ -16,30 +20,10 @@ namespace FotM.Portal.ViewModels
 
         public SpecViewModel(CharacterClass charClass, CharacterSpec charSpec)
         {
-            _charClass = charClass;
-            _charSpec = charSpec;
-            _specId = ((int)charSpec).ToString();
-            _classId = ((int)charClass).ToString();
-        }
-
-        public string SpecId
-        {
-            get { return _specId; }
-        }
-
-        public string ClassId
-        {
-            get { return _classId; }
-        }
-
-        internal CharacterClass CharClass
-        {
-            get { return _charClass; }
-        }
-
-        internal CharacterSpec CharSpec
-        {
-            get { return _charSpec; }
+            CharClass = charClass;
+            CharSpec = charSpec;
+            SpecId = (int)charSpec;
+            ClassId = (int)charClass;
         }
     }
 }

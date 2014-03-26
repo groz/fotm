@@ -44,6 +44,11 @@ namespace FotM.Portal.ViewModels
             get { return _model.UpdatedUtc.ToString(); }
         }
 
+        internal DateTime UpdatedUtc
+        {
+            get { return _model.UpdatedUtc; }
+        }
+
         public string RatingChange
         {
             get

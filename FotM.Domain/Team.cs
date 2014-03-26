@@ -46,5 +46,12 @@ namespace FotM.Domain
         {
             return "(" + string.Join(",", Players.AsEnumerable()) + ")";
         }
+
+        public bool HasSetup(CharacterSpec[] specs)
+        {
+            return Players.Select(p => p.Spec)
+                .OrderBy(s => s)
+                .SequenceEqual(specs.OrderBy(s => s));
+        }
     }
 }

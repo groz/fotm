@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using FotM.Config;
+using FotM.Domain;
 using FotM.Messaging;
 using FotM.Messaging.Messages;
 using FotM.Portal.ViewModels;
@@ -23,7 +25,7 @@ namespace FotM.Portal.Infrastructure
         private readonly IHubConnectionContext _clients;
         private readonly ISubscriber<StatsUpdateMessage> _statsUpdateListener;
 
-        private StatsUpdateMessage _latestMessage = null;
+        private TeamStatsRepository _repository = null;
 
         private ReactiveUpdateManager()
         {
@@ -57,31 +59,31 @@ namespace FotM.Portal.Infrastructure
 
         private bool OnStatsUpdateReceived(StatsUpdateMessage msg)
         {
-            var armoryViewModel = CreateViewModel(msg);
+            _repository = new TeamStatsRepository(msg.Stats);
+
+            var armoryViewModel = CreateViewModel(_repository);
 
             if (armoryViewModel.AllTimeLeaders.Any())
             {
                 _clients.All.update(armoryViewModel);
             }
 
-            _latestMessage = msg;
-
             return true;
         }
 
-        private static ArmoryViewModel CreateViewModel(StatsUpdateMessage msg)
+        private static ArmoryViewModel CreateViewModel(TeamStatsRepository repository)
         {
-            return new ArmoryViewModel(msg.Stats, TimeSpan.FromHours(1.5),
+            return new ArmoryViewModel(repository, 
+                TimeSpan.FromHours(1.5),
                 nTeamsToShow: 20, 
                 nSetupsToShow: 10, 
-                nPlayingNowMax: 20,
-                nTeamsPerSpec: 10);
+                nPlayingNowMax: 20);
         }
 
         public ArmoryViewModel GetLatestViewModel()
         {
-            return _latestMessage != null
-                ? CreateViewModel(_latestMessage)
+            return _repository != null
+                ? CreateViewModel(_repository)
                 : null;
         }
 
@@ -92,5 +94,32 @@ namespace FotM.Portal.Infrastructure
             if (viewModel != null)
                 caller.update(viewModel);
         }
+
+        public void SendTeamsForSetup(dynamic caller, TeamSetupViewModel teamSetupViewModel)
+        {
+            if (_repository == null)
+                return;
+
+            var teams = _repository.QueryTeamsForSetup(teamSetupViewModel, 10);
+
+            caller.showSetupTeams(teams);
+        }
+
+        public void SendSetupsForFilters(dynamic caller, TeamFilter[] teamFilters)
+        {
+            if (_repository == null)
+                return;
+
+            var teamSetups = _repository.QueryFilteredSetups(teamFilters, 10);
+
+            caller.showFilteredSetups(teamSetups);
+        }
+    }
+
+    public class TeamInfo
+    {
+        public Team Team { get; set; }
+        public TeamSetup Setup { get; set; }
+        public TeamStats Stats { get; set; }
     }
 }

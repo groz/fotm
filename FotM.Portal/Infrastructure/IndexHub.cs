@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using FotM.Portal.ViewModels;
+using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
+using Newtonsoft.Json;
 
 namespace FotM.Portal.Infrastructure
 {
@@ -10,5 +12,16 @@ namespace FotM.Portal.Infrastructure
         {
             ReactiveUpdateManager.Instance.SendLatestUpdate(Clients.Caller);
         }
+
+        public void QueryTeamsForSetup(TeamSetupViewModel teamSetupViewModel)
+        {
+            ReactiveUpdateManager.Instance.SendTeamsForSetup(Clients.Caller, teamSetupViewModel);
+        }
+
+        public void QueryFilteredSetups(TeamFilter[] teamFilters)
+        {
+            ReactiveUpdateManager.Instance.SendSetupsForFilters(Clients.Caller, teamFilters);
+        }
+
     }
 }
