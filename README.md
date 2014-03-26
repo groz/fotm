@@ -5,6 +5,8 @@ World of Warcraft arena FotM monitor.
 
 TODO
 
+ASAP: prepopulate fotm specs, check race conditions on multiple clicks.
+
 Feature requests from the users:
 - Search fotm comps per spec
 - More teams than top 20
