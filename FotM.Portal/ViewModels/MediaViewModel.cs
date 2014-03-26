@@ -16,12 +16,17 @@ namespace FotM.Portal.ViewModels
 
         public Dictionary<string, string> RaceImages { get; private set; }
 
+        public Dictionary<string, string> SpecsToClasses { get; private set; }
+
         public MediaViewModel()
         {
-            SpecImages = CollectionExtensions.GetValues<CharacterSpec>()
+            var allSpecs = CollectionExtensions.GetValues<CharacterSpec>();
+            var allClasses = CollectionExtensions.GetValues<CharacterClass>();
+
+            SpecImages = allSpecs
                 .ToDictionary(s => ((int)s).ToString(), MediaLinks.SpecImageLink);
 
-            ClassImages = CollectionExtensions.GetValues<CharacterClass>()
+            ClassImages = allClasses
                 .ToDictionary(s => ((int)s).ToString(), MediaLinks.ClassImageLink);
 
             FactionImages = CollectionExtensions.GetValues<Faction>()
@@ -34,6 +39,9 @@ namespace FotM.Portal.ViewModels
                 let link = MediaLinks.RaceImageLink(race, gender)
                 select new {key, link})
                 .ToDictionary(o => o.key, o => o.link);
+
+            SpecsToClasses = SpecInfo.ClassMappings
+                .ToDictionary(s => ((int) s.Key).ToString(), s => ((int) s.Value).ToString());
         }
     }
 }

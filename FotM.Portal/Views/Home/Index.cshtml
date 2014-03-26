@@ -76,12 +76,11 @@
 </div>
 
 <div class="row">
-    <div class="col-lg-3 col-md-3 col-sm-5 col-xs-8">
+    <div class="col-lg-3 col-md-3 col-sm-5">
         <h2>FotM</h2>
         <table class="table table-striped table-condensed table-responsive table-hover">
             <tbody data-bind="foreach: model().TeamSetupsViewModels">
-                <tr data-bind="click: $parent.showTeams, css: {success: $parent.isSetupSelected($data)}" 
-                    class="notext">
+                <tr data-bind="click: $parent.showTeams, css: {success: $parent.isSetupSelected($data)}" class="notext">
                     <td class="hidden-md" data-bind="text: Rank"></td>
                     <!-- ko foreach: Specs -->
                     <td>
@@ -93,8 +92,28 @@
                 </tr>
             </tbody>
         </table>
+        
+        <h4>Filters</h4>
+        <div data-bind="foreach: classFilters" class="btn-group btn-group-justified">
+            <div class="dropup btn-group">
+                <button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" data-bind="html: $root.filterView($index)"></button>
+                <ul class="dropdown-menu" role="menu">
+                    <!-- ko foreach: $root.allSpecs -->
+                    <li>
+                        <a data-bind="click: function() { $root.addFilter($parentContext.$index, $data); }">
+                            <img data-bind="attr:{src: $root.toClassImage(classId)}" alt="ClassImage" />
+                            <img data-bind="attr:{src: $root.toSpecImage(specId)}" alt="SpecImage" />
+                        </a>
+                    </li>
+                    <!-- /ko -->
+                    <li class="notext">
+                        <a data-bind="click: function() { $root.addFilter($index, $data); }">All</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
-    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+    <div class="col-lg-9 col-md-9 col-sm-12">
         <h2>Teams</h2>
         <div class="alert" data-bind="visible: showFotMHint">
             Select <strong>FotM</strong> setup to browse teams.
@@ -111,8 +130,7 @@
                             <!-- ko foreach: Players -->
                             <div class="col-lg-4 col-md-4 col-sm-4">
                                 <img data-bind="attr:{src: $root.toRaceImage(RaceId)}" alt="RaceImage" />
-                                <img class="hidden-xs"
-                                     data-bind="attr:{src: $root.toClassImage(ClassId)}" alt="ClassImage" />
+                                <img class="hidden-xs" data-bind="attr:{src: $root.toClassImage(ClassId)}" alt="ClassImage" />
                                 <img data-bind="attr:{src: $root.toSpecImage(SpecId)}" alt="SpecImage" />
                                 <span data-bind="text: Name"></span>
                             </div>

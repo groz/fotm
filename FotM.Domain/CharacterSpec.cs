@@ -58,7 +58,7 @@ namespace FotM.Domain
         }
     }
 
-    public static class SpecNames
+    public static class SpecInfo
     {
         public static Dictionary<int, string> Names = new Dictionary<int, string>
         {
@@ -97,5 +97,44 @@ namespace FotM.Domain
             {269, "Monk: Windwalker"},
             {270, "Monk: Mistweaver"},
         };
+
+        public static Dictionary<CharacterSpec, CharacterClass> ClassMappings =
+            new Dictionary<CharacterSpec, CharacterClass>()
+            {
+                {CharacterSpec.Mage_Arcane, CharacterClass.Mage},
+                {CharacterSpec.Mage_Fire, CharacterClass.Mage},
+                {CharacterSpec.Mage_Frost, CharacterClass.Mage},
+                {CharacterSpec.Paladin_Holy, CharacterClass.Paladin},
+                {CharacterSpec.Paladin_Protection, CharacterClass.Paladin},
+                {CharacterSpec.Paladin_Retribution, CharacterClass.Paladin},
+                {CharacterSpec.Warrior_Arms, CharacterClass.Warrior},
+                {CharacterSpec.Warrior_Fury, CharacterClass.Warrior},
+                {CharacterSpec.Warrior_Protection, CharacterClass.Warrior},
+                {CharacterSpec.Druid_Balance, CharacterClass.Druid},
+                {CharacterSpec.Druid_Feral, CharacterClass.Druid},
+                {CharacterSpec.Druid_Guardian, CharacterClass.Druid},
+                {CharacterSpec.Druid_Restoration, CharacterClass.Druid},
+                {CharacterSpec.DeathKnight_Blood, CharacterClass.DeathKnight},
+                {CharacterSpec.DeathKnight_Frost, CharacterClass.DeathKnight},
+                {CharacterSpec.DeathKnight_Unholy, CharacterClass.DeathKnight},
+                {CharacterSpec.Hunter_BeastMastery, CharacterClass.Hunter},
+                {CharacterSpec.Hunter_Marksmanship, CharacterClass.Hunter},
+                {CharacterSpec.Hunter_Survival, CharacterClass.Hunter},
+                {CharacterSpec.Priest_Discipline, CharacterClass.Priest},
+                {CharacterSpec.Priest_Holy, CharacterClass.Priest},
+                {CharacterSpec.Priest_Shadow, CharacterClass.Priest},
+                {CharacterSpec.Rogue_Assassination, CharacterClass.Rogue},
+                {CharacterSpec.Rogue_Combat, CharacterClass.Rogue},
+                {CharacterSpec.Rogue_Subtlety, CharacterClass.Rogue},
+                {CharacterSpec.Shaman_Elemental, CharacterClass.Shaman},
+                {CharacterSpec.Shaman_Enhancement, CharacterClass.Shaman},
+                {CharacterSpec.Shaman_Restoration, CharacterClass.Shaman},
+                {CharacterSpec.Warlock_Affliction, CharacterClass.Warlock},
+                {CharacterSpec.Warlock_Demonology, CharacterClass.Warlock},
+                {CharacterSpec.Warlock_Destruction, CharacterClass.Warlock},
+                {CharacterSpec.Monk_Brewmaster, CharacterClass.Monk},
+                {CharacterSpec.Monk_Mistweaver, CharacterClass.Monk},
+                {CharacterSpec.Monk_Windwalker, CharacterClass.Monk}
+            };
     }
 }

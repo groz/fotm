@@ -21,7 +21,7 @@ namespace FotM.Domain
 
         public override string ToString()
         {
-            return string.Join(", ", SpecIds.Select(id => SpecNames.Names[id]));
+            return string.Join(", ", SpecIds.Select(id => SpecInfo.Names[id]));
         }
 
         public bool Equals(TeamSetup other)

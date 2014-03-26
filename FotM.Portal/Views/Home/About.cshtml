@@ -1,11 +1,11 @@
 ﻿@{
     ViewBag.Title = "FotM";
 }
-<h2>@ViewBag.Title</h2>
-<h3>@ViewBag.Message</h3>
+
+<h3>Project</h3>
 
 <div class="row">
-    <div class="col-lg-6">
+    <div class="col-lg-6 col-md-8 col-sm-10">
         <p>
             Since World of Warcraft armory changed from team-based to player-based style many players missed old
             armory. So I've decided to give it a try and implement some data mining and machine learning to
@@ -14,12 +14,45 @@
     </div>
 </div>
 
+<h3>How it works?</h3>
 <div class="row">
-    <div class="col-lg-6">
+    <div class="col-lg-6 col-md-8 col-sm-10">
+        <p>
+            There's a scanner running 24/7 polling top 1000 players from Blizzard API.
+            Whenever it sees players that changed ratings it calculates diffs from their previous values.
+        </p>
+        <p>
+            The diffs are then fed to clustering algorithm that is a variation of <a href="http://en.wikipedia.org/wiki/Kmeans">k-means</a> to
+            try and divide players into the teams of 3.
+        </p>
+    </div>
+</div>
+
+<h3>Technologies used</h3>
+
+<div class="row">
+    <div class="col-lg-6 col-md-8 col-sm-10">
+        <ul>
+            <li>C# + ASP.NET MVC</li>
+            <li>SignalR</li>
+            <li>Bootstrap</li>
+            <li>Knockout.js</li>
+            <li>Windows Azure</li>
+        </ul>
+        <p>
+            Almost everything I used for this project I've used for the first time (except for C#), 
+            so if you see that something can be improved I would appreciate the feedback.
+        </p>
+    </div>
+</div>
+
+<br/>
+
+<div class="row">
+    <div class="col-lg-6 col-md-8 col-sm-10">
         <p>
             <strong>Made by:</strong>
             <span>Tagir Magomedov</span>
         </p>
     </div>
-
 </div>

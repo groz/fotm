@@ -106,6 +106,60 @@ function ArmoryViewModel(region, data, media) {
     self.isSetupSelected = function (teamSetup) {
         return self.selectedSetup() == teamSetup;
     };
+    
+    function specsToClasses() {
+        var result = [];
+        var dictionary = media.SpecsToClasses;
+
+        for (var key in dictionary) {
+            if (dictionary.hasOwnProperty(key)) {
+                result.push({
+                    specId: key,
+                    classId: dictionary[key]
+                });
+            }
+        }
+
+        return result;
+    }
+
+    // not proud. TODO: refactor the section below
+    self.allSpecs = ko.observableArray(specsToClasses());
+    
+    self.classFilters = ko.observable([null, null, null]);
+
+    self.addFilter = function (filterIndex, spec) {
+        var idx = filterIndex();
+        console.log(idx, spec);
+        self.classFilters()[idx] = spec;
+        
+        self.filterViews[idx](
+            createHtmlForSpec(spec)
+        );
+    };
+
+    var emptySpecHtml = "<span>All</span>";
+
+    function createHtmlForSpec(spec) {
+        if (spec != null) {
+            return '<img src="' + self.toClassImage(spec.classId) + '" alt="ClassImage" />&nbsp;' +
+                '<img src="' + self.toSpecImage(spec.specId) + '" alt="SpecImage" />';
+        } else {
+            return emptySpecHtml;
+        }
+    }
+
+    self.filterViews = [
+        ko.observable(emptySpecHtml),
+        ko.observable(emptySpecHtml),
+        ko.observable(emptySpecHtml)
+    ];
+        
+
+    self.filterView = function (d) {
+        var idx = d();
+        return self.filterViews[idx];
+    };
 }
 
 function initializePage(region, data, media) {

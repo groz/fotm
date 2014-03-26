@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using FotM.Config;
 using FotM.Messaging;
 using FotM.Messaging.Messages;
 using FotM.Portal.ViewModels;
@@ -36,7 +37,12 @@ namespace FotM.Portal.Infrastructure
             _statsUpdateListener.Subscribe(OnStatsUpdateReceived);
 
             // create private queue, send it in message and listen to it for response
-            string hostName = Dns.GetHostName()+Guid.NewGuid().ToString().Substring(0, 4);
+            string hostName = Dns.GetHostName();
+
+            if (RegionalConfig.Instance.Region != "TEST")
+            {
+                hostName += Guid.NewGuid().ToString().Substring(0, 4);
+            }
 
             var receiver = new AzureQueueClient<StatsUpdateMessage>(hostName, true);
             receiver.Subscribe(OnStatsUpdateReceived);
@@ -65,10 +71,10 @@ namespace FotM.Portal.Infrastructure
 
         private static ArmoryViewModel CreateViewModel(StatsUpdateMessage msg)
         {
-            return new ArmoryViewModel(msg.Stats, TimeSpan.FromHours(2),
+            return new ArmoryViewModel(msg.Stats, TimeSpan.FromHours(1.5),
                 nTeamsToShow: 20, 
                 nSetupsToShow: 10, 
-                nPlayingNowMax: 10,
+                nPlayingNowMax: 20,
                 nTeamsPerSpec: 10);
         }
 

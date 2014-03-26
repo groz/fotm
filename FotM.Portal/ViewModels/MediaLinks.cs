@@ -38,21 +38,19 @@ namespace FotM.Portal.ViewModels
         {
             switch (spec)
             {
-                    // TODO: Add warr fury
                 case CharacterSpec.Warrior_Arms:
                     return "http://media.blizzard.com/wow/icons/18/ability_warrior_savageblow.jpg";
                 case CharacterSpec.Warrior_Protection:
                     return "http://media.blizzard.com/wow/icons/18/ability_warrior_defensivestance.jpg";
                 case CharacterSpec.Warrior_Fury:
-                    return "http://media.blizzard.com/wow/icons/18/ability_warrior_savageblow.jpg";
+                    return "http://media.blizzard.com/wow/icons/18/ability_warrior_innerrage.jpg";
 
-                    // TODO: update druid guardian
                 case CharacterSpec.Druid_Balance:
                     return "http://media.blizzard.com/wow/icons/18/spell_nature_starfall.jpg";
                 case CharacterSpec.Druid_Feral:
                     return "http://media.blizzard.com/wow/icons/18/ability_druid_catform.jpg";
                 case CharacterSpec.Druid_Guardian:
-                    return "http://media.blizzard.com/wow/icons/18/ability_druid_catform.jpg";
+                    return "http://media.blizzard.com/wow/icons/18/ability_racial_bearform.jpg";
                 case CharacterSpec.Druid_Restoration:
                     return "http://media.blizzard.com/wow/icons/18/spell_nature_healingtouch.jpg";
 
@@ -84,13 +82,12 @@ namespace FotM.Portal.ViewModels
                 case CharacterSpec.Hunter_Survival:
                     return "http://media.blizzard.com/wow/icons/18/ability_hunter_camouflage.jpg";
 
-                    // TODO: update paladin protection
                 case CharacterSpec.Paladin_Holy:
                     return "http://media.blizzard.com/wow/icons/18/spell_holy_holybolt.jpg";
                 case CharacterSpec.Paladin_Retribution:
                     return "http://media.blizzard.com/wow/icons/18/spell_holy_auraoflight.jpg";
                 case CharacterSpec.Paladin_Protection:
-                    return "http://media.blizzard.com/wow/icons/18/spell_holy_auraoflight.jpg";
+                    return "http://media.blizzard.com/wow/icons/18/ability_paladin_shieldofthetemplar.jpg";
 
 
                 case CharacterSpec.Rogue_Assassination:
