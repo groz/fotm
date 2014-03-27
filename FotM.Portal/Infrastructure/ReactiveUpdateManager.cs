@@ -75,9 +75,9 @@ namespace FotM.Portal.Infrastructure
         {
             return new ArmoryViewModel(repository, 
                 TimeSpan.FromHours(1.5),
-                nTeamsToShow: 20, 
+                nTeamsToShow: 15, 
                 nSetupsToShow: 10, 
-                nPlayingNowMax: 20);
+                nPlayingNowMax: 15);
         }
 
         public ArmoryViewModel GetLatestViewModel()
