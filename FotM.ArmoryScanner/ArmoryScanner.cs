@@ -226,8 +226,6 @@ namespace FotM.ArmoryScanner
 
         private void LogStats()
         {
-            Logger.Info("Top teams:");
-
             var verifiedTeams = _teamStats
                 .Where(t => t.Value.IsVerified)
                 .Select(t => new
@@ -238,6 +236,8 @@ namespace FotM.ArmoryScanner
                 })
                 .ToArray();
 
+            /*
+            Logger.Info("Top teams:");
             foreach (var team in verifiedTeams.OrderByDescending(t => t.Stats.Rating))
             {
                 Logger.InfoFormat("Team: {0} ({1}), Rating: {3} ({4}{5}), TimesSeen: {2}, Updated: {6}", 
@@ -249,6 +249,7 @@ namespace FotM.ArmoryScanner
                     team.Stats.RatingChange,
                     team.Stats.UpdatedUtc.ToLocalTime());
             }
+            */
 
             Logger.Info("Top setups:");
 

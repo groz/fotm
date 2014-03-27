@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FotM.Domain;
-using System.Collections.Generic;
-using FotM.Domain;
 using FotM.Utilities;
 using log4net;
 using MoreLinq;

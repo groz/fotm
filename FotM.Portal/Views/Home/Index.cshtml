@@ -78,25 +78,6 @@
 <div class="row">
     <div class="col-lg-3 col-md-3 col-sm-5">
         <h2>FotM</h2>
-        
-        <div data-bind="foreach: classFilters" class="btn-group btn-group-justified">
-            <div class="dropup btn-group">
-                <button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown" data-bind="html: $root.filterView($index)"></button>
-                <ul class="dropdown-menu" role="menu">
-                    <!-- ko foreach: $root.allSpecs -->
-                    <li>
-                        <a data-bind="click: function() { $root.addFilter($parentContext.$index, $data); }">
-                            <img data-bind="attr:{src: $root.toClassImage(classId)}" alt="ClassImage" />
-                            <img data-bind="attr:{src: $root.toSpecImage(specId)}" alt="SpecImage" />
-                        </a>
-                    </li>
-                    <!-- /ko -->
-                    <li class="notext">
-                        <a data-bind="click: function() { $root.addFilter($index, $data); }">All</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
 
         <table class="table table-striped table-condensed table-responsive table-hover">
             <tbody data-bind="foreach: fotmSetups">
@@ -112,7 +93,62 @@
                 </tr>
             </tbody>
         </table>
-        
+
+        <h3>Filter</h3>
+        <div class="btn-group btn-group-justified">
+            <div class="btn-group btn-group-vertical">
+                <div class="btn-group"><button class="btn btn-link">Class</button></div>
+                <div class="btn-group"><button class="btn btn-link">Spec</button></div>
+            </div>
+            <!-- ko foreach: setupFilters-->
+            <div class="btn-group btn-group-vertical">
+                
+                <div class="dropup btn-group">
+
+                    <!-- Dropdown button -->
+                    <button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown"
+                            data-bind="html: $root.filterClassView($index)"></button>
+
+                    <!-- Dropdown menu -->
+                    <ul class="dropdown-menu" role="menu">
+                        <!-- ko foreach: $root.allClasses -->
+                        <li>
+                            <a data-bind="click: function() { $root.updateClassFilter($parentContext.$index, $data); }">
+                                <img data-bind="attr:{src: $root.toClassImage($data)}" alt="ClassImage" />
+                            </a>
+                        </li>
+                        <!-- /ko -->
+                        <li class="notext">
+                            <a data-bind="click: function() { $root.updateClassFilter($index, null); }">All</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="dropup btn-group">
+
+                    <!-- Dropdown button -->
+                    <button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown"
+                            data-bind="html: $root.filterSpecView($index)"></button>
+
+                    <!-- Dropdown menu -->
+                    <ul class="dropdown-menu" role="menu">
+                        <!-- ko foreach: $root.allSpecs -->
+                        <li>
+                            <a data-bind="click: function() { $root.updateSpecFilter($parentContext.$index, $data); }">
+                                <img data-bind="attr:{src: $root.toSpecImage(specId)}" alt="ClassImage" />
+                            </a>
+                        </li>
+                        <!-- /ko -->
+                        <li class="notext">
+                            <a data-bind="click: function() { $root.updateSpecFilter($index, null); }">All</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <!-- /ko -->
+        </div>
+
+
     </div>
     <div class="col-lg-9 col-md-9 col-sm-12">
         <h2>Teams</h2>

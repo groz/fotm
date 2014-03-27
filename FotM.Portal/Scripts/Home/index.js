@@ -1,6 +1,6 @@
 ﻿// Code-behind viewmodel for /Home/Index action
 
-function ArmoryViewModel(region, data, media) {
+function ArmoryViewModel(region, data, media, un) {
     var self = this;
 
     self.hub = null;
@@ -60,9 +60,13 @@ function ArmoryViewModel(region, data, media) {
         }
     };
 
+    function exists(data) {
+        return !((typeof data === 'undefined') || (data === null));
+    }
+
     self.showFotMHint = ko.observable(true);
 
-    if ((typeof data === "undefined") || (data === null)) {
+    if (!exists(data)) {
         console.log("Initialization data was not provided. Waiting for updates...");
     } else {
         console.log("Initializing with", data);
@@ -115,7 +119,7 @@ function ArmoryViewModel(region, data, media) {
 
         var selectedSetup = self.selectedSetup();
         
-        if ((typeof selectedSetup === "undefined") || (selectedSetup === null) || (selectedSetup == {}))
+        if (!exists(selectedSetup) || (selectedSetup == {}))
             return false;
 
         for (var i = 0; i < 3; ++i) {
@@ -126,7 +130,7 @@ function ArmoryViewModel(region, data, media) {
         return true;
     };
     
-    function specsToClasses() {
+    function getAllSpecs() {
         var result = [];
         var dictionary = media.SpecsToClasses;
 
@@ -142,44 +146,105 @@ function ArmoryViewModel(region, data, media) {
         return result;
     }
 
-    self.allSpecs = ko.observableArray(specsToClasses());
+    function getAllClasses() {
+        var result = [];
+        var dictionary = media.SpecsToClasses;
+
+        for (var key in dictionary) {
+            if (dictionary.hasOwnProperty(key)) {
+                var classId = dictionary[key];
+                if (-1 == $.inArray(classId, result))
+                    result.push(classId);
+            }
+        }
+
+        return result;
+    }
+
+    self.allSpecs = ko.observableArray(getAllSpecs());
+    self.allClasses = ko.observableArray(getAllClasses());
     
-    self.classFilters = ko.observable([null, null, null]);
+    self.setupFilters = ko.observable([
+        { classId: null, specId: null },
+        { classId: null, specId: null },
+        { classId: null, specId: null }
+    ]);
 
-    self.addFilter = function (filterIndex, spec) {
+    self.updateClassFilter = function (filterIndex, classId) {
         var idx = filterIndex();
-        console.log(idx, spec);
-        self.classFilters()[idx] = spec;
+        console.log(idx, classId);
 
-        console.log("Sending filtering request for", self.classFilters());
+        self.setupFilters()[idx].classId = classId;
+
+        console.log("Sending filtering request for", self.setupFilters());
         
-        self.hub.server.queryFilteredSetups(self.classFilters());
+        self.hub.server.queryFilteredSetups(self.setupFilters());
         
-        self.filterViews[idx](
-            createHtmlForSpec(spec)
+        self.filterClassViews[idx](
+            createHtmlForClass(classId)
+        );
+    };
+
+    self.updateSpecFilter = function (filterIndex, spec) {
+        if (filterIndex == null) {
+            self.hub.server.queryFilteredSetups(self.setupFilters());
+            return;
+        }
+
+        var specId = spec != null ? spec.specId : null;
+        var idx = filterIndex();
+        console.log(idx, specId);
+
+        self.setupFilters()[idx].specId = specId;
+
+        console.log("Sending filtering request for", self.setupFilters());
+
+        self.hub.server.queryFilteredSetups( self.setupFilters() );
+
+        self.filterSpecViews[idx](
+            createHtmlForSpec(specId)
         );
     };
 
     var emptySpecHtml = "<span>All</span>";
 
-    function createHtmlForSpec(spec) {
-        if (spec != null) {
-            return '<img src="' + self.toClassImage(spec.classId) + '" alt="ClassImage" />&nbsp;' +
-                '<img src="' + self.toSpecImage(spec.specId) + '" alt="SpecImage" />';
+    function createHtmlForSpec(specId) {
+        console.log("create html called for specid:", specId);
+        if (specId != null) {
+            return '<img src="' + self.toSpecImage(specId) + '" alt="SpecImage" />';
         } else {
             return emptySpecHtml;
         }
     }
 
-    self.filterViews = [
+    function createHtmlForClass(classId) {
+        if (classId != null) {
+            return '<img src="' + self.toClassImage(classId) + '" alt="ClassImage" />';
+        } else {
+            return emptySpecHtml;
+        }
+    }
+
+    self.filterClassViews = [
         ko.observable(emptySpecHtml),
         ko.observable(emptySpecHtml),
         ko.observable(emptySpecHtml)
     ];
 
-    self.filterView = function (d) {
+    self.filterSpecViews = [
+        ko.observable(emptySpecHtml),
+        ko.observable(emptySpecHtml),
+        ko.observable(emptySpecHtml)
+    ];
+
+    self.filterClassView = function (d) {
         var idx = d();
-        return self.filterViews[idx];
+        return self.filterClassViews[idx];
+    };
+
+    self.filterSpecView = function (d) {
+        var idx = d();
+        return self.filterSpecViews[idx];
     };
 }
 
@@ -207,7 +272,9 @@ function initializePage(region, data, media) {
     };
 
     $.connection.hub.start().done(function () {
-        hub.server.queryLatestUpdate();
         armory.hub = hub;
+        armory.updateSpecFilter(null);
+
+        hub.server.queryLatestUpdate();
     });
 }

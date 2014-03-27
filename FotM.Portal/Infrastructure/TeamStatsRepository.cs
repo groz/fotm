@@ -11,8 +11,8 @@ namespace FotM.Portal.Infrastructure
         private readonly TeamInfo[] _verifiedTeams;
         private readonly IGrouping<TeamSetup, TeamInfo>[] _setupGroups;
         private readonly TeamStatsViewModel[] _allTimeViewModels;
-        private TeamStatsViewModel[] _playingNowViewModels;
-        private TeamSetupViewModel[] _teamSetupsViewModels;
+        private readonly TeamInfo[] _orderedByTime;
+        private readonly TeamSetupViewModel[] _teamSetupsViewModels;
 
         public TeamStatsRepository(TeamStats[] teamStats)
         {
@@ -33,9 +33,8 @@ namespace FotM.Portal.Infrastructure
                 .Select((ts, i) => new TeamStatsViewModel(i + 1, ts.Stats))
                 .ToArray();
             
-            _playingNowViewModels = _verifiedTeams
+            _orderedByTime = _verifiedTeams
                 .OrderByDescending(t => t.Stats.UpdatedUtc)
-                .Select((ts, i) => new TeamStatsViewModel(i + 1, ts.Stats))
                 .ToArray();
 
             int totalSetups = _setupGroups.Sum(sg => sg.Count());
@@ -63,10 +62,11 @@ namespace FotM.Portal.Infrastructure
         {
             var utcNow = DateTime.UtcNow;
 
-            return _playingNowViewModels
-                .TakeWhile(t => utcNow - t.UpdatedUtc < playingNowPeriod)
+            return _orderedByTime
+                .TakeWhile(t => utcNow - t.Stats.UpdatedUtc < playingNowPeriod)
                 .Take(nMax)
-                .OrderByDescending(t => t.Rating)
+                .OrderByDescending(t => t.Stats.Rating)
+                .Select((ts, i) => new TeamStatsViewModel(i + 1, ts.Stats))
                 .ToArray();
         }
 
@@ -77,20 +77,40 @@ namespace FotM.Portal.Infrastructure
 
         public TeamSetupViewModel[] QueryFilteredSetups(TeamFilter[] teamFilters, int nMax)
         {
-            var filters = teamFilters
-                .Where(filter => filter != null)
-                .GroupBy(tf => tf.SpecId)
-                .Select(g => new {specId = g.Key, count = g.Count()});
-
-            return (from vm in _teamSetupsViewModels
-                let vmSpecs = vm.Specs.Select(s => s.SpecId)
-                where filters
-                    .All(specFilter => vmSpecs
-                        .Count(s => specFilter.specId == s) == specFilter.count)
-                select vm)
+            return _teamSetupsViewModels.Where(tsvm => Passes(tsvm, teamFilters))
                 .OrderBy(vm => vm.Rank)
                 .Take(nMax)
                 .ToArray();
+        }
+
+        private static bool Passes(TeamSetupViewModel setup, TeamFilter[] filters)
+        {
+            IEnumerable<CharacterClass> allClasses = SpecInfo.ClassMappings.Values.Distinct();
+            IEnumerable<CharacterSpec> allSpecs = SpecInfo.ClassMappings.Keys;
+
+            Dictionary<CharacterClass, int> setupClasses = allClasses.ToDictionary(c => c, c => 0);
+            Dictionary<CharacterSpec, int> setupSpecs = allSpecs.ToDictionary(c => c, c => 0);
+
+            foreach (var specViewModel in setup.Specs)
+            {
+                ++setupClasses[specViewModel.CharClass];
+                ++setupSpecs[specViewModel.CharSpec];
+            }
+
+            Dictionary<CharacterClass, int> filterClasses = allClasses.ToDictionary(c => c, c => 0);
+            Dictionary<CharacterSpec, int> filterSpecs = allSpecs.ToDictionary(c => c, c => 0);
+
+            foreach (var filter in filters)
+            {
+                if (filter.ClassId.HasValue)
+                    ++filterClasses[(CharacterClass)filter.ClassId];
+
+                if (filter.SpecId.HasValue)
+                    ++filterSpecs[filter.Spec];
+            }
+
+            return setupClasses.All(kv => kv.Value >= filterClasses[kv.Key]) &&
+                setupSpecs.All(kv => kv.Value >= filterSpecs[kv.Key]);
         }
 
         public TeamStatsViewModel[] QueryTeamsForSetup(TeamSetupViewModel teamSetupViewModel, int nMaxTeams)
