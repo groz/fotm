@@ -19,7 +19,7 @@ function ArmoryViewModel(region, data, media) {
             var requestGuid = genGuid();
             latestSetupRequestGuid = requestGuid;
             self.hub.server.queryTeamsForSetup(requestGuid, setup);
-            virtualPageView("/show-setup?");
+            virtualPageView("/teams");
         } else {
             console.error("hub is null");
         }

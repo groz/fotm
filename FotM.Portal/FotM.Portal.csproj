@@ -184,7 +184,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\Home\index.js" />
+    <Content Include="Scripts\Home\index_01.js" />
     <Content Include="Scripts\jquery-2.1.0.js" />
     <Content Include="Scripts\jquery-2.1.0.min.js" />
     <Content Include="Scripts\jquery.signalR-2.0.2.js" />
