@@ -1,6 +1,6 @@
 ﻿// Code-behind viewmodel for /Home/Index action
 
-function ArmoryViewModel(region, data, media, un) {
+function ArmoryViewModel(region, data, media) {
     var self = this;
 
     self.hub = null;
@@ -45,7 +45,7 @@ function ArmoryViewModel(region, data, media, un) {
     };
     
     self.selectedSetup = ko.observable(null);
-    self.fotmTeams = ko.observable({});
+    self.fotmTeams = ko.observableArray([]);
     self.fotmSetups = ko.observable(self.model().TeamSetupsViewModels);
 
     self.showTeams = function (setup) {
@@ -60,8 +60,8 @@ function ArmoryViewModel(region, data, media, un) {
         }
     };
 
-    function exists(data) {
-        return !((typeof data === 'undefined') || (data === null));
+    function exists(d) {
+        return !((typeof d === 'undefined') || (d === null));
     }
 
     self.showFotMHint = ko.observable(true);
@@ -171,42 +171,60 @@ function ArmoryViewModel(region, data, media, un) {
     ]);
 
     self.updateClassFilter = function (filterIndex, classId) {
+        self.fotmTeams([]);
+
         var idx = filterIndex();
         console.log(idx, classId);
 
-        self.setupFilters()[idx].classId = classId;
+        var setupFilter = self.setupFilters();
+        setupFilter[idx].classId = classId;
+        setupFilter[idx].specId = null;
 
-        console.log("Sending filtering request for", self.setupFilters());
+        var possibleSpecs = getSpecsFor(setupFilter[idx].classId);
+        console.log("Setting possible specs", idx, "to", possibleSpecs);
+        self.possibleSpecs[idx](possibleSpecs);
+
+        console.log("Sending filtering request for", setupFilter);
         
-        self.hub.server.queryFilteredSetups(self.setupFilters());
+        self.hub.server.queryFilteredSetups(setupFilter);
         
         self.filterClassViews[idx](
             createHtmlForClass(classId)
         );
+        
+        self.filterSpecViews[idx](
+            createHtmlForSpec(null)
+        );
     };
 
     self.updateSpecFilter = function (filterIndex, spec) {
+        var setupFilter = self.setupFilters();
+        
         if (filterIndex == null) {
-            self.hub.server.queryFilteredSetups(self.setupFilters());
+            // only used on init
+            self.hub.server.queryFilteredSetups(setupFilter);
             return;
         }
+        
+        self.fotmTeams([]);
 
         var specId = spec != null ? spec.specId : null;
         var idx = filterIndex();
         console.log(idx, specId);
 
-        self.setupFilters()[idx].specId = specId;
+        setupFilter[idx].specId = specId;
 
-        console.log("Sending filtering request for", self.setupFilters());
+        console.log("Sending filtering request for", setupFilter);
 
-        self.hub.server.queryFilteredSetups( self.setupFilters() );
+        self.hub.server.queryFilteredSetups(setupFilter);
 
         self.filterSpecViews[idx](
             createHtmlForSpec(specId)
         );
     };
 
-    var emptySpecHtml = "<span>All</span>";
+    var emptyClassHtml = "<span>All</span>";
+    var emptySpecHtml = "<span>&nbsp;</span>";
 
     function createHtmlForSpec(specId) {
         console.log("create html called for specid:", specId);
@@ -221,14 +239,14 @@ function ArmoryViewModel(region, data, media, un) {
         if (classId != null) {
             return '<img src="' + self.toClassImage(classId) + '" alt="ClassImage" />';
         } else {
-            return emptySpecHtml;
+            return emptyClassHtml;
         }
     }
 
     self.filterClassViews = [
-        ko.observable(emptySpecHtml),
-        ko.observable(emptySpecHtml),
-        ko.observable(emptySpecHtml)
+        ko.observable(emptyClassHtml),
+        ko.observable(emptyClassHtml),
+        ko.observable(emptyClassHtml)
     ];
 
     self.filterSpecViews = [
@@ -245,6 +263,53 @@ function ArmoryViewModel(region, data, media, un) {
     self.filterSpecView = function (d) {
         var idx = d();
         return self.filterSpecViews[idx];
+    };
+    
+    function getSpecsFor(classId) {
+        console.log("getSpecsFor called for", classId);
+
+        // couldn't make $.grep work here for some reason
+        var result = [];
+
+        var dictionary = media.SpecsToClasses;
+
+        for (var specId in dictionary) {
+            if (dictionary.hasOwnProperty(specId)) {
+                if (dictionary[specId] === classId) {
+                    result.push({
+                        specId: specId,
+                        classId: dictionary[specId]
+                    });
+                }
+            }
+        }
+
+        return result;
+        
+        //return $.grep(media.SpecsToClasses, function (e, i) {
+        //        console.log("GREP", e, i);
+        //        var key = this;
+        //        var value = media.SpecsToClasses[key];
+        //        return value == teamFilter.classId;
+        //    }).
+        //    map(function () {
+        //        var key = this;
+        //        var value = media.SpecsToClasses[key];
+        //        return { classId: key, specId: value };
+        //    });
+    }
+    
+    self.possibleSpecs = [
+        ko.observableArray(),
+        ko.observableArray(),
+        ko.observableArray()
+    ];
+    
+    self.specsFor = function ($i) {
+        var i = $i();
+
+        var specs = self.possibleSpecs[i];
+        return specs();
     };
 }
 

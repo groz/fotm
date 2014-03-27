@@ -20,6 +20,7 @@ namespace FotM.Portal.ViewModels
 
             Players = model.Team.Players
                 .OrderBy(p => p.Spec.IsHealer())
+                .ThenBy(p => p.Spec.IsRanged())
                 .ThenBy(p => p.ClassId)
                 .Select(p => new PlayerViewModel(p)).ToArray();
         }

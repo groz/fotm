@@ -9,7 +9,12 @@ namespace FotM.Portal.Infrastructure
 
         public CharacterSpec Spec
         {
-            get { return (CharacterSpec)SpecId; }
+            get { return (CharacterSpec)SpecId.Value; }
+        }
+
+        public CharacterClass Class
+        {
+            get { return (CharacterClass)ClassId.Value; }
         }
     }
 }

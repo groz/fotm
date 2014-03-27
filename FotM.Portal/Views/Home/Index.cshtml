@@ -78,32 +78,17 @@
 <div class="row">
     <div class="col-lg-3 col-md-3 col-sm-5">
         <h2>FotM</h2>
-
-        <table class="table table-striped table-condensed table-responsive table-hover">
-            <tbody data-bind="foreach: fotmSetups">
-                <tr data-bind="click: $parent.showTeams, css: {success: $parent.isSetupSelected($data)}" class="notext">
-                    <td class="hidden-md" data-bind="text: Rank"></td>
-                    <!-- ko foreach: Specs -->
-                    <td>
-                        <img data-bind="attr:{src: $root.toClassImage(ClassId)}" alt="ClassImage" />
-                        <img data-bind="attr:{src: $root.toSpecImage(SpecId)}" alt="SpecImage" />
-                    </td>
-                    <!-- /ko -->
-                    <td data-bind="text: Percent"></td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h3>Filter</h3>
+        
+        <!-- FILTERS -->
         <div class="btn-group btn-group-justified">
             <div class="btn-group btn-group-vertical">
-                <div class="btn-group"><button class="btn btn-link">Class</button></div>
-                <div class="btn-group"><button class="btn btn-link">Spec</button></div>
+                <div class="btn-group btn-group-sm"><button class="btn btn-link">Class</button></div>
+                <div class="btn-group btn-group-sm"><button class="btn btn-link">Spec</button></div>
             </div>
             <!-- ko foreach: setupFilters-->
             <div class="btn-group btn-group-vertical">
-                
-                <div class="dropup btn-group">
+
+                <div class="dropup btn-group btn-group-sm">
 
                     <!-- Dropdown button -->
                     <button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown"
@@ -124,7 +109,7 @@
                     </ul>
                 </div>
 
-                <div class="dropup btn-group">
+                <div class="dropdown btn-group btn-group-sm">
 
                     <!-- Dropdown button -->
                     <button type="button" class="dropdown-toggle btn btn-default" data-toggle="dropdown"
@@ -132,7 +117,7 @@
 
                     <!-- Dropdown menu -->
                     <ul class="dropdown-menu" role="menu">
-                        <!-- ko foreach: $root.allSpecs -->
+                        <!-- ko foreach: $root.specsFor($index) -->
                         <li>
                             <a data-bind="click: function() { $root.updateSpecFilter($parentContext.$index, $data); }">
                                 <img data-bind="attr:{src: $root.toSpecImage(specId)}" alt="ClassImage" />
@@ -148,8 +133,25 @@
             <!-- /ko -->
         </div>
 
+        <!-- FOTM TABLE -->
+        <table class="table table-striped table-condensed table-responsive table-hover">
+            <tbody data-bind="foreach: fotmSetups">
+                <tr data-bind="click: $parent.showTeams, css: {success: $parent.isSetupSelected($data)}" class="notext">
+                    <td class="hidden-md" data-bind="text: Rank"></td>
+                    <!-- ko foreach: Specs -->
+                    <td>
+                        <img data-bind="attr:{src: $root.toClassImage(ClassId)}" alt="ClassImage" />
+                        <img data-bind="attr:{src: $root.toSpecImage(SpecId)}" alt="SpecImage" />
+                    </td>
+                    <!-- /ko -->
+                    <td data-bind="text: Percent"></td>
+                </tr>
+            </tbody>
+        </table>
 
     </div>
+    
+    <!-- FOTM SELECTED TEAMS -->
     <div class="col-lg-9 col-md-9 col-sm-12">
         <h2>Teams</h2>
         <div class="alert" data-bind="visible: showFotMHint">

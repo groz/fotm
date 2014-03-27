@@ -10,9 +10,12 @@ namespace FotM.Portal.Infrastructure
     {
         private readonly TeamInfo[] _verifiedTeams;
         private readonly IGrouping<TeamSetup, TeamInfo>[] _setupGroups;
-        private readonly TeamStatsViewModel[] _allTimeViewModels;
         private readonly TeamInfo[] _orderedByTime;
         private readonly TeamSetupViewModel[] _teamSetupsViewModels;
+        private readonly TeamStatsViewModel[] _allTimeViewModels;
+
+        // number of times setup has to be seen to be considered legit for FotM
+        private const int SetupSeenNumberFilter = 10;
 
         public TeamStatsRepository(TeamStats[] teamStats)
         {
@@ -26,8 +29,6 @@ namespace FotM.Portal.Infrastructure
                 })
                 .ToArray();
 
-            _setupGroups = _verifiedTeams.GroupBy(t => t.Setup).ToArray();
-
             _allTimeViewModels = _verifiedTeams
                 .OrderByDescending(t => t.Stats.Rating)
                 .Select((ts, i) => new TeamStatsViewModel(i + 1, ts.Stats))
@@ -37,13 +38,19 @@ namespace FotM.Portal.Infrastructure
                 .OrderByDescending(t => t.Stats.UpdatedUtc)
                 .ToArray();
 
-            int totalSetups = _setupGroups.Sum(sg => sg.Count());
+            _setupGroups = _verifiedTeams.GroupBy(t => t.Setup).ToArray();
+
+            Dictionary<TeamSetup, int> setupSeen = _setupGroups
+                .ToDictionary(sg => sg.Key, sg => sg.Sum(t => t.Stats.TimesSeen));
+
+
+            int totalSeen = setupSeen.Values.Sum();
 
             var teamSetups = _setupGroups
                 .Select(setupGroup => new
                 {
                     Setup = setupGroup.Key,
-                    Percent = setupGroup.Count() / (double)totalSetups,
+                    Percent = setupSeen[setupGroup.Key] / (double)totalSeen,
                 })
                 .OrderByDescending(ts => ts.Percent)
                 .ToArray();
@@ -103,14 +110,14 @@ namespace FotM.Portal.Infrastructure
             foreach (var filter in filters)
             {
                 if (filter.ClassId.HasValue)
-                    ++filterClasses[(CharacterClass)filter.ClassId];
+                    ++filterClasses[filter.Class];
 
                 if (filter.SpecId.HasValue)
                     ++filterSpecs[filter.Spec];
             }
 
             return setupClasses.All(kv => kv.Value >= filterClasses[kv.Key]) &&
-                setupSpecs.All(kv => kv.Value >= filterSpecs[kv.Key]);
+                   setupSpecs.All(kv => kv.Value >= filterSpecs[kv.Key]);
         }
 
         public TeamStatsViewModel[] QueryTeamsForSetup(TeamSetupViewModel teamSetupViewModel, int nMaxTeams)

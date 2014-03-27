@@ -56,6 +56,28 @@ namespace FotM.Domain
                    spec == CharacterSpec.Priest_Discipline ||
                    spec == CharacterSpec.Monk_Mistweaver;
         }
+
+        public static bool IsRanged(this CharacterSpec spec)
+        {
+            return spec == CharacterSpec.Mage_Arcane ||
+                   spec == CharacterSpec.Mage_Fire ||
+                   spec == CharacterSpec.Mage_Frost ||
+                   spec == CharacterSpec.Druid_Balance ||
+                   spec == CharacterSpec.Druid_Guardian ||
+                   spec == CharacterSpec.Hunter_BeastMastery ||
+                   spec == CharacterSpec.Hunter_Marksmanship ||
+                   spec == CharacterSpec.Hunter_Survival ||
+                   spec == CharacterSpec.Priest_Shadow ||
+                   spec == CharacterSpec.Shaman_Elemental ||
+                   spec == CharacterSpec.Warlock_Affliction ||
+                   spec == CharacterSpec.Warlock_Demonology ||
+                   spec == CharacterSpec.Warlock_Destruction;
+        }
+
+        public static bool IsMelee(this CharacterSpec spec)
+        {
+            return !spec.IsHealer() && !spec.IsHealer();
+        }
     }
 
     public static class SpecInfo

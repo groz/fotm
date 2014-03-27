@@ -47,24 +47,17 @@ namespace FotM.Cassandra
         public int FactionId { get; private set; }
 
         public string RealmSlug { get; set; }
-
-        //[numl.Model.Feature]
-        //[AccordFeature(Weight = 1, Normalize = false)]
-        // Labels can't be features
         public int SpecId { get; set; }
-
-        //[Feature]
         public int RealmId { get; private set; }
 
         [numl.Model.Feature]
         [CassandraFeature(Weight = 1)]
         public int RatingDiff { get; private set; }
 
-        //[AccordFeature(Weight = 5)]
         public int RankingDiff { get; private set; }
 
         [numl.Model.Feature]
-        [CassandraFeature(Weight = 1)]
+        [CassandraFeature(Weight = 2)]
         public int Ranking { get; private set; }
 
         [numl.Model.Feature]
@@ -87,16 +80,12 @@ namespace FotM.Cassandra
         [CassandraFeature(Weight = 1)]
         public int SeasonLosses { get; private set; }
        
-        //[AccordFeature]
         public int WeeklyWinsDiff { get; private set; }
 
-        //[AccordFeature]
         public int WeeklyLossesDiff { get; private set; }
 
-        //[AccordFeature]
         public int SeasonWinsDiff { get; private set; }
 
-        //[AccordFeature]
         public int SeasonLossesDiff { get; private set; }
     }
 

@@ -21,6 +21,7 @@ namespace FotM.Portal.ViewModels
             Specs = Enumerable.Range(0, teamSetup.BracketSize)
                 .Select(i => new SpecViewModel(teamSetup.ClassIds[i], teamSetup.SpecIds[i]))
                 .OrderBy(svm => svm.CharSpec.IsHealer())
+                .ThenBy(svm => svm.CharSpec.IsRanged())
                 .ThenBy(svm => svm.CharClass)
                 .ToArray();
         }
