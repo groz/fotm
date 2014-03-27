@@ -95,24 +95,24 @@ namespace FotM.Portal.Infrastructure
                 caller.update(viewModel);
         }
 
-        public void SendTeamsForSetup(dynamic caller, TeamSetupViewModel teamSetupViewModel)
+        public void SendTeamsForSetup(dynamic caller, Guid requestGuid, TeamSetupViewModel teamSetupViewModel)
         {
             if (_repository == null)
                 return;
 
             var teams = _repository.QueryTeamsForSetup(teamSetupViewModel, 10);
 
-            caller.showSetupTeams(teams);
+            caller.showSetupTeams(requestGuid, teams);
         }
 
-        public void SendSetupsForFilters(dynamic caller, TeamFilter[] teamFilters)
+        public void SendSetupsForFilters(dynamic caller, Guid requestGuid, TeamFilter[] teamFilters)
         {
             if (_repository == null)
                 return;
 
             var teamSetups = _repository.QueryFilteredSetups(teamFilters, 10);
 
-            caller.showFilteredSetups(teamSetups);
+            caller.showFilteredSetups(requestGuid, teamSetups);
         }
     }
 

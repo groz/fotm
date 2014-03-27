@@ -1,15 +1,58 @@
 ﻿// Code-behind viewmodel for /Home/Index action
 
 function ArmoryViewModel(region, data, media) {
-    var self = this;
-
-    self.hub = null;
     
     function virtualPageView(virtualPage) {
         console.log(virtualPage);
         ga('send', 'pageview', virtualPage);
     }
+
+    var self = this;
+
+    self.hub = null;
+
+    var latestSetupRequestGuid = null;
+    var latestFilterRequestGuid = null;
     
+    function queryServerForSetup(setup) {
+        if (self.hub != null) {
+            var requestGuid = genGuid();
+            latestSetupRequestGuid = requestGuid;
+            self.hub.server.queryTeamsForSetup(requestGuid, setup);
+            virtualPageView("/show-setup?");
+        } else {
+            console.error("hub is null");
+        }
+    }
+
+    function queryServerForFilteredSetups(setupFilter) {
+        if (self.hub != null) {
+            var requestGuid = genGuid();
+            latestFilterRequestGuid = requestGuid;
+            self.hub.server.queryFilteredSetups(requestGuid, setupFilter);
+            virtualPageView("/filter");
+        } else {
+            console.error("hub is null");
+        }
+    }
+
+    self.populateFotmTeamsFromServer = function(requestGuid, teams) {
+        if (requestGuid == latestSetupRequestGuid) {
+            self.fotmTeams(teams);
+        } else {
+            console.log("Response to request", requestGuid, "is outdated and discarded.");
+        }
+    };
+
+    self.populateFilteredSetupsFromServer = function (requestGuid, setups) {
+        if (requestGuid == latestFilterRequestGuid) {
+            self.fotmSetups(setups);
+        } else {
+            console.log("Response to request", requestGuid, "is outdated and discarded.");
+        }
+        
+    };
+
     self.bracket = ko.observable("3v3");
     self.region = ko.observable(region);
     
@@ -52,12 +95,9 @@ function ArmoryViewModel(region, data, media) {
         self.showFotMHint(false);
         self.selectedSetup(setup);
 
-        var virtualPage = '/fotm?rank=' + setup.Rank;
-        virtualPageView(virtualPage);
+        virtualPageView('/fotm?rank=' + setup.Rank);
 
-        if (self.hub != null) {
-            self.hub.server.queryTeamsForSetup(setup);
-        }
+        queryServerForSetup(setup);
     };
 
     function exists(d) {
@@ -185,8 +225,8 @@ function ArmoryViewModel(region, data, media) {
         self.possibleSpecs[idx](possibleSpecs);
 
         console.log("Sending filtering request for", setupFilter);
-        
-        self.hub.server.queryFilteredSetups(setupFilter);
+
+        queryServerForFilteredSetups(setupFilter);
         
         self.filterClassViews[idx](
             createHtmlForClass(classId)
@@ -202,7 +242,7 @@ function ArmoryViewModel(region, data, media) {
         
         if (filterIndex == null) {
             // only used on init
-            self.hub.server.queryFilteredSetups(setupFilter);
+            queryServerForFilteredSetups(setupFilter);
             return;
         }
         
@@ -216,7 +256,7 @@ function ArmoryViewModel(region, data, media) {
 
         console.log("Sending filtering request for", setupFilter);
 
-        self.hub.server.queryFilteredSetups(setupFilter);
+        queryServerForFilteredSetups(setupFilter);
 
         self.filterSpecViews[idx](
             createHtmlForSpec(specId)
@@ -285,18 +325,6 @@ function ArmoryViewModel(region, data, media) {
         }
 
         return result;
-        
-        //return $.grep(media.SpecsToClasses, function (e, i) {
-        //        console.log("GREP", e, i);
-        //        var key = this;
-        //        var value = media.SpecsToClasses[key];
-        //        return value == teamFilter.classId;
-        //    }).
-        //    map(function () {
-        //        var key = this;
-        //        var value = media.SpecsToClasses[key];
-        //        return { classId: key, specId: value };
-        //    });
     }
     
     self.possibleSpecs = [
@@ -326,14 +354,14 @@ function initializePage(region, data, media) {
         armory.update(msg);
     };
     
-    hub.client.showSetupTeams = function (teams) {
-        console.log("Teams for queried setup received. Populating...");
-        armory.fotmTeams(teams);
+    hub.client.showSetupTeams = function (requestGuid, teams) {
+        console.log("Teams for queried setup received for request", requestGuid);
+        armory.populateFotmTeamsFromServer(requestGuid, teams);
     };
     
-    hub.client.showFilteredSetups = function (setups) {
-        console.log("Filter response received: ", setups);
-        armory.fotmSetups(setups);
+    hub.client.showFilteredSetups = function (requestGuid, setups) {
+        console.log("Filter response received for request guid", requestGuid);
+        armory.populateFilteredSetupsFromServer(requestGuid, setups);
     };
 
     $.connection.hub.start().done(function () {

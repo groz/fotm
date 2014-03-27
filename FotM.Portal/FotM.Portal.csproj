@@ -197,6 +197,8 @@
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\underscore-min.js" />
+    <Content Include="Scripts\underscore.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -214,6 +216,7 @@
     <Content Include="Scripts\jquery-2.1.0.min.map" />
     <Content Include="Views\Shared\GoogleAnalyticsTrackingCode.cshtml" />
     <Content Include="Views\Home\PartialCharacterView.cshtml" />
+    <Content Include="Scripts\underscore-min.map" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FotM.Config\FotM.Config.csproj">
