@@ -1,0 +1,70 @@
+﻿module Loading
+
+type RegionCode = 
+| US
+| EU
+| KR
+| CN
+| TW
+
+type Region = {
+    region: RegionCode;
+    blizzardApiUrl: string;
+    azureConnectionString: string;
+}
+
+[<Literal>]
+let BlizzardLadderSample = """{
+"rows" : [ {
+"ranking" : 1,
+"rating" : 2777,
+"name" : "Hamshamx",
+"realmId" : 11,
+"realmName" : "Tichondrius",
+"realmSlug" : "tichondrius",
+"raceId" : 2,
+"classId" : 7,
+"specId" : 264,
+"factionId" : 1,
+"genderId" : 1,
+"seasonWins" : 275,
+"seasonLosses" : 106,
+"weeklyWins" : 0,
+"weeklyLosses" : 0
+} ] 
+}
+"""
+
+open FSharp.Data
+open Armory
+
+type RawLadder = JsonProvider<BlizzardLadderSample>
+
+type ArmoryLoader(region: Region, bracket: Bracket) =
+
+    member this.toDomainPlayer(row: RawLadder.Row): PlayerEntry = {
+            player = {
+                        Player.name = row.Name;
+                        Player.faction = enum row.FactionId;
+                        Player.gender = enum row.GenderId
+                        Player.race = enum row.RaceId;
+                        Player.realm = {
+                                            Realm.realmId = row.RealmId;
+                                            Realm.realmName = row.RealmName;
+                                            Realm.realmSlug = row.RealmSlug;
+                                        };
+                        Player.classSpec = Specs.toClass row.ClassId row.SpecId;
+                     };
+            ranking = row.Ranking;
+            rating = row.Rating;
+            seasonWins = row.SeasonWins;
+            seasonLosses = row.SeasonLosses;
+            weeklyWins = row.WeeklyWins;
+            weeklyLosses = row.WeeklyLosses;
+        }
+
+    member this.load() =
+        let rawLadder = RawLadder.Load(region.blizzardApiUrl)
+
+        rawLadder.Rows
+        |> Seq.map (fun row -> this.toDomainPlayer(row))

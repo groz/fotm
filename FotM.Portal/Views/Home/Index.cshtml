@@ -11,6 +11,7 @@
     @Scripts.Render("~/bundles/activeView")
     <script src="~/signalr/hubs"></script>
     <script src="~/Scripts/Home/index_01.js"></script>
+    <script src="~/Scripts/Home/main.js"></script>
 }
 
 @section onReady
@@ -18,6 +19,9 @@
     var armory = @Html.Raw(Json.Encode(Model))
     var media = @Html.Raw(Json.Encode(ViewBag.Media))
     initializePage("@(RegionalConfig.Instance.Region)", armory, media)
+    
+    var main = new Main();
+    main.startLeaderboardPage("gg");
 }
 
 <div class="row pager">
