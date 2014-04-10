@@ -64,7 +64,7 @@ type ArmoryLoader(region: Region, bracket: Bracket) =
         }
 
     member this.load() =
-        let rawLadder = RawLadder.Load(region.blizzardApiUrl)
+        let rawLadder = RawLadder.Load(region.blizzardApiUrl + bracket.url)
 
         rawLadder.Rows
         |> Seq.map (fun row -> this.toDomainPlayer(row))
