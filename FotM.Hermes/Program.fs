@@ -1,7 +1,7 @@
 ﻿module Main
 
 open System
-open Loading
+open ArmoryLoader
 open Armory
 
 let usRegion = {

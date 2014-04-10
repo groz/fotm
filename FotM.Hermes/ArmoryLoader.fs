@@ -1,4 +1,6 @@
-﻿module Loading
+﻿module ArmoryLoader
+open FSharp.Data
+open Armory
 
 type RegionCode = 
 | US
@@ -34,9 +36,6 @@ let BlizzardLadderSample = """{
 } ] 
 }
 """
-
-open FSharp.Data
-open Armory
 
 type RawLadder = JsonProvider<BlizzardLadderSample>
 
