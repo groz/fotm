@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace FotM.Cassandra
+﻿namespace FotM.Utilities
 {
     public interface IKMeans<T>
     {

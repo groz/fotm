@@ -1,4 +1,7 @@
-﻿module Loading
+﻿namespace FotM.Hermes
+
+open FSharp.Data
+open Armory
 
 type RegionCode = 
 | US
@@ -13,34 +16,34 @@ type Region = {
     azureConnectionString: string;
 }
 
-[<Literal>]
-let BlizzardLadderSample = """{
-"rows" : [ {
-"ranking" : 1,
-"rating" : 2777,
-"name" : "Hamshamx",
-"realmId" : 11,
-"realmName" : "Tichondrius",
-"realmSlug" : "tichondrius",
-"raceId" : 2,
-"classId" : 7,
-"specId" : 264,
-"factionId" : 1,
-"genderId" : 1,
-"seasonWins" : 275,
-"seasonLosses" : 106,
-"weeklyWins" : 0,
-"weeklyLosses" : 0
-} ] 
-}
-"""
+[<AutoOpen>]
+module ArmoryLoader =
 
-open FSharp.Data
-open Armory
+    [<Literal>]
+    let BlizzardLadderSample = """{
+    "rows" : [ {
+    "ranking" : 1,
+    "rating" : 2777,
+    "name" : "Hamshamx",
+    "realmId" : 11,
+    "realmName" : "Tichondrius",
+    "realmSlug" : "tichondrius",
+    "raceId" : 2,
+    "classId" : 7,
+    "specId" : 264,
+    "factionId" : 1,
+    "genderId" : 1,
+    "seasonWins" : 275,
+    "seasonLosses" : 106,
+    "weeklyWins" : 0,
+    "weeklyLosses" : 0
+    } ] 
+    }
+    """
 
 type RawLadder = JsonProvider<BlizzardLadderSample>
 
-type ArmoryLoader(region: Region, bracket: Bracket) =
+type ArmoryPuller(region: Region, bracket: Bracket) =
 
     member this.toDomainPlayer(row: RawLadder.Row): PlayerEntry = {
             player = {
@@ -64,7 +67,7 @@ type ArmoryLoader(region: Region, bracket: Bracket) =
         }
 
     member this.load() =
-        let rawLadder = RawLadder.Load(region.blizzardApiUrl)
+        let rawLadder = RawLadder.Load(region.blizzardApiUrl + bracket.url)
 
         rawLadder.Rows
         |> Seq.map (fun row -> this.toDomainPlayer(row))

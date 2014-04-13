@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using FotM.Utilities;
 using numl.Math.Metrics;
 using numl.Model;
 using numl.Unsupervised;

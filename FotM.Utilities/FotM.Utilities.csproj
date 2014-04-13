@@ -66,6 +66,7 @@
     <Compile Include="CompressionUtils.cs" />
     <Compile Include="ConfigHelpers.cs" />
     <Compile Include="FromConfigAttribute.cs" />
+    <Compile Include="IKMeans.cs" />
     <Compile Include="LoggingExtensions.cs" />
     <Compile Include="MathUtils.cs" />
     <Compile Include="MemberCompare.cs" />

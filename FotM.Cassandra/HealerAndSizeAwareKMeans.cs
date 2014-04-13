@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FotM.Domain;
+using FotM.Utilities;
 
 namespace FotM.Cassandra
 {

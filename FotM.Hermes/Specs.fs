@@ -1,4 +1,4 @@
-﻿module Specs
+﻿namespace FotM.Hermes
 
 type WarriorSpec =
 | Arms = 71
@@ -69,16 +69,17 @@ type Class =
 | Monk of MonkSpec option
 | Druid of DruidSpec option
 
-let toClass classId specId = 
-    match classId with
-    | 1 -> Warrior( Some(enum specId) )
-    | 2 -> Paladin( Some(enum specId) )
-    | 3 -> Hunter( Some(enum specId) )
-    | 4 -> Rogue( Some(enum specId) )
-    | 5 -> Priest( Some(enum specId) )
-    | 6 -> ``Death Knight``( Some(enum specId) )
-    | 7 -> Shaman( Some(enum specId) )
-    | 8 -> Mage( Some(enum specId) )
-    | 9 -> Warlock( Some(enum specId) )
-    | 10 -> Monk( Some(enum specId) )
-    | 11 -> Druid( Some(enum specId) )
+module Specs = 
+    let toClass classId specId = 
+        match classId with
+        | 1 -> Warrior( Some(enum specId) )
+        | 2 -> Paladin( Some(enum specId) )
+        | 3 -> Hunter( Some(enum specId) )
+        | 4 -> Rogue( Some(enum specId) )
+        | 5 -> Priest( Some(enum specId) )
+        | 6 -> ``Death Knight``( Some(enum specId) )
+        | 7 -> Shaman( Some(enum specId) )
+        | 8 -> Mage( Some(enum specId) )
+        | 9 -> Warlock( Some(enum specId) )
+        | 10 -> Monk( Some(enum specId) )
+        | 11 -> Druid( Some(enum specId) )

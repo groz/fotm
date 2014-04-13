@@ -80,7 +80,6 @@
     <Compile Include="FeatureAttributeDescriptor.cs" />
     <Compile Include="HealerAndSizeAwareKMeans.cs" />
     <Compile Include="MyKMeans.cs" />
-    <Compile Include="IKMeans.cs" />
     <Compile Include="NumlKMeans.cs" />
     <Compile Include="PlayerChange.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

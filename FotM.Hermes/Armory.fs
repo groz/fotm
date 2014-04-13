@@ -1,4 +1,4 @@
-﻿module Armory
+﻿namespace FotM.Hermes
 
 (* DOMAIN TYPES *)
 type Realm = {
@@ -32,8 +32,6 @@ type Race =
 | ``Pandaren Alliance`` = 25
 | ``Pandaren Horde`` = 26
 
-open Specs
-
 type Player = {
     name: string;
     realm: Realm;
@@ -66,17 +64,19 @@ type Brackets = {
     rbg: Bracket;
 }
 
-let brackets = {
-    twos = { url = "2v2"; teamSize = 2 };
-    threes = { url = "3v3"; teamSize = 2 };
-    fives = { url = "5v5"; teamSize = 2 };
-    rbg = { url = "rbg"; teamSize = 10 };
-}
-
 type LadderSnapshot = {
     bracket: Bracket;
     ladder: seq<PlayerEntry>;
     taken: System.DateTime;
 }
+
+[<AutoOpen>]
+module Armory =
+    let brackets = {
+        twos = { url = "2v2"; teamSize = 2 };
+        threes = { url = "3v3"; teamSize = 3 };
+        fives = { url = "5v5"; teamSize = 5 };
+        rbg = { url = "rbg"; teamSize = 10 };
+    }
 
 (* /DOMAIN TYPES *)

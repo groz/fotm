@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Accord.MachineLearning;
+using FotM.Utilities;
 
 namespace FotM.Cassandra
 {
