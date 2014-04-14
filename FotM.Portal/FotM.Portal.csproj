@@ -180,6 +180,7 @@
     <Content Include="Content\bootstrap.css.map" />
     <None Include="Properties\PublishProfiles\fotm-eu.pubxml" />
     <None Include="Properties\PublishProfiles\fotm-eu__staging.pubxml" />
+    <None Include="Properties\PublishProfiles\fotm-kr.pubxml" />
     <None Include="Properties\PublishProfiles\fotm.pubxml" />
     <None Include="Properties\PublishProfiles\fotm__staging.pubxml" />
     <Content Include="Scripts\Main\main.coffee" />
