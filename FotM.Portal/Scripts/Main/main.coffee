@@ -166,14 +166,15 @@ class ArmoryViewModel
         hub.server.queryFilteredSetups requestGuid, setupFilter
 
 class @Main
-    constructor: (region, armory, mediaData) -> 
+    constructor: (region, regionEndPoint, armory, mediaData) -> 
         armory = armory or { TeamSetupsViewModels: {}, PlayingNow: [], AllTimeLeaders: {} }
 
-        armoryViewModel = new ArmoryViewModel(region, armory, new Media(mediaData), true)
+        media = new Media(regionEndPoint, mediaData)
+        armoryViewModel = new ArmoryViewModel(region, armory, media, true)
         ko.applyBindings armoryViewModel
         
 class Media
-    constructor: (@data) ->
+    constructor: (@regionEndPoint, @data) ->
         @allClasses = []
         for s, c of @data.SpecsToClasses
             if @allClasses.indexOf(c) == -1
@@ -183,6 +184,9 @@ class Media
     toClassImage: (classId) => @data.ClassImages[classId]
     toSpecImage: (specId) => @data.SpecImages[specId]    
     toRaceImage: (raceId) => @data.RaceImages[raceId]
+    
+    armoryLink: (data) =>
+        "#{@regionEndPoint}wow/en/character/#{data.RealmSlug}/#{data.Name}/simple"
     
     getSpecsForClass: (classId) =>
         result = []

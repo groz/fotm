@@ -20,7 +20,10 @@
     var armory = @Html.Raw(Json.Encode(Model))
     var media = @Html.Raw(Json.Encode(ViewBag.Media))
 
-    var main = new Main("@(RegionalConfig.Instance.Region)", armory, media)
+    var main = new Main("@(RegionalConfig.Instance.Region)", 
+        "@(RegionalConfig.Instance.BlizzardApiEndPoint)",
+        armory, 
+        media)
 }
 
 <div class="row pager">
@@ -61,9 +64,11 @@
                         <div class="row">
                             <!-- ko foreach: Players -->
                             <div class="col-lg-4 col-md-4 col-sm-4 nopadding">
-                                @Html.Partial("PartialCharacterView")
-                                <span class="hidden-sm hidden-md">-</span>
-                                <span class="hidden-sm hidden-md" data-bind="text: Realm"></span>
+                                <a data-bind="attr: {href: $root.media.armoryLink($data)}" class="nolink">
+                                    @Html.Partial("PartialCharacterView")
+                                    <span class="hidden-sm hidden-md">-</span>
+                                    <span class="hidden-sm hidden-md" data-bind="text: Realm"></span>
+                                </a>
                             </div>
                             <!-- /ko -->
                         </div>
@@ -165,10 +170,12 @@
                         <div class="row">
                             <!-- ko foreach: Players -->
                             <div class="col-lg-4 col-md-4 col-sm-4">
-                                <img data-bind="attr:{src: $root.media.toRaceImage(RaceId)}" alt="RaceImage" />
-                                <img class="hidden-xs" data-bind="attr:{src: $root.media.toClassImage(ClassId)}" alt="ClassImage" />
-                                <img data-bind="attr:{src: $root.media.toSpecImage(SpecId)}" alt="SpecImage" />
-                                <span data-bind="text: Name"></span>
+                                <a data-bind="attr: {href: $root.media.armoryLink($data)}" class="nolink">
+                                    <img data-bind="attr:{src: $root.media.toRaceImage(RaceId)}" alt="RaceImage" />
+                                    <img class="hidden-xs" data-bind="attr:{src: $root.media.toClassImage(ClassId)}" alt="ClassImage" />
+                                    <img data-bind="attr:{src: $root.media.toSpecImage(SpecId)}" alt="SpecImage" />
+                                    <span data-bind="text: Name"></span>
+                                </a>
                             </div>
                             <!-- /ko -->
                         </div>

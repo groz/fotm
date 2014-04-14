@@ -254,14 +254,15 @@
   })();
 
   this.Main = (function() {
-    function Main(region, armory, mediaData) {
-      var armoryViewModel;
+    function Main(region, regionEndPoint, armory, mediaData) {
+      var armoryViewModel, media;
       armory = armory || {
         TeamSetupsViewModels: {},
         PlayingNow: [],
         AllTimeLeaders: {}
       };
-      armoryViewModel = new ArmoryViewModel(region, armory, new Media(mediaData), true);
+      media = new Media(regionEndPoint, mediaData);
+      armoryViewModel = new ArmoryViewModel(region, armory, media, true);
       ko.applyBindings(armoryViewModel);
     }
 
@@ -270,10 +271,12 @@
   })();
 
   Media = (function() {
-    function Media(data) {
+    function Media(regionEndPoint, data) {
       var c, s, _ref;
+      this.regionEndPoint = regionEndPoint;
       this.data = data;
       this.getSpecsForClass = __bind(this.getSpecsForClass, this);
+      this.armoryLink = __bind(this.armoryLink, this);
       this.toRaceImage = __bind(this.toRaceImage, this);
       this.toSpecImage = __bind(this.toSpecImage, this);
       this.toClassImage = __bind(this.toClassImage, this);
@@ -302,6 +305,10 @@
 
     Media.prototype.toRaceImage = function(raceId) {
       return this.data.RaceImages[raceId];
+    };
+
+    Media.prototype.armoryLink = function(data) {
+      return "" + this.regionEndPoint + "wow/en/character/" + data.RealmSlug + "/" + data.Name + "/simple";
     };
 
     Media.prototype.getSpecsForClass = function(classId) {

@@ -22,6 +22,11 @@ namespace FotM.Portal.ViewModels
             get { return _model.Realm.RealmName; }
         }
 
+        public string RealmSlug
+        {
+            get { return _model.Realm.RealmSlug; }
+        }
+
         public string RaceId
         {
             get
