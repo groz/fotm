@@ -53,6 +53,8 @@ namespace FotM.Portal.Infrastructure
 
         private bool OnStatsUpdateReceived(StatsUpdateMessage msg)
         {
+            bool firstUpdate = _repository == null;
+
             _repository = new TeamStatsRepository(msg.Stats);
 
             var armoryViewModel = CreateViewModel(_repository);
@@ -60,6 +62,9 @@ namespace FotM.Portal.Infrastructure
             if (armoryViewModel.AllTimeLeaders.Any())
             {
                 _clients.All.updateNow(armoryViewModel.PlayingNow);
+
+                if (firstUpdate)
+                    _clients.All.updateAll(armoryViewModel);
             }
 
             return true;
