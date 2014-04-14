@@ -222,15 +222,20 @@
 
     ArmoryViewModel.prototype.showTeams = function(setup) {
       if (!this.serverActionsDisabled()) {
-        this.selectedSetup(setup);
-        this.virtualPageView("/fotm?rank=" + setup.Rank);
-        return this.queryServerForSetup(setup);
+        if (setup === this.selectedSetup()) {
+          this.selectedSetup(null);
+          console.log("Cancelled setup selection");
+          return this.queryServerForFilteredSetups(this.setupFilters());
+        } else {
+          this.virtualPageView("/fotm?rank=" + setup.Rank);
+          this.selectedSetup(setup);
+          return this.queryServerForSetup(setup);
+        }
       }
     };
 
     ArmoryViewModel.prototype.queryServerForSetup = function(setup) {
       var requestGuid;
-      this.virtualPageView("/teams");
       requestGuid = genGuid();
       latestSetupRequestGuid = requestGuid;
       return hub.server.queryTeamsForSetup(requestGuid, setup);

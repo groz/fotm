@@ -22,7 +22,7 @@ namespace FotM.Portal
 
             bundles.Add(new ScriptBundle("~/bundles/my").Include("~/Scripts/myUtils.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/3v3").Include("~/Scripts/Home/main.js"));
+            bundles.Add(new ScriptBundle("~/bundles/3v3").Include("~/Scripts/Main/main.js"));
 
 #if DEBUG
             bundles.Add(new ScriptBundle("~/bundles/activeView").Include(

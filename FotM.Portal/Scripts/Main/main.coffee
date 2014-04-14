@@ -145,12 +145,16 @@ class ArmoryViewModel
             
     showTeams: (setup) =>
         if !@serverActionsDisabled()
-            @selectedSetup setup
-            @virtualPageView "/fotm?rank=#{setup.Rank}"
-            @queryServerForSetup setup
+            if setup == @selectedSetup()
+                @selectedSetup null
+                console.log "Cancelled setup selection"
+                @queryServerForFilteredSetups @setupFilters()
+            else
+                @virtualPageView "/fotm?rank=#{setup.Rank}"
+                @selectedSetup setup
+                @queryServerForSetup setup
 
     queryServerForSetup: (setup) ->
-        @virtualPageView "/teams"
         requestGuid = genGuid()
         latestSetupRequestGuid = requestGuid
         hub.server.queryTeamsForSetup requestGuid, setup
@@ -160,7 +164,7 @@ class ArmoryViewModel
         requestGuid = genGuid()
         latestFilterRequestGuid = requestGuid
         hub.server.queryFilteredSetups requestGuid, setupFilter
-                        
+
 class @Main
     constructor: (region, armory, mediaData) -> 
         armory = armory or { TeamSetupsViewModels: {}, PlayingNow: [], AllTimeLeaders: {} }
