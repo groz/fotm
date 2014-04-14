@@ -5,31 +5,18 @@ World of Warcraft arena FotM monitor.
 
 TODO
 
-ASAP: prepopulate fotm specs
-
-Feature requests from the users:
-- More teams than top 20
-- Click on the player to open armory
-- Publish period for when the data was collected somewhere on the page
-
 Frontend:
 - When Playing now is empty show the time of latest update
 - Create admin push mechanism
 - Create admin method polling number of current connected users
-- Add NavBar for FotM section to choose fotms by class, not spec
-- Add armory links to players
 
 Infrastructure:
 - Setup easy deployment for website to US/EU
 - Setup easy deployment for scanner to US/EU
-- Add website for KR
-- Delete expired (1 game per day?) entries from leaderboard
 - Remember teams, add win/loss ratio to each team
-- Set smaller expiration date for teams that were seen only a few times
 - Divide ratings update per number of games if diff is more than 1 to avoid showing 30+ rating changes
 
 Machine learning:
-- Refactor final kmeans implementation, remove numl and Accord
 
 Backlog:
 - Add AWS SNS/SQS
