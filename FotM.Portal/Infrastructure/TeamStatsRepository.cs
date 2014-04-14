@@ -124,11 +124,29 @@ namespace FotM.Portal.Infrastructure
         {
             var specs = teamSetupViewModel.Specs.Select(svm => svm.CharSpec).ToArray();
 
-            return _verifiedTeams
-                .Where(t => t.Team.HasSetup(specs))
-                .OrderByDescending(sg => sg.Stats.Rating)
+            return _allTimeViewModels
+                .Where(t => t.Model.Team.HasSetup(specs))
+                .OrderByDescending(teamStatsViewModel => teamStatsViewModel.Rating)
                 .Take(nMaxTeams)
-                .Select((sg, i) => new TeamStatsViewModel(i + 1, sg.Stats))
+                .ToArray();
+        }
+
+        public TeamStatsViewModel[] QueryFilteredTeams(TeamFilter[] teamFilters, int nMaxTeams)
+        {
+            var teamDatas = from teamViewModel in _allTimeViewModels
+                let team = teamViewModel.Model.Team
+                let setupViewModel = _teamSetupsViewModels
+                    .SingleOrDefault(tsvm => team.HasSetup(
+                        tsvm.Specs.Select(svm => svm.CharSpec).ToArray())
+                    )
+                where setupViewModel != null
+                select new {teamViewModel, setupViewModel};
+
+            return teamDatas
+                .Where(teamData => Passes(teamData.setupViewModel, teamFilters))
+                .Select(teamData => teamData.teamViewModel)
+                .OrderBy(teamStats => teamStats.Rank)
+                .Take(nMaxTeams)
                 .ToArray();
         }
     }

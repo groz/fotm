@@ -12,15 +12,6 @@ namespace FotM.Portal.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
-        {
-            ArmoryViewModel latestArmoryViewModel = ReactiveUpdateManager.Instance.GetLatestViewModel();
-
-            ViewBag.Media = new MediaViewModel();
-
-            return View(latestArmoryViewModel);
-        }
-
         public ActionResult About()
         {
             ViewBag.Message = "World of Warcraft Armory monitoring.";

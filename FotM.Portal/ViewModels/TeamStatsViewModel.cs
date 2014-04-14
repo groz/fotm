@@ -45,6 +45,11 @@ namespace FotM.Portal.ViewModels
             get { return _model.UpdatedUtc.ToString(); }
         }
 
+        internal TeamStats Model
+        {
+            get { return _model; }
+        }
+
         internal DateTime UpdatedUtc
         {
             get { return _model.UpdatedUtc; }

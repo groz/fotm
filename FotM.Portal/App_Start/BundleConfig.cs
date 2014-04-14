@@ -22,6 +22,8 @@ namespace FotM.Portal
 
             bundles.Add(new ScriptBundle("~/bundles/my").Include("~/Scripts/myUtils.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/3v3").Include("~/Scripts/Home/main.js"));
+
 #if DEBUG
             bundles.Add(new ScriptBundle("~/bundles/activeView").Include(
                 "~/Scripts/knockout-3.1.0.debug.js",

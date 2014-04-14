@@ -240,12 +240,6 @@ function ArmoryViewModel(region, data, media) {
     self.updateSpecFilter = function (filterIndex, spec) {
         var setupFilter = self.setupFilters();
         
-        if (filterIndex == null) {
-            // only used on init
-            queryServerForFilteredSetups(setupFilter);
-            return;
-        }
-        
         self.fotmTeams([]);
 
         var specId = spec != null ? spec.specId : null;
@@ -339,6 +333,8 @@ function ArmoryViewModel(region, data, media) {
         var specs = self.possibleSpecs[i];
         return specs();
     };
+
+    //self.fotmTeams(self.selectedPage());
 }
 
 function initializePage(region, data, media) {
@@ -366,8 +362,6 @@ function initializePage(region, data, media) {
 
     $.connection.hub.start().done(function () {
         armory.hub = hub;
-        armory.updateSpecFilter(null);
-
         hub.server.queryLatestUpdate();
     });
 }

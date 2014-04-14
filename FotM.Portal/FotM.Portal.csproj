@@ -140,9 +140,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ThreesController.cs" />
     <Compile Include="Infrastructure\IndexHub.cs" />
     <Compile Include="Infrastructure\ReactiveUpdateManager.cs" />
     <Compile Include="Infrastructure\TeamFilter.cs" />
+    <Compile Include="Infrastructure\TeamInfo.cs" />
     <Compile Include="Infrastructure\TeamStatsRepository.cs" />
     <Compile Include="ViewModels\ArmoryViewModel.cs" />
     <Compile Include="ViewModels\MediaLinks.cs" />
@@ -216,11 +218,11 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
-    <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Scripts\jquery-2.1.0.min.map" />
     <Content Include="Views\Shared\GoogleAnalyticsTrackingCode.cshtml" />
-    <Content Include="Views\Home\PartialCharacterView.cshtml" />
+    <Content Include="Views\Shared\PartialCharacterView.cshtml" />
     <Content Include="Scripts\underscore-min.map" />
+    <Content Include="Views\Threes\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FotM.Config\FotM.Config.csproj">

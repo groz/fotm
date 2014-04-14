@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using FotM.Config;
-using FotM.Domain;
 using FotM.Messaging;
 using FotM.Messaging.Messages;
 using FotM.Portal.ViewModels;
@@ -15,12 +14,7 @@ namespace FotM.Portal.Infrastructure
 {
     public class ReactiveUpdateManager
     {
-        private static readonly ReactiveUpdateManager _instance = new ReactiveUpdateManager();
-
-        public static ReactiveUpdateManager Instance
-        {
-            get { return _instance; }
-        }
+        public static readonly ReactiveUpdateManager Instance = new ReactiveUpdateManager();
 
         private readonly IHubConnectionContext _clients;
         private readonly ISubscriber<StatsUpdateMessage> _statsUpdateListener;
@@ -65,7 +59,7 @@ namespace FotM.Portal.Infrastructure
 
             if (armoryViewModel.AllTimeLeaders.Any())
             {
-                _clients.All.update(armoryViewModel);
+                _clients.All.updateNow(armoryViewModel.PlayingNow);
             }
 
             return true;
@@ -89,10 +83,10 @@ namespace FotM.Portal.Infrastructure
 
         public void SendLatestUpdate(dynamic caller)
         {
-            var viewModel = GetLatestViewModel();
+            var armoryViewModel = GetLatestViewModel();
 
-            if (viewModel != null)
-                caller.update(viewModel);
+            if (armoryViewModel != null)
+                caller.updateAll(armoryViewModel);
         }
 
         public void SendTeamsForSetup(dynamic caller, Guid requestGuid, TeamSetupViewModel teamSetupViewModel)
@@ -100,7 +94,7 @@ namespace FotM.Portal.Infrastructure
             if (_repository == null)
                 return;
 
-            var teams = _repository.QueryTeamsForSetup(teamSetupViewModel, 10);
+            var teams = _repository.QueryTeamsForSetup(teamSetupViewModel, nMaxTeams: 15);
 
             caller.showSetupTeams(requestGuid, teams);
         }
@@ -111,15 +105,9 @@ namespace FotM.Portal.Infrastructure
                 return;
 
             var teamSetups = _repository.QueryFilteredSetups(teamFilters, 10);
+            var teams = _repository.QueryFilteredTeams(teamFilters, 15);
 
-            caller.showFilteredSetups(requestGuid, teamSetups);
+            caller.showFilteredSetups(requestGuid, teamSetups, teams);
         }
-    }
-
-    public class TeamInfo
-    {
-        public Team Team { get; set; }
-        public TeamSetup Setup { get; set; }
-        public TeamStats Stats { get; set; }
     }
 }
