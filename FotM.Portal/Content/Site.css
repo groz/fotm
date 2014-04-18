@@ -73,3 +73,7 @@ input[type="checkbox"].input-validation-error {
     text-decoration: none !important;
     color: inherit;
 }
+
+.inline-it {
+    display: inline-block;
+}

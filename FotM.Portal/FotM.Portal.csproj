@@ -179,10 +179,8 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
     <None Include="Properties\PublishProfiles\fotm-eu.pubxml" />
-    <None Include="Properties\PublishProfiles\fotm-eu__staging.pubxml" />
     <None Include="Properties\PublishProfiles\fotm-kr.pubxml" />
     <None Include="Properties\PublishProfiles\fotm.pubxml" />
-    <None Include="Properties\PublishProfiles\fotm__staging.pubxml" />
     <Content Include="Scripts\Main\main.coffee" />
     <None Include="Scripts\jquery-2.1.0.intellisense.js" />
     <Content Include="favicon.ico" />
@@ -223,6 +221,7 @@
     <Content Include="Views\Shared\PartialCharacterView.cshtml" />
     <Content Include="Scripts\underscore-min.map" />
     <Content Include="Views\Threes\Index.cshtml" />
+    <Content Include="Views\Shared\DonateButton.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FotM.Config\FotM.Config.csproj">
