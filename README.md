@@ -5,7 +5,7 @@ World of Warcraft arena FotM monitor.
 
 TODO
 ASAP:
-- When setup is unselected populate team list with current filter
+- When setup is unselected populate team list with current filter (not working for KR)
 
 Frontend:
 - Show loading spin until SignalR is connected
