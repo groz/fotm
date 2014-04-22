@@ -4,6 +4,8 @@ fotm
 World of Warcraft arena FotM monitor.
 
 TODO
+ASAP:
+- When setup is unselected populate team list with current filter
 
 Frontend:
 - Show loading spin until SignalR is connected
