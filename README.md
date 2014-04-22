@@ -6,7 +6,7 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Discussion forum per team setup?
+- Show loading spin until SignalR is connected
 - Switch to Angular.js or otherwise implement the correct urls altering for this SPA, i.e. when user applies some filter the address should change accordingly so that he can share the result
 - When Playing now is empty show the time of latest update
 - Create admin push mechanism
@@ -19,9 +19,11 @@ Infrastructure:
 - Divide ratings update per number of games if diff is more than 1 to avoid showing 30+ rating changes
 
 Machine learning:
+- Try evaluating all n choose 3 combinations instead of multiple k-means runs
 
 Backlog:
 - Add AWS SNS/SQS
 - Refactoring!
 - Make FotM.Config rebuild on each update to Regional.config
 - Investigate compressing all SignalR communication
+- Discussion forum per team setup?
