@@ -4,8 +4,10 @@ fotm
 World of Warcraft arena FotM monitor.
 
 TODO
+
 ASAP:
 - When setup is unselected populate team list with current filter (not working for KR)
+- Add CN region
 
 Frontend:
 - Show loading spin until SignalR is connected
