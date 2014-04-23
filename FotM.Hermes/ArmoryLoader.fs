@@ -16,11 +16,7 @@ type Region = {
     azureConnectionString: string;
 }
 
-[<AutoOpen>]
-module ArmoryLoader =
-
-    [<Literal>]
-    let BlizzardLadderSample = """{
+type RawLadder = JsonProvider<"""{
     "rows" : [ {
     "ranking" : 1,
     "rating" : 2777,
@@ -39,9 +35,7 @@ module ArmoryLoader =
     "weeklyLosses" : 0
     } ] 
     }
-    """
-
-type RawLadder = JsonProvider<BlizzardLadderSample>
+""">
 
 type ArmoryPuller(region: Region, bracket: Bracket) =
 
@@ -66,8 +60,9 @@ type ArmoryPuller(region: Region, bracket: Bracket) =
             weeklyLosses = row.WeeklyLosses;
         }
 
-    member this.load() =
+    member this.load(): LadderSnapshot =
         let rawLadder = RawLadder.Load(region.blizzardApiUrl + bracket.url)
 
-        rawLadder.Rows
-        |> Seq.map (fun row -> this.toDomainPlayer(row))
+        let ladder = rawLadder.Rows |> Seq.map (fun row -> this.toDomainPlayer(row))
+
+        { bracket = bracket; ladder = ladder; timeTaken = NodaTime.SystemClock.Instance.Now }

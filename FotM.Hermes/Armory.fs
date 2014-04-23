@@ -67,7 +67,7 @@ type Brackets = {
 type LadderSnapshot = {
     bracket: Bracket;
     ladder: seq<PlayerEntry>;
-    taken: System.DateTime;
+    timeTaken: NodaTime.Instant;
 }
 
 [<AutoOpen>]

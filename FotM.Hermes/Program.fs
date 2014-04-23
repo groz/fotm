@@ -13,9 +13,9 @@ module Main =
 
     let armoryPuller = ArmoryPuller(region, brackets.threes)
 
-    let ladder = armoryPuller.load()
+    let ladderSnapshot = armoryPuller.load()
 
-    let realms = ladder |> Seq.groupBy (fun (playerEntry: PlayerEntry) -> playerEntry.player.classSpec)
+    let realms = ladderSnapshot.ladder |> Seq.groupBy (fun (playerEntry: PlayerEntry) -> playerEntry.player.classSpec)
 
     realms
     |> Seq.sortBy (fun g -> snd(g) |> Seq.length )
