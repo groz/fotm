@@ -1,4 +1,4 @@
-﻿namespace FotM.Hermes
+﻿namespace FotM.Data
 
 type WarriorSpec =
 | Arms = 71
@@ -70,16 +70,27 @@ type Class =
 | Druid of DruidSpec option
 
 module Specs = 
+
+    let toSpecEnum<'a when 'a: enum<int>>(value: int): 'a option =
+        if not (System.Enum.IsDefined(typeof<'a>, value)) then
+            None
+        else
+            Some(LanguagePrimitives.EnumOfValue<int, 'a> value)
+
     let toClass classId specId = 
+
+        if (classId < 1 || classId > 11) then 
+            invalidArg "classId" (classId.ToString())
+
         match classId with
-        | 1 -> Warrior( Some(enum specId) )
-        | 2 -> Paladin( Some(enum specId) )
-        | 3 -> Hunter( Some(enum specId) )
-        | 4 -> Rogue( Some(enum specId) )
-        | 5 -> Priest( Some(enum specId) )
-        | 6 -> ``Death Knight``( Some(enum specId) )
-        | 7 -> Shaman( Some(enum specId) )
-        | 8 -> Mage( Some(enum specId) )
-        | 9 -> Warlock( Some(enum specId) )
-        | 10 -> Monk( Some(enum specId) )
-        | 11 -> Druid( Some(enum specId) )
+        | 1 -> Warrior( toSpecEnum specId )
+        | 2 -> Paladin( toSpecEnum specId )
+        | 3 -> Hunter( toSpecEnum specId )
+        | 4 -> Rogue( toSpecEnum specId )
+        | 5 -> Priest( toSpecEnum specId )
+        | 6 -> ``Death Knight``( toSpecEnum specId )
+        | 7 -> Shaman( toSpecEnum specId )
+        | 8 -> Mage( toSpecEnum specId )
+        | 9 -> Warlock( toSpecEnum specId )
+        | 10 -> Monk( toSpecEnum specId )
+        | 11 -> Druid( toSpecEnum specId )

@@ -1,20 +1,7 @@
 ﻿namespace FotM.Hermes
 
 open FSharp.Data
-open Armory
-
-type RegionCode = 
-| US
-| EU
-| KR
-| CN
-| TW
-
-type Region = {
-    region: RegionCode;
-    blizzardApiUrl: string;
-    azureConnectionString: string;
-}
+open FotM.Data
 
 type RawLadder = JsonProvider<"""{
     "rows" : [ {
@@ -37,7 +24,7 @@ type RawLadder = JsonProvider<"""{
     }
 """>
 
-type ArmoryPuller(region: Region, bracket: Bracket) =
+type ArmoryLoader(region: RegionalSettings, bracket: Bracket) =
 
     member this.toDomainPlayer(row: RawLadder.Row): PlayerEntry = {
             player = {
@@ -61,8 +48,10 @@ type ArmoryPuller(region: Region, bracket: Bracket) =
         }
 
     member this.load(): LadderSnapshot =
-        let rawLadder = RawLadder.Load(region.blizzardApiUrl + bracket.url)
+        let rawLadder = RawLadder.Load(region.blizzardApiRoot + bracket.url)
 
-        let ladder = rawLadder.Rows |> Seq.map (fun row -> this.toDomainPlayer(row))
-
-        { bracket = bracket; ladder = ladder; timeTaken = NodaTime.SystemClock.Instance.Now }
+        { 
+            bracket = bracket; 
+            ladder = rawLadder.Rows |> Seq.map this.toDomainPlayer;
+            timeTaken = NodaTime.SystemClock.Instance.Now 
+        }

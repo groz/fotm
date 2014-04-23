@@ -1,19 +1,15 @@
 ﻿namespace FotM.Hermes
 
 open System
+open FotM.Data
 
 module Main =
-    let usRegion = {
-        region = US;
-        blizzardApiUrl = "http://us.battle.net/api/wow/leaderboard/";
-        azureConnectionString = ""
-    }
 
-    let region = usRegion
+    let region = Regions.US
 
-    let armoryPuller = ArmoryPuller(region, brackets.threes)
+    let armory = ArmoryLoader(region, Brackets.threes)
 
-    let ladderSnapshot = armoryPuller.load()
+    let ladderSnapshot = armory.load()
 
     let realms = ladderSnapshot.ladder |> Seq.groupBy (fun (playerEntry: PlayerEntry) -> playerEntry.player.classSpec)
 

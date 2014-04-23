@@ -1,4 +1,4 @@
-﻿namespace FotM.Hermes
+﻿namespace FotM.Data
 
 (* DOMAIN TYPES *)
 type Realm = {
@@ -57,26 +57,16 @@ type Bracket = {
     teamSize: int;
 }
 
-type Brackets = {
-    twos: Bracket;
-    threes: Bracket;
-    fives: Bracket;
-    rbg: Bracket;
-}
-
 type LadderSnapshot = {
     bracket: Bracket;
     ladder: seq<PlayerEntry>;
     timeTaken: NodaTime.Instant;
 }
 
-[<AutoOpen>]
-module Armory =
-    let brackets = {
-        twos = { url = "2v2"; teamSize = 2 };
-        threes = { url = "3v3"; teamSize = 3 };
-        fives = { url = "5v5"; teamSize = 5 };
-        rbg = { url = "rbg"; teamSize = 10 };
-    }
+module Brackets =
+    let twos = { url = "2v2"; teamSize = 2 }
+    let threes = { url = "3v3"; teamSize = 3 }
+    let fives = { url = "5v5"; teamSize = 5 }
+    let rbg = { url = "rbg"; teamSize = 10 }
 
 (* /DOMAIN TYPES *)
