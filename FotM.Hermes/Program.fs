@@ -11,6 +11,18 @@ Workflow of this module:
 
 open System
 open FotM.Data
+open NodaTime
+
+type Watcher(region: RegionalSettings, bracket: Bracket) =
+
+    let duplicateCheckPeriod = Duration.FromHours(int64 1)
+
+    let armoryLoader = new ArmoryLoader(region, bracket)
+
+    member this.watch() =
+        let lastSnapshots = []
+        
+
 
 module Main =
 
