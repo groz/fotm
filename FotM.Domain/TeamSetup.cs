@@ -12,7 +12,7 @@ namespace FotM.Domain
 
         public TeamSetup(Team team)
         {
-            var players = team.Players.OrderBy(p => p.ClassId).ToArray();
+            var players = team.Players.OrderBy(p => p.SpecId).ToArray();
 
             SpecIds = players.Select(p => p.SpecId).ToArray();
             ClassIds = players.Select(p => p.ClassId).ToArray();
