@@ -25,7 +25,7 @@ type RawLadder = JsonProvider<"""{
     }
 """>
 
-type ArmoryLoader(region: RegionalSettings, bracket: Bracket) =
+module ArmoryLoader =
 
     let toDomainPlayer(rank: int, row: RawLadder.Row): PlayerEntry = {
             player = {
@@ -48,16 +48,15 @@ type ArmoryLoader(region: RegionalSettings, bracket: Bracket) =
             weeklyLosses = row.WeeklyLosses;
         }
 
-    member this.load(): LadderSnapshot =
+    let load(region: RegionalSettings, bracket: Bracket): LadderSnapshot =
         let rawLadder = RawLadder.Load(region.blizzardApiRoot + bracket.url)
 
         // apply consistent ordering to the ladder
         let ladder = 
             rawLadder.Rows |> 
             Array.sortBy (fun row -> row.Rating, row.Name, row.RealmId) |>
-            Array.mapi (fun rank row -> toDomainPlayer(rank+1, row))
+            Array.mapi (fun rank row -> toDomainPlayer(rank + 1, row))
 
-        // return
         { 
             bracket = bracket
             ladder = ladder

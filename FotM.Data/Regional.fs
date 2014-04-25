@@ -52,3 +52,5 @@ module Regions =
         googleAnalyticsPropertyCode = "";
         googleAnalyticsPropertyWebSite = "";
     }
+
+    let all = [ US; EU; KR; TW; CN ]
