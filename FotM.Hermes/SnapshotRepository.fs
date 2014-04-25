@@ -4,6 +4,8 @@ open System
 open Microsoft.WindowsAzure.Storage
 open Microsoft.WindowsAzure.Storage.Blob
 open Newtonsoft.Json
+open NodaTime.Serialization.JsonNet
+open NodaTime
 open FotM.Data
 
 type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
@@ -12,7 +14,7 @@ type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
 
     let blobClient = storageAccount.CreateCloudBlobClient()
 
-    let containerName = sprintf "%s-snapshots" (region.code.ToLower())
+    let containerName = sprintf "snapshots"
     let container = blobClient.GetContainerReference containerName
 
     do
@@ -21,12 +23,23 @@ type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
 
     member this.uploadSnapshot snapshot = 
         let snapshotId = Guid.NewGuid()
-        let blobName = sprintf "%s/%A.json" bracket.url snapshotId
+        let blobName = sprintf "%s/%s/%A.json" region.code bracket.url snapshotId
 
         let blob = container.GetBlockBlobReference(blobName)
-        blob.UploadText(JsonConvert.SerializeObject snapshot)
 
-        printfn "Snapshot uploaded to %s" (blob.Uri.ToString())
-        snapshotId // return id
+        try
+            let settings = JsonSerializerSettings().ConfigureForNodaTime(DateTimeZoneProviders.Tzdb)
+            let json = JsonConvert.SerializeObject(snapshot, settings)
+            blob.UploadText(json)
+        with
+            | :? System.NullReferenceException -> 
+                printfn "*********** ERROR *****************"
+                let guid = Guid.NewGuid()
+                let filename = sprintf "error_%A.txt" guid
+                printfn "NullRef Exception occured. Storing snapshot in file %s" filename
+                let str = sprintf "%A" snapshot
+                System.IO.File.WriteAllText(filename, str)
+
+        blob.Uri
 
 

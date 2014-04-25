@@ -59,9 +59,9 @@ type Bracket = {
 
 [<StructuralEquality;NoComparison>]
 type LadderSnapshot = {
-    bracket: Bracket;
-    ladder: PlayerEntry[];
-    timeTaken: NodaTime.Instant;
+    bracket: Bracket
+    ladder: PlayerEntry[]
+    timeTaken: NodaTime.Instant
 }
 
 module Brackets =

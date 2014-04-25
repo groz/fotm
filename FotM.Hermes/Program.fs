@@ -11,12 +11,12 @@ Workflow of this module:
 open System
 open System.Threading
 open FSharp.Data
-open NodaTime
 open FotM.Data
+open NodaTime
 
 module Main =
 
-    let armoryPollTimeout  = Duration.FromSeconds(int64 5)
+    let armoryPollTimeout  = Duration.FromSeconds(int64 20)
     let duplicateCheckPeriod = Duration.FromHours(int64 1)
 
     let shouldRetain(snapshot: LadderSnapshot) =
@@ -40,32 +40,35 @@ module Main =
             yield! armoryUpdates(region, bracket, currentSnapshot :: history)
     }
 
+    type ArmoryStream = {
+        repo: SnapshotRepository
+        updates: seq<LadderSnapshot>
+    }
+
     [<EntryPoint>]
     let main argv = 
         printfn "arguments: %A" argv
 
-        let region = Regions.US
-        let bracket = Brackets.threes;
-        let repo = SnapshotRepository(region, bracket)
+        let armories = 
+            [for region in Regions.all do
+             for bracket in Brackets.all do
+             yield { 
+                repo = SnapshotRepository(region, bracket)
+                updates = armoryUpdates(region, bracket, [])
+            }];
 
-        for snapshot in armoryUpdates(region, bracket, []) do
+        let processArmory armory = async {
+            for snapshot in armory.updates do
+                let snapshotUri = armory.repo.uploadSnapshot snapshot
+                printfn "Added new snapshot %A..." snapshotUri
 
-            let snapshotId = repo.uploadSnapshot snapshot
-            printfn "Added new snapshot  %A..." snapshotId
+                // TODO: publish update
+        }
+
+        armories
+        |> List.map processArmory
+        |> Async.Parallel
+        |> Async.RunSynchronously
+        |> ignore
 
         0 // return an integer exit code
-
-
-(*
-let region = Regions.US
-
-let armory = ArmoryLoader(region, Brackets.threes)
-
-let ladderSnapshot = armory.load()
-let realms = ladderSnapshot.ladder |> Seq.groupBy (fun (playerEntry: PlayerEntry) -> playerEntry.player.classSpec)
-
-realms
-|> Seq.sortBy (fun g -> snd(g) |> Seq.length )
-|> Seq.iter (fun g -> printfn "%A" g)
-*)
-
