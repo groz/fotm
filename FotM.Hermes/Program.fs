@@ -12,6 +12,8 @@ open System
 open System.Threading
 open FSharp.Data
 open FotM.Data
+open Newtonsoft.Json
+open NodaTime.Serialization.JsonNet
 open NodaTime
 
 module Main =
@@ -41,7 +43,7 @@ module Main =
     }
 
     type ArmoryStream = {
-        repo: SnapshotRepository
+        uploader: MailboxProcessor<UploadRequestMessage>
         updates: seq<LadderSnapshot>
     }
 
@@ -53,14 +55,17 @@ module Main =
             [for region in Regions.all do
              for bracket in Brackets.all do
              yield { 
-                repo = SnapshotRepository(region, bracket)
+                uploader = SnapshotRepository(region, bracket).uploader
                 updates = armoryUpdates(region, bracket, [])
             }];
 
+        let buildMessage(replyChannel): AsyncReplyChannel<Uri> -> LadderSnapshot = 
+            replyChannel()
+
         let processArmory armory = async {
             for snapshot in armory.updates do
-                let snapshotUri = armory.repo.uploadSnapshot snapshot
-                printfn "Added new snapshot %A..." snapshotUri
+                let result = armory.uploader.PostAndReply(fun replyChannel -> snapshot, replyChannel)
+                printfn "Added new snapshot %A..." result
 
                 // TODO: publish update
         }

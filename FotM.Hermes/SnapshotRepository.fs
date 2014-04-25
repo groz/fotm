@@ -8,6 +8,9 @@ open NodaTime.Serialization.JsonNet
 open NodaTime
 open FotM.Data
 
+
+type UploadRequestMessage = LadderSnapshot * AsyncReplyChannel<Uri>
+
 type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
 
     let storageAccount = CloudStorageAccount.Parse region.storageConnection
@@ -21,25 +24,29 @@ type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
         printfn "initializing blob container at %A" container.Uri
         container.CreateIfNotExists(BlobContainerPublicAccessType.Blob) |> ignore
 
-    member this.uploadSnapshot snapshot = 
+    let uploadSnapshot snapshot = 
         let snapshotId = Guid.NewGuid()
         let blobName = sprintf "%s/%s/%A.json" region.code bracket.url snapshotId
 
         let blob = container.GetBlockBlobReference(blobName)
 
         try
-            let settings = JsonSerializerSettings().ConfigureForNodaTime(DateTimeZoneProviders.Tzdb)
-            let json = JsonConvert.SerializeObject(snapshot, settings)
+            let json = JsonConvert.SerializeObject(snapshot)
             blob.UploadText(json)
         with
             | :? System.NullReferenceException -> 
-                printfn "*********** ERROR *****************"
-                let guid = Guid.NewGuid()
-                let filename = sprintf "error_%A.txt" guid
-                printfn "NullRef Exception occured. Storing snapshot in file %s" filename
-                let str = sprintf "%A" snapshot
-                System.IO.File.WriteAllText(filename, str)
+                printfn "NullRef exception. Race condition while uploading."
+            | ex ->
+                printfn "Exception occured while uploading: %A" ex
 
         blob.Uri
 
 
+    member this.uploader = MailboxProcessor<UploadRequestMessage>.Start(fun inbox-> 
+            async { 
+                while true do        
+                    let! (msg, replyChannel) = inbox.Receive()
+                    let uri = uploadSnapshot msg
+                    replyChannel.Reply(uri)
+            }
+    )
