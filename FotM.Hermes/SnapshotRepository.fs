@@ -8,9 +8,6 @@ open NodaTime.Serialization.JsonNet
 open NodaTime
 open FotM.Data
 
-
-type UploadRequestMessage = LadderSnapshot * AsyncReplyChannel<Uri>
-
 type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
 
     let storageAccount = CloudStorageAccount.Parse region.storageConnection
@@ -24,15 +21,14 @@ type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
         printfn "initializing blob container at %A" container.Uri
         container.CreateIfNotExists(BlobContainerPublicAccessType.Blob) |> ignore
 
-    let uploadSnapshot snapshot = 
+    member this.uploadSnapshot snapshot = 
         let snapshotId = Guid.NewGuid()
         let blobName = sprintf "%s/%s/%A.json" region.code bracket.url snapshotId
 
         let blob = container.GetBlockBlobReference(blobName)
 
         try
-            let json = JsonConvert.SerializeObject(snapshot)
-            blob.UploadText(json)
+            blob.UploadText(JsonConvert.SerializeObject snapshot)
         with
             | :? System.NullReferenceException -> 
                 printfn "NullRef exception. Race condition while uploading."
@@ -40,13 +36,3 @@ type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
                 printfn "Exception occured while uploading: %A" ex
 
         blob.Uri
-
-
-    member this.uploader = MailboxProcessor<UploadRequestMessage>.Start(fun inbox-> 
-            async { 
-                while true do        
-                    let! (msg, replyChannel) = inbox.Receive()
-                    let uri = uploadSnapshot msg
-                    replyChannel.Reply(uri)
-            }
-    )

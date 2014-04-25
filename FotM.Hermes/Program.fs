@@ -25,7 +25,6 @@ module Main =
          (SystemClock.Instance.Now - snapshot.timeTaken) < duplicateCheckPeriod
 
     let wait() =
-        printfn "Sleeping for %A..." armoryPollTimeout
         Thread.Sleep(armoryPollTimeout.ToTimeSpan())
 
     let rec armoryUpdates(region, bracket, oldHistory) = seq {
@@ -33,7 +32,6 @@ module Main =
         let currentSnapshot = ArmoryLoader.load(region, bracket)
 
         if history |> List.exists (fun entry -> entry.ladder = currentSnapshot.ladder) then
-            printfn "Duplicate snapshot, skipping..."
             wait()
             yield! armoryUpdates(region, bracket, history)
         else
@@ -42,10 +40,21 @@ module Main =
             yield! armoryUpdates(region, bracket, currentSnapshot :: history)
     }
 
-    type ArmoryStream = {
-        uploader: MailboxProcessor<UploadRequestMessage>
+    type ArmorySettings = {
+        repo: SnapshotRepository
         updates: seq<LadderSnapshot>
     }
+
+    type UpdateMessage = LadderSnapshot * ArmorySettings
+    
+    let updateAgent = MailboxProcessor<UpdateMessage>.Start(fun inbox-> 
+            async { 
+                while true do        
+                    let! (snapshot, armorySettings) = inbox.Receive()
+                    let uri = armorySettings.repo.uploadSnapshot snapshot
+                    printfn "uploaded update to %A" uri
+            }
+    )
 
     [<EntryPoint>]
     let main argv = 
@@ -55,19 +64,16 @@ module Main =
             [for region in Regions.all do
              for bracket in Brackets.all do
              yield { 
-                uploader = SnapshotRepository(region, bracket).uploader
+                repo = SnapshotRepository(region, bracket)
                 updates = armoryUpdates(region, bracket, [])
             }];
 
-        let buildMessage(replyChannel): AsyncReplyChannel<Uri> -> LadderSnapshot = 
-            replyChannel()
-
         let processArmory armory = async {
-            for snapshot in armory.updates do
-                let result = armory.uploader.PostAndReply(fun replyChannel -> snapshot, replyChannel)
-                printfn "Added new snapshot %A..." result
-
-                // TODO: publish update
+            try
+                for snapshot in armory.updates do
+                    updateAgent.Post(snapshot, armory)
+            with
+                | ex -> printfn "%A" ex
         }
 
         armories
