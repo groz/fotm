@@ -10,9 +10,9 @@ Workflow of this module:
 
 open System
 open System.Threading
-open FotM.Data
+open FSharp.Data
 open NodaTime
-open Microsoft.WindowsAzure.Storage
+open FotM.Data
 
 module Main =
 
@@ -26,20 +26,19 @@ module Main =
         printfn "Sleeping for %A..." armoryPollTimeout
         Thread.Sleep(armoryPollTimeout.ToTimeSpan())
 
-    let rec armoryUpdates(region, bracket, oldHistory) = 
-        seq {
-            let history = oldHistory |> List.filter shouldRetain
-            let currentSnapshot = ArmoryLoader.load(region, bracket)
+    let rec armoryUpdates(region, bracket, oldHistory) = seq {
+        let history = oldHistory |> List.filter shouldRetain
+        let currentSnapshot = ArmoryLoader.load(region, bracket)
 
-            if history |> List.exists (fun entry -> entry.ladder = currentSnapshot.ladder) then
-                printfn "Duplicate snapshot, skipping..."
-                wait()
-                yield! armoryUpdates(region, bracket, history)
-            else
-                yield currentSnapshot
-                wait()
-                yield! armoryUpdates(region, bracket, currentSnapshot :: history)
-        }
+        if history |> List.exists (fun entry -> entry.ladder = currentSnapshot.ladder) then
+            printfn "Duplicate snapshot, skipping..."
+            wait()
+            yield! armoryUpdates(region, bracket, history)
+        else
+            yield currentSnapshot
+            wait()
+            yield! armoryUpdates(region, bracket, currentSnapshot :: history)
+    }
 
     [<EntryPoint>]
     let main argv = 
@@ -47,9 +46,12 @@ module Main =
 
         let region = Regions.US
         let bracket = Brackets.threes;
+        let repo = SnapshotRepository(region, bracket)
 
         for snapshot in armoryUpdates(region, bracket, []) do
-            printfn "Added new snapshot  %A..." (hash(snapshot))
+
+            let snapshotId = repo.uploadSnapshot snapshot
+            printfn "Added new snapshot  %A..." snapshotId
 
         0 // return an integer exit code
 

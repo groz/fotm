@@ -73,7 +73,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NodaTime">
@@ -101,6 +101,7 @@
     <None Include="packages.config" />
     <None Include="App.config" />
     <Compile Include="ArmoryLoader.fs" />
+    <Compile Include="SnapshotRepository.fs" />
     <Compile Include="Program.fs" />
     <None Include="Performance\Microsoft.ServiceBus.MessagingPerformanceCounters.man" />
   </ItemGroup>

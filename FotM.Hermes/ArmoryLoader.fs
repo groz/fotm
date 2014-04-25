@@ -49,6 +49,9 @@ module ArmoryLoader =
         }
 
     let load(region: RegionalSettings, bracket: Bracket): LadderSnapshot =
+
+        printfn "Loading ladder for region %s bracket %s..." region.code bracket.url
+
         let rawLadder = RawLadder.Load(region.blizzardApiRoot + bracket.url)
 
         // apply consistent ordering to the ladder
