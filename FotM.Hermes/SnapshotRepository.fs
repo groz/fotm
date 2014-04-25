@@ -21,12 +21,12 @@ type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
 
     member this.uploadSnapshot snapshot = 
         let snapshotId = Guid.NewGuid()
-        let blobName = sprintf "%s_%A.json" bracket.url snapshotId
+        let blobName = sprintf "%s/%A.json" bracket.url snapshotId
 
         let blob = container.GetBlockBlobReference(blobName)
         blob.UploadText(JsonConvert.SerializeObject snapshot)
 
         printfn "Snapshot uploaded to %s" (blob.Uri.ToString())
-
+        snapshotId // return id
 
 
