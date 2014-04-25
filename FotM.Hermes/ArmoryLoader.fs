@@ -2,6 +2,7 @@
 
 open FSharp.Data
 open FotM.Data
+open NodaTime
 
 type RawLadder = JsonProvider<"""{
     "rows" : [ {
@@ -26,7 +27,7 @@ type RawLadder = JsonProvider<"""{
 
 type ArmoryLoader(region: RegionalSettings, bracket: Bracket) =
 
-    member this.toDomainPlayer(row: RawLadder.Row): PlayerEntry = {
+    let toDomainPlayer(rank: int, row: RawLadder.Row): PlayerEntry = {
             player = {
                         Player.name = row.Name;
                         Player.faction = enum row.FactionId;
@@ -39,7 +40,7 @@ type ArmoryLoader(region: RegionalSettings, bracket: Bracket) =
                                         };
                         Player.classSpec = Specs.toClass row.ClassId row.SpecId;
                      };
-            ranking = row.Ranking;
+            ranking = rank;
             rating = row.Rating;
             seasonWins = row.SeasonWins;
             seasonLosses = row.SeasonLosses;
@@ -50,8 +51,15 @@ type ArmoryLoader(region: RegionalSettings, bracket: Bracket) =
     member this.load(): LadderSnapshot =
         let rawLadder = RawLadder.Load(region.blizzardApiRoot + bracket.url)
 
+        // apply consistent ordering to the ladder
+        let ladder = 
+            rawLadder.Rows |> 
+            Array.sortBy (fun row -> row.Rating, row.Name, row.RealmId) |>
+            Array.mapi (fun rank row -> toDomainPlayer(rank+1, row))
+
+        // return
         { 
-            bracket = bracket; 
-            ladder = rawLadder.Rows |> Seq.map this.toDomainPlayer;
-            timeTaken = NodaTime.SystemClock.Instance.Now 
+            bracket = bracket
+            ladder = ladder
+            timeTaken = SystemClock.Instance.Now
         }

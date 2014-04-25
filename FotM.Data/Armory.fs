@@ -57,9 +57,10 @@ type Bracket = {
     teamSize: int;
 }
 
+[<StructuralEquality;NoComparison>]
 type LadderSnapshot = {
     bracket: Bracket;
-    ladder: seq<PlayerEntry>;
+    ladder: PlayerEntry[];
     timeTaken: NodaTime.Instant;
 }
 
