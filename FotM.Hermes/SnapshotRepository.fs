@@ -1,12 +1,17 @@
 ﻿namespace FotM.Hermes
 
 open System
+open System.IO
+open System.Threading
 open Microsoft.WindowsAzure.Storage
 open Microsoft.WindowsAzure.Storage.Blob
 open Newtonsoft.Json
 open NodaTime.Serialization.JsonNet
 open NodaTime
 open FotM.Data
+
+module RepoSync =
+    let lockobj = new System.Object()
 
 type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
 
@@ -28,7 +33,9 @@ type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
         let blob = container.GetBlockBlobReference(blobName)
 
         try
-            blob.UploadText(JsonConvert.SerializeObject snapshot)
+            lock RepoSync.lockobj (fun () ->
+                blob.UploadText (JsonConvert.SerializeObject snapshot) // serialization is not threadsafe here
+            )
         with
             | :? System.NullReferenceException -> 
                 printfn "NullRef exception. Race condition while uploading."

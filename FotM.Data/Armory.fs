@@ -41,7 +41,7 @@ type Player = {
     classSpec: Class;
 }
 
-type PlayerUpdateFeatures = {
+type PlayerUpdate = {
     player: Player;
 
     // features
@@ -67,7 +67,7 @@ type PlayerEntry = {
     weeklyLosses: int;
 } 
 with
-    static member (-) (current: PlayerEntry, previous: PlayerEntry): PlayerUpdateFeatures = {
+    static member (-) (current: PlayerEntry, previous: PlayerEntry) = {
         player = current.player;
         ranking = current.ranking;
         rating = current.rating;

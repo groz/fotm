@@ -45,17 +45,6 @@ module Main =
         updates: seq<LadderSnapshot>
     }
 
-    type UpdateMessage = LadderSnapshot * ArmorySettings
-    
-    let updateAgent = MailboxProcessor<UpdateMessage>.Start(fun inbox-> 
-            async { 
-                while true do
-                    let! (snapshot, armorySettings) = inbox.Receive()
-                    let uri = armorySettings.repo.uploadSnapshot snapshot
-                    printfn "uploaded update to %A" uri
-            }
-    )
-
     let armories = 
         [for region in Regions.all do
             for bracket in Brackets.all do
@@ -67,7 +56,8 @@ module Main =
     let processArmory armory = async {
         try
             for snapshot in armory.updates do
-                updateAgent.Post(snapshot, armory)
+                let uri = armory.repo.uploadSnapshot snapshot
+                printfn "uploaded update to %A" uri
         with
             | ex -> printfn "%A" ex
     }
