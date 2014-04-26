@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>0eb66680-a371-4ace-983c-c37effd31ba5</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>FotM.Athena</RootNamespace>
     <AssemblyName>FotM.Athena</AssemblyName>
     <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
@@ -42,10 +42,15 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AthenaKMeans.fs" />
-    <None Include="Script.fsx" />
+    <Compile Include="Math.fs" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\FotM.Data\FotM.Data.fsproj">
+      <Name>FotM.Data</Name>
+      <Project>{3d02c2f7-31e5-49b1-a77d-ce689c9c9b0b}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\FotM.Utilities\FotM.Utilities.csproj">
       <Name>FotM.Utilities</Name>
       <Project>{90d8a7e8-fbac-4b87-9ec2-a4e6f02b75c8}</Project>

@@ -41,6 +41,21 @@ type Player = {
     classSpec: Class;
 }
 
+type PlayerUpdateFeatures = {
+    player: Player;
+
+    // features
+    ranking: int;
+    rating: int;
+    weeklyWins: int;
+    weeklyLosses: int;
+    seasonWins: int;
+    seasonLosses: int;
+
+    // diff features
+    ratingDiff: int;
+}
+
 type PlayerEntry = {
     player: Player;
 
@@ -50,7 +65,18 @@ type PlayerEntry = {
     seasonLosses: int;
     weeklyWins: int;
     weeklyLosses: int;
-}
+} 
+with
+    static member (-) (current: PlayerEntry, previous: PlayerEntry): PlayerUpdateFeatures = {
+        player = current.player;
+        ranking = current.ranking;
+        rating = current.rating;
+        weeklyWins = current.weeklyWins;
+        weeklyLosses = current.weeklyLosses;
+        seasonWins = current.seasonWins;
+        seasonLosses = current.seasonLosses;
+        ratingDiff = current.rating - previous.rating;
+    }
 
 type Bracket = {
     url: string;

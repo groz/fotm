@@ -49,37 +49,31 @@ module Main =
     
     let updateAgent = MailboxProcessor<UpdateMessage>.Start(fun inbox-> 
             async { 
-                while true do        
+                while true do
                     let! (snapshot, armorySettings) = inbox.Receive()
                     let uri = armorySettings.repo.uploadSnapshot snapshot
                     printfn "uploaded update to %A" uri
             }
     )
 
-    [<EntryPoint>]
-    let main argv = 
-        printfn "arguments: %A" argv
+    let armories = 
+        [for region in Regions.all do
+            for bracket in Brackets.all do
+            yield { 
+            repo = SnapshotRepository(region, bracket)
+            updates = armoryUpdates(region, bracket, [])
+        }];
 
-        let armories = 
-            [for region in Regions.all do
-             for bracket in Brackets.all do
-             yield { 
-                repo = SnapshotRepository(region, bracket)
-                updates = armoryUpdates(region, bracket, [])
-            }];
+    let processArmory armory = async {
+        try
+            for snapshot in armory.updates do
+                updateAgent.Post(snapshot, armory)
+        with
+            | ex -> printfn "%A" ex
+    }
 
-        let processArmory armory = async {
-            try
-                for snapshot in armory.updates do
-                    updateAgent.Post(snapshot, armory)
-            with
-                | ex -> printfn "%A" ex
-        }
-
-        armories
-        |> List.map processArmory
-        |> Async.Parallel
-        |> Async.RunSynchronously
-        |> ignore
-
-        0 // return an integer exit code
+    armories
+    |> List.map processArmory
+    |> Async.Parallel
+    |> Async.RunSynchronously
+    |> ignore
