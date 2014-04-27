@@ -60,7 +60,7 @@ namespace FotM.Cassandra
                 .Select(pt => _descriptor.GetFeatureVector(pt).ToVector())
                 .ToArray();
 
-            int nFeatures = _descriptor.TotalFeatures;
+            int n = _descriptor.TotalFeatures;
 
             //Vector[] centroids = new Vector[k];
             //Vector[] centroids = DumbInit();
@@ -70,11 +70,9 @@ namespace FotM.Cassandra
             // Forgy initialization of centroids (as opposed to Random Partition)
 
             // run until convergence
-            int nIterations = 0;
             bool changed = true;
             while (changed)
             {
-                ++nIterations;
                 changed = false;
 
                 // I. assignment step
@@ -108,7 +106,7 @@ namespace FotM.Cassandra
                     }
                     else
                     {
-                        centroids[i] = Vector.Zero(nFeatures);
+                        centroids[i] = Vector.Zero(n);
                     }
                 }
             }
@@ -181,11 +179,9 @@ namespace FotM.Cassandra
 
                 for (int j = 0; j < m; ++j)
                 {
-                    Vector x = input[j];
-
                     var currentCentroids = centroids.Take(i);
 
-                    dx2[j] = currentCentroids.Min(c => Vector.SquaredDistance(c, x));
+                    dx2[j] = currentCentroids.Min(c => Vector.SquaredDistance(c, input[j]));
                 }
 
                 double sum = dx2.Sum();
