@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ using Accord.Math;
 using FotM.Domain;
 using FotM.TestingUtilities;
 using FotM.Utilities;
+using Microsoft.FSharp.Core;
 using MoreLinq;
 using NUnit.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -37,20 +39,31 @@ namespace FotM.Cassandra.Tests
         private readonly Dictionary<string, IKMeans<PlayerChange>> _clusterers;
         private Dictionary<Leaderboard, HashSet<Team>> _history;
 
+        private readonly static FeatureAttributeDescriptor<PlayerChange> Descriptor = new FeatureAttributeDescriptor<PlayerChange>();
+
+        private static double[] FeatureExtractor(PlayerChange change)
+        {
+            return Descriptor.GetFeatureVector(change);
+        }
+
         public CassandraSuperTests() : base(Bracket.Threes)
         {
             _clusterers = new Dictionary<string, IKMeans<PlayerChange>>
             {
+                {"Athena plain", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), false, false)},
+                {"Athena plain distortion", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, true)},
+                {"Athena normalized", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, false)},
+                {"Athena normalized distortion", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, true)},
                 {"My kmeans with normalization custom metric", new HealerAndSizeAwareKMeans(true, 3)},
                 {"My kmeans custom metric", new HealerAndSizeAwareKMeans(false, 3)},
-                {"My kmeans with normalization", new MyKMeans<PlayerChange>(normalize: true)},
-                {"My kmeans without normalization", new MyKMeans<PlayerChange>(normalize: false)},
-                {"Accord with normalization", new AccordKMeans(normalize: true)},
-                {"Accord no normalization", new AccordKMeans(normalize: false)},
-                {"Numl non-normalized Manhattan distance", new NumlKMeans(new numl.Math.Metrics.ManhattanDistance())},
-                {"Numl non-normalized Euclidean distance", new NumlKMeans(new numl.Math.Metrics.EuclidianDistance())},
-                {"Numl non-normalized Hamming distance", new NumlKMeans(new numl.Math.Metrics.HammingDistance())},
-                {"Numl non-normalized Cosine distance", new NumlKMeans(new numl.Math.Metrics.CosineDistance())},
+                //{"My kmeans with normalization", new MyKMeans<PlayerChange>(normalize: true)},
+                //{"My kmeans without normalization", new MyKMeans<PlayerChange>(normalize: false)},
+                //{"Accord with normalization", new AccordKMeans(normalize: true)},
+                //{"Accord no normalization", new AccordKMeans(normalize: false)},
+                //{"Numl non-normalized Manhattan distance", new NumlKMeans(new numl.Math.Metrics.ManhattanDistance())},
+                //{"Numl non-normalized Euclidean distance", new NumlKMeans(new numl.Math.Metrics.EuclidianDistance())},
+                //{"Numl non-normalized Hamming distance", new NumlKMeans(new numl.Math.Metrics.HammingDistance())},
+                //{"Numl non-normalized Cosine distance", new NumlKMeans(new numl.Math.Metrics.CosineDistance())},
             };
 
             LeaderboardEntry[] startingEntries = GeneratePlayers(999);
@@ -289,6 +302,8 @@ namespace FotM.Cassandra.Tests
             int numerator = 0;
             int nRetrievedTeams = 0;
 
+            Stopwatch sw = Stopwatch.StartNew();
+
             var previousLeaderboard = _history.First().Key;
 
             foreach (var step in _history.Skip(1).Take(historyLength))
@@ -323,6 +338,7 @@ namespace FotM.Cassandra.Tests
 
                 Trace.WriteLine(msg);
                 Trace.WriteLine(cassandra.Stats);
+                Trace.WriteLine(sw.Elapsed);
                 Trace.WriteLine("");
             }
 
@@ -375,5 +391,20 @@ namespace FotM.Cassandra.Tests
             Trace.WriteLine(msg);
         }
  */
+    }
+
+    public class FSharpFuncWrapper<T, TResult> : FSharpFunc<T, TResult>
+    {
+        private readonly Func<T, TResult> _f;
+
+        public FSharpFuncWrapper(Func<T, TResult> f)
+        {
+            _f = f;
+        }
+
+        public override TResult Invoke(T arg)
+        {
+            return _f(arg);
+        }
     }
 }

@@ -20,16 +20,16 @@ namespace FotM.Cassandra
             _regroupMetric = regroupMetric;
         }
 
-        private double Distortion(int[] grouping, Vector[] x, Vector[] centroids)
+        private double Distortion(int[] grouping, Vector[] input, Vector[] centroids)
         {
-            int m = x.Length;
+            int m = input.Length;
 
             double sum = 0;
 
             for (int i = 0; i < m; ++i)
             {
                 int ci = grouping[i]; // index of cluster to which i-th point belongs
-                sum += Vector.SquaredDistance(x[i], centroids[ci]);
+                sum += Vector.SquaredDistance(input[i], centroids[ci]);
             }
 
             return sum / m;
