@@ -2,11 +2,6 @@
 
 open Math
 
-type NormalizeParams = {
-    mean: float
-    scale: float
-}
-
 type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool, applyDistortionMetric: bool) =
 
     (*
@@ -15,6 +10,8 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
         1. init k centroids
         2. 
     *)
+
+    let maxIterations = 100 // main parameter for kmeans precision, bigger = better & slower
 
     let distance = squaredEuclideanDistance
 
@@ -45,10 +42,12 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
         |> Array.filter (fun idx -> snd idx = i)
         |> Array.map (fun idx -> matrix.[fst idx])
 
-    let cluster(matrix: float[][])(k: int): Vector[] * int[] =
+    let rec cluster (nIteration: int) (k: int) (rng: System.Random) (matrix: float[][]): Vector[] * int[] =
 
         let n = matrix.[0].Length
-        let centroids = ``kmeans++`` matrix k (System.Random())
+        let maxGroupSize = matrix.Length / k
+
+        let centroids = ``kmeans++`` matrix k rng
 
         let rec iterate (centroids: Vector list) (currentClustering: int[]) =
             // I. assignment step
@@ -61,31 +60,18 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
             else
                 centroids |> List.toArray, currentClustering
 
-        iterate centroids [||]
+        let clustering = iterate centroids [||]
 
-    let normalize(matrix: float[][]): float[][] =
-        let columnStats (col: int) =
-            let column = matrix |> Array.map (fun row -> row.[col])
-            let min = column |> Array.min
-            let max = column |> Array.max
-            {
-                mean = column |> Array.average
-                scale  = if (max - min = 0.0) then 1.0 else (max - min)
-            }
+        let overbooked = 
+            snd clustering
+            |> Array.mapi (fun i ci -> ci)
+            |> Seq.groupBy id
+            |> Seq.exists (fun g -> snd g |> Seq.length > maxGroupSize)
 
-        let n = matrix.[0].Length
-        let m = matrix.Length
-
-        let stats = [0..n-1] |> List.map columnStats
-
-        [|
-        for i in 0..m-1 do
-        yield
-            [|
-            for j in 0..n-1 do
-            yield (matrix.[i].[j] - stats.[j].mean) / (stats.[j].scale)
-            |]
-        |]
+        if overbooked && nIteration < maxIterations then
+            cluster (nIteration+1) k rng matrix
+        else
+            clustering
 
     let distortionMetric (matrix: float[][]) (centroids: Vector[], clustering: int[]) : float = 
         matrix
@@ -97,11 +83,13 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
             let input = dataSet |> Array.map featureExtractor
             let matrix = if shouldNormalize then normalize input else input
 
+            let rng = System.Random()
+
             if applyDistortionMetric then
                 let orderedResults = 
-                    [for i in 0..50 do yield cluster matrix nGroups]
+                    [for i in 0..5 do yield matrix |> cluster 0 nGroups rng]
                     |> List.sortBy (distortionMetric matrix)
 
                 snd orderedResults.Head
             else
-                snd (cluster matrix nGroups)
+                snd (matrix |> cluster 0 nGroups rng)

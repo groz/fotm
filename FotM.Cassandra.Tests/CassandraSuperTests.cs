@@ -51,7 +51,7 @@ namespace FotM.Cassandra.Tests
             _clusterers = new Dictionary<string, IKMeans<PlayerChange>>
             {
                 {"Athena plain", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), false, false)},
-                {"Athena plain distortion", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, true)},
+                //{"Athena plain distortion", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), false, true)},
                 {"Athena normalized", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, false)},
                 {"Athena normalized distortion", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, true)},
                 {"My kmeans with normalization custom metric", new HealerAndSizeAwareKMeans(true, 3)},
