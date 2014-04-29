@@ -56,9 +56,9 @@ module ArmoryLoader =
 
         // apply consistent ordering to the ladder
         let ladder = 
-            rawLadder.Rows |> 
-            Array.sortBy (fun row -> -row.Rating, row.Name, row.RealmId) |>
-            Array.mapi (fun rank row -> toDomainPlayer(rank + 1, row))
+            rawLadder.Rows 
+            |> Array.sortBy (fun row -> -row.Rating, row.Name, row.RealmId) 
+            |> Array.mapi (fun i row -> toDomainPlayer(i + 1, row))
 
         { 
             bracket = bracket
