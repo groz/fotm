@@ -64,7 +64,6 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
 
         let overbooked = 
             snd clustering
-            |> Array.mapi (fun i ci -> ci)
             |> Seq.groupBy id
             |> Seq.exists (fun g -> snd g |> Seq.length > maxGroupSize)
 
