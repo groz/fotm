@@ -14,9 +14,11 @@ module Regions =
     let commonStorage = ""
     let commonServiceBus = ""
 
-    let getHistoryPath region bracket snapshotId = sprintf "%s/%s/history/%A.json" region.code bracket.url snapshotId
+    let snapshotsContainer = "snapshots"
 
-    let getLadderPath region bracket snapshotId = sprintf "%s/%s/ladder/%A.json" region.code bracket.url snapshotId
+    let ladderContainer = "ladder"
+
+    let getPath region bracket snapshotId = sprintf "%s/%s/%A.json" region.code bracket.url snapshotId
 
     let US = {
         code = "US"

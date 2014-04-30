@@ -19,8 +19,7 @@ type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
 
     let blobClient = storageAccount.CreateCloudBlobClient()
 
-    let containerName = sprintf "snapshots"
-    let container = blobClient.GetContainerReference containerName
+    let container = blobClient.GetContainerReference Regions.snapshotsContainer
 
     do
         printfn "initializing blob container at %A" container.Uri
@@ -28,7 +27,7 @@ type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
 
     member this.uploadSnapshot snapshot = 
         let snapshotId = Guid.NewGuid()
-        let blobName = Regions.getHistoryPath region bracket snapshotId
+        let blobName = Regions.getPath region bracket snapshotId
 
         let blob = container.GetBlockBlobReference(blobName)
 
