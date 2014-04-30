@@ -28,7 +28,7 @@ type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
 
     member this.uploadSnapshot snapshot = 
         let snapshotId = Guid.NewGuid()
-        let blobName = sprintf "%s/%s/%A.json" region.code bracket.url snapshotId
+        let blobName = Regions.getHistoryPath region bracket snapshotId
 
         let blob = container.GetBlockBlobReference(blobName)
 

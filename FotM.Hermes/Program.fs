@@ -18,13 +18,14 @@ open NodaTime
 
 module Main =
 
-    let armoryPollTimeout  = Duration.FromSeconds(int64 20)
-    let duplicateCheckPeriod = Duration.FromHours(int64 1)
+    let armoryPollTimeout  = Duration.FromSeconds(20L)
+    let duplicateCheckPeriod = Duration.FromHours(1L)
 
     let shouldRetain(snapshot: LadderSnapshot) =
          (SystemClock.Instance.Now - snapshot.timeTaken) < duplicateCheckPeriod
 
     let wait() =
+        printfn "waiting for %A" armoryPollTimeout
         Thread.Sleep(armoryPollTimeout.ToTimeSpan())
 
     let rec armoryUpdates(region, bracket, oldHistory) = seq {
