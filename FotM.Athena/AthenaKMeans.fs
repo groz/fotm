@@ -2,7 +2,7 @@
 
 open Math
 
-type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool, applyDistortionMetric: bool) =
+type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool, applyMetric: bool) =
 
     (*
         NB! matrix has m rows (number of training examples) and n columns (number of features)
@@ -42,7 +42,7 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
         |> Array.filter (fun idx -> snd idx = i)
         |> Array.map (fun idx -> matrix.[fst idx])
 
-    let rec cluster (nIteration: int) (k: int) (rng: System.Random) (matrix: float[][]): Vector[] * int[] =
+    let cluster (nIteration: int) (k: int) (rng: System.Random) (matrix: float[][]): Vector[] * int[] =
 
         let n = matrix.[0].Length
         let maxGroupSize = matrix.Length / k
@@ -60,22 +60,30 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
             else
                 centroids |> List.toArray, currentClustering
 
-        let clustering = iterate centroids [||]
-
-        let overbooked = 
-            snd clustering
-            |> Seq.groupBy id
-            |> Seq.exists (fun g -> snd g |> Seq.length > maxGroupSize)
-
-        if overbooked && nIteration < maxIterations then
-            cluster (nIteration+1) k rng matrix
-        else
-            clustering
+        iterate centroids [||]
+//        let clustering = iterate centroids [||]
+//
+//        let overbooked = 
+//            snd clustering
+//            |> Seq.groupBy id
+//            |> Seq.exists (fun g -> snd g |> Seq.length > maxGroupSize)
+//
+//        if overbooked && nIteration < maxIterations then
+//            cluster (nIteration+1) k rng matrix
+//        else
+//            clustering
 
     let distortionMetric (matrix: float[][]) (centroids: Vector[], clustering: int[]) : float = 
         matrix
         |> Array.mapi (fun i row -> distance row centroids.[clustering.[i]])
-        |> Array.sum
+        |> Array.average
+
+    let resultMetric (size: int) (matrix: float[][]) (centroids: Vector[], clustering: int[]) =
+            let groups = clustering |> Seq.groupBy id
+            let nGroups = groups |> Seq.length
+            let nOverbooked = groups |> Seq.filter (fun g -> snd g |> Seq.length > size) |> Seq.length
+            let nRegular = groups |> Seq.filter (fun g -> snd g |> Seq.length = size) |> Seq.length
+            (nOverbooked, -nRegular, (if nOverbooked > 0 then nGroups else -nGroups), distortionMetric matrix (centroids, clustering))
 
     interface FotM.Utilities.IKMeans<'a> with
         member this.ComputeGroups(dataSet, nGroups) =
@@ -84,10 +92,12 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
 
             let rng = System.Random()
 
-            if applyDistortionMetric then
+            let groupSize = matrix.Length / nGroups
+            
+            if applyMetric then
                 let orderedResults = 
-                    [for i in 0..5 do yield matrix |> cluster 0 nGroups rng]
-                    |> List.sortBy (distortionMetric matrix)
+                    [for i in 0..maxIterations do yield matrix |> cluster 0 nGroups rng]
+                    |> List.sortBy (fun clustering -> clustering |> resultMetric groupSize matrix)
 
                 snd orderedResults.Head
             else

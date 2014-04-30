@@ -50,7 +50,7 @@ namespace FotM.Cassandra.Tests
         {
             _clusterers = new Dictionary<string, IKMeans<PlayerChange>>
             {
-                {"Athena plain", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), false, false)},
+                //{"Athena plain", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), false, false)},
                 //{"Athena plain distortion", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), false, true)},
                 {"Athena normalized", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, false)},
                 {"Athena normalized distortion", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, true)},
@@ -284,8 +284,8 @@ namespace FotM.Cassandra.Tests
                 }
                 else
                 {
-                    var msg = string.Format("Couldn't find non-healers {0}.", ++nJumpsFailed);
-                    Trace.WriteLine(msg);
+                    //var msg = string.Format("Couldn't find non-healers {0}.", ++nJumpsFailed);
+                    //Trace.WriteLine(msg);
                 }
             }
         }
