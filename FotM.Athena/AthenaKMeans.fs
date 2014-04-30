@@ -4,13 +4,6 @@ open Math
 
 type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool, applyMetric: bool) =
 
-    (*
-        NB! matrix has m rows (number of training examples) and n columns (number of features)
-
-        1. init k centroids
-        2. 
-    *)
-
     let distance = squaredEuclideanDistance
 
     let ``kmeans++`` (matrix: float[][]) (k: int) (rng: System.Random) =
@@ -59,17 +52,6 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
                 centroids |> List.toArray, currentClustering
 
         iterate centroids [||]
-//        let clustering = iterate centroids [||]
-//
-//        let overbooked = 
-//            snd clustering
-//            |> Seq.groupBy id
-//            |> Seq.exists (fun g -> snd g |> Seq.length > maxGroupSize)
-//
-//        if overbooked && nIteration < maxIterations then
-//            cluster (nIteration+1) k rng matrix
-//        else
-//            clustering
 
     let distortionMetric (matrix: float[][]) (centroids: Vector[], clustering: int[]) : float = 
         matrix
@@ -97,8 +79,6 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
             let rng = System.Random()
 
             let groupSize = int (ceil (float(matrix.Length) / float(nGroups)))
-            //printfn "Total items: %i, nGroups: %i, group size: %i" matrix.Length nGroups groupSize
-
             
             if applyMetric then
                 let nClusteringIterations = 100
