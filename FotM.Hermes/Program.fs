@@ -15,6 +15,7 @@ open FotM.Data
 open Newtonsoft.Json
 open NodaTime.Serialization.JsonNet
 open NodaTime
+open FotM.Aether
 
 module Main =
 

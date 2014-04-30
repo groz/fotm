@@ -1,4 +1,4 @@
-﻿namespace FotM.Hermes
+﻿namespace FotM.Aether
 
 open System
 open System.IO
@@ -6,8 +6,6 @@ open System.Threading
 open Microsoft.WindowsAzure.Storage
 open Microsoft.WindowsAzure.Storage.Blob
 open Newtonsoft.Json
-open NodaTime.Serialization.JsonNet
-open NodaTime
 open FotM.Data
 
 module RepoSync =
