@@ -56,7 +56,7 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
     let distortionMetric (matrix: float[][]) (centroids: Vector[], clustering: int[]) : float = 
         matrix
         |> Array.mapi (fun i row -> distance row centroids.[clustering.[i]])
-        |> Array.average
+        |> Array.sum
 
     let resultMetric (size: int) (matrix: float[][]) (centroids: Vector[], clustering: int[]) =
             let groups = clustering |> Seq.groupBy id
@@ -65,10 +65,10 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
             let nRegular = groups |> Seq.filter (fun g -> snd g |> Seq.length = size) |> Seq.length
 
             (
-                nOverbooked,
-                -nRegular,
-                -nGroups,
-                distortionMetric matrix (centroids, clustering)
+                nOverbooked,    // prioritize clusterings with less overbooked teams
+                -nRegular,      // out of those prioritize clusterings with most teams of right size
+                -nGroups,       // out of those prioritize clusterings with more total teams (that's for when we have overbooked teams at all)
+                distortionMetric matrix (centroids, clustering) // out of those get whatever has smaller distortion
             )
 
     interface FotM.Utilities.IKMeans<'a> with
