@@ -25,7 +25,7 @@ namespace FotM.Cassandra.Tests
     public class CassandraSuperTests: ArmoryTestingBase
     {
         const int BracketTeamSize = 3;
-        private static readonly Random Rng = new Random(367);
+        private static readonly Random Rng = new Random(55369);
 
         private static readonly Realm[] Realms = new Realm[]
         {
@@ -156,19 +156,25 @@ namespace FotM.Cassandra.Tests
             player.SpecId = (int) specClass.Key;
         }
 
-        Leaderboard Play(Leaderboard leaderboard, Team[] playingTeams, Func<LeaderboardEntry, int> ratingChange)
+        Leaderboard Play(Leaderboard leaderboard, Team[] playingTeams, Func<LeaderboardEntry, int> ratingChange,
+            bool skipOne = false)
         {
             var updatedEntries = new List<LeaderboardEntry>();
+            var skippedPlayer = playingTeams[0].Players[0];
 
-            foreach (var playingTeam in playingTeams)
+            for (int iTeam = 0; iTeam < playingTeams.Length; iTeam++)
             {
-                var previousPlayerEntries =
-                    playingTeam.Players.Select(player => leaderboard[player])
-                        .OrderByDescending(p => p.Rating)
-                        .ToArray();
+                var playingTeam = playingTeams[iTeam];
+
+                // drop first player from the first team, pretend they played with somebody else
+
+                var previousPlayerEntries = playingTeam.Players.Select(player => leaderboard[player]).ToArray();
 
                 for (int iPlayer = 0; iPlayer < BracketTeamSize; ++iPlayer)
                 {
+                    if (skipOne && iTeam == 0 && iPlayer == 0)
+                        continue;
+
                     var previousEntry = previousPlayerEntries[iPlayer];
 
                     int playerRatingChange = ratingChange(previousEntry);
@@ -180,6 +186,8 @@ namespace FotM.Cassandra.Tests
 
             // Fill it
             var updatedPlayers = playingTeams.SelectMany(t => t.Players).ToHashSet();
+            if (skipOne)
+                updatedPlayers.Remove(skippedPlayer);
             var oldEntries = leaderboard.Rows.Where(r => !updatedPlayers.Contains(r.Player()));
 
             var newLeaderboard = new Leaderboard
@@ -246,13 +254,15 @@ namespace FotM.Cassandra.Tests
                 bool win = Rng.Next(2) == 0;
                 int opponentRating = 2300 + Rng.Next(-100, 100);
 
+                bool skipOne = true;
+
                 // For each of them generate rating change, update players and create new leaderboard
                 var newLeaderboard = Play(leaderboard, playingTeams,
-                    player => RatingUtils.EstimatedRatingChange(player.Rating, opponentRating, win)
+                    player => RatingUtils.EstimatedRatingChange(player.Rating, opponentRating, win), skipOne
                 );
                 
                 // Remember who really played this turn
-                results[newLeaderboard] = playingTeams.ToHashSet();
+                results[newLeaderboard] = playingTeams.Skip(skipOne ? 1 : 0).ToHashSet();
 
                 leaderboard = newLeaderboard;
             }

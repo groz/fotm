@@ -11,8 +11,6 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
         2. 
     *)
 
-    let maxIterations = 100 // main parameter for kmeans precision, bigger = better & slower
-
     let distance = squaredEuclideanDistance
 
     let ``kmeans++`` (matrix: float[][]) (k: int) (rng: System.Random) =
@@ -83,7 +81,13 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
             let nGroups = groups |> Seq.length
             let nOverbooked = groups |> Seq.filter (fun g -> snd g |> Seq.length > size) |> Seq.length
             let nRegular = groups |> Seq.filter (fun g -> snd g |> Seq.length = size) |> Seq.length
-            (nOverbooked, -nRegular, (if nOverbooked > 0 then nGroups else -nGroups), distortionMetric matrix (centroids, clustering))
+
+            (
+                nOverbooked,
+                -nRegular,
+                -nGroups,
+                distortionMetric matrix (centroids, clustering)
+            )
 
     interface FotM.Utilities.IKMeans<'a> with
         member this.ComputeGroups(dataSet, nGroups) =
@@ -92,11 +96,15 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
 
             let rng = System.Random()
 
-            let groupSize = matrix.Length / nGroups
+            let groupSize = int (ceil (float(matrix.Length) / float(nGroups)))
+            //printfn "Total items: %i, nGroups: %i, group size: %i" matrix.Length nGroups groupSize
+
             
             if applyMetric then
+                let nClusteringIterations = 100
+
                 let orderedResults = 
-                    [for i in 0..maxIterations do yield matrix |> cluster 0 nGroups rng]
+                    [for i in 0..nClusteringIterations do yield matrix |> cluster 0 nGroups rng]
                     |> List.sortBy (fun clustering -> clustering |> resultMetric groupSize matrix)
 
                 snd orderedResults.Head
