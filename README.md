@@ -5,8 +5,7 @@ World of Warcraft arena FotM monitor.
 
 TODO
 
-ASAP:
-- Add CN region
+ASAP: -
 
 Frontend:
 - Show loading spin until SignalR is connected
@@ -22,6 +21,8 @@ Infrastructure:
 - Divide ratings update per number of games if diff is more than 1 to avoid showing 30+ rating changes
 
 Machine learning:
+- Add one team grouping with player outside of first 1000 on each turn
+- Add super tests for 2v2/5v5/rbg
 - Try evaluating all n choose 3 combinations instead of multiple k-means runs
 
 Backlog:
@@ -30,3 +31,4 @@ Backlog:
 - Make FotM.Config rebuild on each update to Regional.config
 - Investigate compressing all SignalR communication
 - Discussion forum per team setup?
+- Add CN region
