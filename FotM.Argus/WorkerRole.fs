@@ -15,14 +15,26 @@ type WorkerRole() =
 
     // This is a sample worker implementation. Replace with your logic.
 
-    let log message (kind : string) = Trace.TraceInformation(message, kind)
+    let log (kind : string) message  = 
+        let msg = sprintf "[%A] %s" DateTime.UtcNow message
+        Trace.TraceInformation(msg, kind)
+
+    let logInfo = log "Information"
+
+    let rec run i = 
+        let msg = (sprintf "Working. Current iteration: %i" i)
+        logInfo msg
+
+        if i = 5 then
+            failwith "that's enough for now"
+        else
+            Thread.Sleep(5000)
+            run (i+1)
 
     override wr.Run() =
 
-        log "FotM.Argus entry point called" "Information"
-        while(true) do 
-            Thread.Sleep(10000)
-            log "Working" "Information"
+        logInfo "FotM.Argus entry point called"
+        run 0
 
     override wr.OnStart() = 
 
@@ -33,3 +45,6 @@ type WorkerRole() =
         // see the MSDN topic at http://go.microsoft.com/fwlink/?LinkId=166357.
 
         base.OnStart()
+
+    override wr.OnStop() =
+        logInfo "Graceful shutdown."
