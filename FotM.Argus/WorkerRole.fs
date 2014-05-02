@@ -25,11 +25,8 @@ type WorkerRole() =
         let msg = (sprintf "Working. Current iteration: %i" i)
         logInfo msg
 
-        if i = 5 then
-            failwith "that's enough for now"
-        else
-            Thread.Sleep(5000)
-            run (i+1)
+        Thread.Sleep(5000)
+        run (i+1)
 
     override wr.Run() =
 
