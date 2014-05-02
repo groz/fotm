@@ -27,11 +27,14 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
                                 
         buildCentroids [matrix.[rng.Next(matrix.Length)]] 1
 
-    let getPointsForCluster (clustering: int[]) (i: int) (matrix: Vector[])  =
+    let getPointsForCluster (clustering: int[]) (clusterNum: int) (matrix: Vector[])  =
         clustering
         |> Array.mapi (fun i ci -> i, ci)
-        |> Array.filter (fun idx -> snd idx = i)
+        |> Array.filter (fun idx -> snd idx = clusterNum)
         |> Array.map (fun idx -> matrix.[fst idx])
+
+    let getClusterMean (centroid: Vector) (clusterPoints: Vector array) =
+        if clusterPoints.Length = 0 then Array.zeroCreate centroid.Length else VectorOps.mean clusterPoints
 
     let cluster (nIteration: int) (k: int) (rng: System.Random) (matrix: float[][]): Vector[] * int[] =
 
@@ -41,12 +44,10 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
         let centroids = ``kmeans++`` matrix k rng
 
         let rec iterate (centroids: Vector list) (currentClustering: int[]) =
-            // I. assignment step
             let newClustering = matrix |> Array.map (fun input -> fst( centroids |> List.miniBy(distance input) ) )
 
             if newClustering <> currentClustering then
-                // II. update step
-                let newCentroids = centroids |> List.mapi (fun i c -> matrix |> getPointsForCluster newClustering i |> VectorOps.mean n)
+                let newCentroids = centroids |> List.mapi (fun i c -> matrix |> getPointsForCluster newClustering i |> getClusterMean c)
                 iterate newCentroids newClustering
             else
                 centroids |> List.toArray, currentClustering
@@ -78,7 +79,7 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
 
             let rng = System.Random()
 
-            let groupSize = int (ceil (float(matrix.Length) / float(nGroups)))
+            let groupSize = int (ceil (matrix.Length ./. nGroups))
             
             if applyMetric then
                 let nClusteringIterations = 100

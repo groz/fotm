@@ -15,6 +15,10 @@ module Array =
     let miniBy f s = s |> Array.mapi (fun i x -> (i, f(x))) |> Array.minBy snd
 
 module Math =
+
+    let (./.) x y = 
+        (x |> float) / (y |> float)
+
     let n_choose_k n k = 
         let rec choose lo  =
             function
@@ -66,13 +70,8 @@ module Math =
 
         let (/) (v: Vector) (scale: float) : Vector = v * (1.0/scale)
 
-        let zeroVector n : Vector = [|for i in 1..n do yield 0.0|]
-
-        let mean (n: int) (vectors: Vector array) =
-            if vectors.Length <> 0 then
-                ( vectors |> Array.reduce (fun acc v -> acc + v) ) / float(vectors.Length)
-            else
-                zeroVector(n)
+        let mean (vectors: Vector array) =
+            ( vectors |> Array.reduce (fun acc v -> acc + v) ) / float(vectors.Length)
 
     module Combinatorics =
         let rec splits = function
