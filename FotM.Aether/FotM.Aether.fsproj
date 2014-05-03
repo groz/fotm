@@ -58,11 +58,11 @@
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
   <ItemGroup>
-    <Compile Include="Aether.fs" />
     <None Include="packages.config" />
     <None Include="app.config" />
-    <None Include="Performance\Microsoft.ServiceBus.MessagingPerformanceCounters.man" />
+    <Compile Include="Aether.fs" />
     <Compile Include="SnapshotRepository.fs" />
+    <None Include="Performance\Microsoft.ServiceBus.MessagingPerformanceCounters.man" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Data.Edm">

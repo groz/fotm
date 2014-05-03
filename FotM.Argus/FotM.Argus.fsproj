@@ -37,11 +37,17 @@
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets')" />
   <ItemGroup>
+    <Compile Include="ArmoryLoader.fs" />
     <Compile Include="WorkerRole.fs" />
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="FSharp.Core, Version=4.3.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="FSharp.Data">
+      <HintPath>..\packages\FSharp.Data.2.0.7\lib\net40\FSharp.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Data.Edm">
       <HintPath>..\packages\Microsoft.Data.Edm.5.6.1\lib\net40\Microsoft.Data.Edm.dll</HintPath>
       <Private>True</Private>
@@ -63,11 +69,12 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="FSharp.Core">
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NodaTime">
+      <HintPath>..\packages\NodaTime.1.2.0\lib\net35-Client\NodaTime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -87,6 +94,18 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FotM.Aether\FotM.Aether.fsproj">
+      <Name>FotM.Aether</Name>
+      <Project>{7a3bfbd3-3050-4d64-bdd9-9a33e0e36ae2}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\FotM.Data\FotM.Data.fsproj">
+      <Name>FotM.Data</Name>
+      <Project>{3d02c2f7-31e5-49b1-a77d-ce689c9c9b0b}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
