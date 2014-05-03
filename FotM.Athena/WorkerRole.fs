@@ -1,4 +1,4 @@
-﻿namespace FotM.Argus
+﻿namespace FotM.Athena
 
 open System
 open System.Collections.Generic
@@ -19,7 +19,7 @@ type WorkerRole() =
 
     override wr.Run() =
 
-        log "FotM.Argus entry point called" "Information"
+        log "FotM.Athena entry point called" "Information"
         while(true) do 
             Thread.Sleep(10000)
             log "Working" "Information"
