@@ -86,10 +86,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FotM.Athena\FotM.Athena.fsproj">
-      <Project>{0eb66680-a371-4ace-983c-c37effd31ba5}</Project>
-      <Name>FotM.Athena</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FotM.Cassandra\FotM.Cassandra.csproj">
       <Project>{94158125-21fd-4260-995b-6cadad88a39b}</Project>
       <Name>FotM.Cassandra</Name>

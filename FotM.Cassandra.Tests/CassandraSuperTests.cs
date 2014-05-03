@@ -52,8 +52,8 @@ namespace FotM.Cassandra.Tests
             {
                 //{"Athena plain", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), false, false)},
                 //{"Athena plain distortion", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), false, true)},
-                {"Athena normalized", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, false)},
-                {"Athena normalized distortion", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, true)},
+                //{"Athena normalized", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, false)},
+                //{"Athena normalized distortion", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, true)},
                 {"My kmeans with normalization custom metric", new HealerAndSizeAwareKMeans(true, 3)},
                 {"My kmeans custom metric", new HealerAndSizeAwareKMeans(false, 3)},
                 //{"My kmeans with normalization", new MyKMeans<PlayerChange>(normalize: true)},
