@@ -20,9 +20,6 @@ type WorkerRole() =
 
     override wr.Run() = 
         Async.RunSynchronously(Argus.watch, cancellationToken = cts.Token)
-        //Async.Start(Argus.watch, cancellationToken = cts.Token)
-        //Thread.Sleep 30000
-        //cts.Cancel()
 
     override wr.OnStart() = 
         ServicePointManager.DefaultConnectionLimit <- 12
