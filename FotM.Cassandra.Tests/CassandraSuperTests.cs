@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Accord.Math;
+using FotM.Athena;
 using FotM.Domain;
 using FotM.TestingUtilities;
 using FotM.Utilities;
@@ -51,9 +52,9 @@ namespace FotM.Cassandra.Tests
             _clusterers = new Dictionary<string, IKMeans<PlayerChange>>
             {
                 //{"Athena plain", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), false, false)},
-                //{"Athena plain distortion", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), false, true)},
-                //{"Athena normalized", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, false)},
-                //{"Athena normalized distortion", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, true)},
+                {"Athena plain distortion", new AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), false, true)},
+                {"Athena normalized", new AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, false)},
+                {"Athena normalized distortion", new AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, true)},
                 {"My kmeans with normalization custom metric", new HealerAndSizeAwareKMeans(true, 3)},
                 {"My kmeans custom metric", new HealerAndSizeAwareKMeans(false, 3)},
                 //{"My kmeans with normalization", new MyKMeans<PlayerChange>(normalize: true)},

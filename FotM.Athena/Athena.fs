@@ -1,9 +1,10 @@
 ﻿namespace FotM.Athena
 
-open Math
 open FotM.Data
+open FotM.Hephaestus.TraceLogging
+open Math
 
-module Main =
+module Athena =
     (*
         1. calculate updates/diffs
         2. split into non-intersecting groups
@@ -12,7 +13,7 @@ module Main =
         5. post update
     *)
 
-    let calcUpdates(currentSnapshot: LadderSnapshot, previousSnapshot: LadderSnapshot) =
+    let calcUpdates (currentSnapshot: LadderSnapshot, previousSnapshot: LadderSnapshot) =
         let previousMap = previousSnapshot.ladder |> Array.map (fun e -> e.player, e) |> Map.ofArray
 
         currentSnapshot.ladder
@@ -26,8 +27,7 @@ module Main =
         |> Array.map (fun (current, previous) -> current - previous)
         |> Array.toList
 
-
-    let split(updates: PlayerUpdate list) =
+    let split(updates: PlayerUpdate list): PlayerUpdate list list =
         // 2. split into non-intersecting groups
         let splitConditions = [
             fun (update: PlayerUpdate) -> update.player.faction = Faction.Horde
@@ -48,7 +48,7 @@ module Main =
         partitionAll([updates], splitConditions)
 
     let findTeams(updateGroup: PlayerUpdate list): PlayerUpdate list list =
-        let allVariations = n_choose_k (updateGroup |> List.toArray) 3
+        // TODO: implement this
         []
     
     let processUpdate(ladderSnapshot: LadderSnapshot, history: LadderSnapshot list) =
@@ -59,3 +59,8 @@ module Main =
             let groups = split updates
             let teams = groups |> List.collect findTeams
             teams
+
+    let watch = async {
+        logInfo "FotM.Athena entry point called, starting listening to armory updates..."
+        return ()
+    }

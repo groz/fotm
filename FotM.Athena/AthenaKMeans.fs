@@ -1,6 +1,7 @@
 ﻿namespace FotM.Athena
 
 open Math
+open FotM.Hephaestus.CollectionExtensions
 
 type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool, applyMetric: bool) =
 

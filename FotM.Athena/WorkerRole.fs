@@ -1,35 +1,31 @@
 ﻿namespace FotM.Athena
 
-open System
-open System.Collections.Generic
-open System.Diagnostics
-open System.Linq
-open System.Net
+(*
+Workflow of this module:
+    TODO:
+    - Subscribe to topic updates from Argus
+    - Calculate teams for update
+    - Post calculated teams to appropriate topic
+*)
+
 open System.Threading
-open Microsoft.WindowsAzure
-open Microsoft.WindowsAzure.Diagnostics
+open System.Net
 open Microsoft.WindowsAzure.ServiceRuntime
+open FotM.Hephaestus.TraceLogging
 
 type WorkerRole() =
     inherit RoleEntryPoint() 
+    
+    let cts = new CancellationTokenSource()
 
-    // This is a sample worker implementation. Replace with your logic.
-
-    let log message (kind : string) = Trace.TraceInformation(message, kind)
-
-    override wr.Run() =
-
-        log "FotM.Athena entry point called" "Information"
-        while(true) do 
-            Thread.Sleep(10000)
-            log "Working" "Information"
+    override wr.Run() = 
+        Async.RunSynchronously(Athena.watch, cancellationToken = cts.Token)
 
     override wr.OnStart() = 
-
-        // Set the maximum number of concurrent connections 
         ServicePointManager.DefaultConnectionLimit <- 12
-       
-        // For information on handling configuration changes
-        // see the MSDN topic at http://go.microsoft.com/fwlink/?LinkId=166357.
-
         base.OnStart()
+
+    override wr.OnStop() =
+        logInfo "Graceful shutdown initiated. Cancellation signaled..."
+        cts.Cancel()
+        cts.Dispose()
