@@ -4,6 +4,7 @@ open NodaTime
 open FotM.Aether
 open FotM.Data
 open FotM.Hephaestus.TraceLogging
+open Microsoft.ServiceBus.Messaging
 
 module Argus =
     let armoryPollTimeout = Duration.FromSeconds(20L)
@@ -25,7 +26,7 @@ module Argus =
                 Some(Some(currentSnapshot), currentSnapshot :: history)
         ) [] // initial state is empty history
 
-    let processArmory (region: RegionalSettings) (bracket: Bracket) = async {
+    let processArmory (region: RegionalSettings) (bracket: Bracket) (publisher: TopicClient) = async {
         let armoryInfo = sprintf "[%A, %A]" region.code bracket.url
 
         logInfo "%s started processing armory..." armoryInfo
@@ -40,7 +41,14 @@ module Argus =
                 | Some(snapshot) ->
                     let uri = repository.uploadSnapshot snapshot
                     logInfo "%s uploaded update to %A" armoryInfo uri
-                    // TODO: send update to appropriate topic
+                    use msg = new BrokeredMessage {
+                            storageLocation = uri
+                            region = region
+                            bracket = bracket
+                        }
+                    logInfo "%s publishing update message %A" armoryInfo msg
+                    publisher.Send msg
+                    logInfo "%s message published" armoryInfo
 
                 logInfo "%s processArmory waiting for %A" armoryInfo armoryPollTimeout
                 do! Async.Sleep armoryPollTimeoutInMilliseconds
@@ -48,13 +56,13 @@ module Argus =
             | ex -> logError "%s scan generated exception: %A" armoryInfo ex
     }
 
-    let watch = async {
+    let watch publisher = async {
         logInfo "FotM.Argus entry point called, starting listening to armory updates..."
 
         [
             for region in Regions.all do
             for bracket in Brackets.all do
-            yield (processArmory region bracket)
+            yield (processArmory region bracket publisher)
         ]
         |> List.map Async.StartChild
         |> Async.Parallel

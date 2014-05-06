@@ -10,8 +10,10 @@ Workflow of this module:
 
 open System.Threading
 open System.Net
+open Microsoft.WindowsAzure
 open Microsoft.WindowsAzure.ServiceRuntime
 open FotM.Hephaestus.TraceLogging
+open FotM.Aether
 
 type WorkerRole() =
     inherit RoleEntryPoint() 
@@ -19,7 +21,9 @@ type WorkerRole() =
     let cts = new CancellationTokenSource()
 
     override wr.Run() = 
-        Async.RunSynchronously(Argus.watch, cancellationToken = cts.Token)
+        let serviceBus = ServiceBus()
+        let publisher = serviceBus.topic("updates")
+        Async.RunSynchronously(Argus.watch publisher, cancellationToken = cts.Token)
 
     override wr.OnStart() = 
         ServicePointManager.DefaultConnectionLimit <- 12

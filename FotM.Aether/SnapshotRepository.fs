@@ -3,6 +3,7 @@
 open System
 open System.IO
 open System.Threading
+open Microsoft.WindowsAzure
 open Microsoft.WindowsAzure.Storage
 open Microsoft.WindowsAzure.Storage.Blob
 open Newtonsoft.Json
@@ -11,9 +12,10 @@ open FotM.Data
 module RepoSync =
     let lockobj = new System.Object()
 
-type SnapshotRepository(region: RegionalSettings, bracket: Bracket) =
+type SnapshotRepository(region: RegionalSettings, bracket: Bracket, ?storageConnectionString) =
 
-    let storageAccount = CloudStorageAccount.Parse region.storageConnection
+    let connectionString = defaultArg storageConnectionString (CloudConfigurationManager.GetSetting "Microsoft.Storage.ConnectionString")
+    let storageAccount = CloudStorageAccount.Parse connectionString
 
     let blobClient = storageAccount.CreateCloudBlobClient()
 

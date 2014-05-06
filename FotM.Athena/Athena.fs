@@ -3,6 +3,9 @@
 open FotM.Data
 open FotM.Hephaestus.TraceLogging
 open Math
+open FotM.Aether
+open Microsoft.ServiceBus.Messaging
+open System.Threading
 
 module Athena =
     (*
@@ -60,7 +63,14 @@ module Athena =
             let teams = groups |> List.collect findTeams
             teams
 
-    let watch = async {
+    let watch (updateTopic: SubscriptionClient) (waitHandle: WaitHandle) = async {
         logInfo "FotM.Athena entry point called, starting listening to armory updates..."
-        return ()
+
+        updateTopic.OnMessage(fun msg->
+            logInfo "************ Message received: %A ***********" msg
+            let body = msg.GetBody<UpdateMesage>()
+            logInfo "************ Message handled: %A ***********" body
+        )
+
+        waitHandle.WaitOne() |> ignore
     }

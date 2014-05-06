@@ -8,18 +8,30 @@ Workflow of this module:
     - Post calculated teams to appropriate topic
 *)
 
+open System
 open System.Threading
 open System.Net
 open Microsoft.WindowsAzure.ServiceRuntime
 open FotM.Hephaestus.TraceLogging
+open FotM.Aether
 
 type WorkerRole() =
     inherit RoleEntryPoint() 
     
     let cts = new CancellationTokenSource()
+    let waitHandle = new AutoResetEvent(false)
 
     override wr.Run() = 
-        Async.RunSynchronously(Athena.watch, cancellationToken = cts.Token)
+        let serviceBus = ServiceBus()
+
+        let subscriptionName = 
+            if RoleEnvironment.IsEmulated then
+                Dns.GetHostName()
+            else
+                Dns.GetHostName() + Guid.NewGuid().ToString().Substring(0, 4)
+
+        let updateTopic = serviceBus.subscribe "updates" subscriptionName
+        Async.RunSynchronously(Athena.watch updateTopic waitHandle, cancellationToken = cts.Token)
 
     override wr.OnStart() = 
         ServicePointManager.DefaultConnectionLimit <- 12
@@ -28,4 +40,6 @@ type WorkerRole() =
     override wr.OnStop() =
         logInfo "Graceful shutdown initiated. Cancellation signaled..."
         cts.Cancel()
+        waitHandle.Set() |> ignore
         cts.Dispose()
+        waitHandle.Dispose()

@@ -4,10 +4,18 @@
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
+    <ConfigurationSettings>
+      <Setting name="Microsoft.ServiceBus.ConnectionString" />
+      <Setting name="Microsoft.Storage.ConnectionString" />
+    </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="FotM.Athena" vmsize="Small">
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
+    <ConfigurationSettings>
+      <Setting name="Microsoft.ServiceBus.ConnectionString" />
+      <Setting name="Microsoft.Storage.ConnectionString" />
+    </ConfigurationSettings>
   </WorkerRole>
 </ServiceDefinition>
