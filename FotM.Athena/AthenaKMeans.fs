@@ -73,22 +73,24 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
                 distortionMetric matrix (centroids, clustering) // out of those get whatever has smaller distortion
             )
 
-    interface FotM.Utilities.IKMeans<'a> with
-        member this.ComputeGroups(dataSet, nGroups) =
-            let input = dataSet |> Array.map featureExtractor
-            let matrix = if shouldNormalize then normalize input else input
+    member this.computeGroups (dataSet: 'a array) (nGroups: int) =
+        let input = dataSet |> Array.map featureExtractor
+        let matrix = if shouldNormalize then normalize input else input
 
-            let rng = System.Random()
+        let rng = System.Random()
 
-            let groupSize = int (ceil (matrix.Length ./. nGroups))
+        let groupSize = int (ceil (matrix.Length ./. nGroups))
             
-            if applyMetric then
-                let nClusteringIterations = 100
+        if applyMetric then
+            let nClusteringIterations = 100
 
-                let orderedResults = 
-                    [for i in 0..nClusteringIterations do yield matrix |> cluster 0 nGroups rng]
-                    |> List.sortBy (fun clustering -> clustering |> resultMetric groupSize matrix)
+            let orderedResults = 
+                [for i in 0..nClusteringIterations do yield matrix |> cluster 0 nGroups rng]
+                |> List.sortBy (fun clustering -> clustering |> resultMetric groupSize matrix)
 
-                snd orderedResults.Head
-            else
-                snd (matrix |> cluster 0 nGroups rng)
+            snd orderedResults.Head
+        else
+            snd (matrix |> cluster 0 nGroups rng)
+
+    interface FotM.Utilities.IKMeans<'a> with
+        member this.ComputeGroups(dataSet, nGroups) = this.computeGroups dataSet nGroups          

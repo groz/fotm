@@ -31,7 +31,7 @@ type WorkerRole() =
                 Dns.GetHostName() + Guid.NewGuid().ToString().Substring(0, 4)
 
         let updateTopic = serviceBus.subscribe "updates" subscriptionName
-        Async.RunSynchronously(Athena.watch updateTopic waitHandle, cancellationToken = cts.Token)
+        Async.RunSynchronously(AthenaProcessor.watch updateTopic waitHandle, cancellationToken = cts.Token)
 
     override wr.OnStart() = 
         ServicePointManager.DefaultConnectionLimit <- 12

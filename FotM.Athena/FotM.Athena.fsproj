@@ -41,6 +41,7 @@
     <Compile Include="Math.fs" />
     <Compile Include="AthenaKMeans.fs" />
     <Compile Include="Athena.fs" />
+    <Compile Include="AthenaProcessor.fs" />
     <Compile Include="WorkerRole.fs" />
     <None Include="packages.config" />
     <None Include="Performance\Microsoft.ServiceBus.MessagingPerformanceCounters.man" />
@@ -58,6 +59,10 @@
     <Reference Include="mscorlib" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NodaTime">
+      <HintPath>..\packages\NodaTime.1.2.0\lib\net35-Client\NodaTime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

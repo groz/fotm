@@ -1,18 +1,10 @@
 ﻿namespace FotM.Athena
 
 open System
-open System.Net
 open FotM.Data
 open FotM.Hephaestus.TraceLogging
 open Math
-open FotM.Aether
-open Microsoft.ServiceBus.Messaging
-open System.Threading
-open Newtonsoft.Json
-
-type UpdateAgentMessage =
-| Update of Uri
-| Stop
+open NodaTime
 
 module Athena =
     (*
@@ -22,6 +14,8 @@ module Athena =
         4. merge teams
         5. post update
     *)
+
+    let duplicateCheckPeriod = Duration.FromHours(1L)
 
     let calcUpdates (currentSnapshot: LadderSnapshot, previousSnapshot: LadderSnapshot) =
         let previousMap = previousSnapshot.ladder |> Array.map (fun e -> e.player, e) |> Map.ofArray
@@ -48,7 +42,7 @@ module Athena =
             match splitConditions with
             | [] -> currentPartitions
             | headCondition :: tail -> 
-                let subPartitions = 
+                let subPartitions = // TODO: fix this non-sense
                     currentPartitions
                     |> List.map (List.partition headCondition)      // partitions into tuples of (list, list)
                     |> List.map (fun (left, right) -> left @ right) // merge tuple into list
@@ -57,73 +51,42 @@ module Athena =
         
         partitionAll([updates], splitConditions)
 
-    let findTeams(updateGroup: PlayerUpdate list): PlayerUpdate list list =
+    let featureExtractor (pu: PlayerUpdate) =
+        [|
+            float pu.ratingDiff
+            float pu.ranking
+            float pu.rating
+            float pu.weeklyWins
+            float pu.weeklyLosses
+            float pu.seasonWins
+            float pu.seasonLosses
+        |]        
+
+    let findTeamsInGroup(updateGroup: PlayerUpdate list): PlayerUpdate list list =
         // TODO: implement this
+        let clusterer = AthenaKMeans(featureExtractor, true, true)
+        let clusters = clusterer.computeGroups (updateGroup |> List.toArray) 3
         []
     
-    let processUpdate ladderSnapshot history =
+    let findTeams ladderSnapshot history =
         match history with
         | [] -> []
         | head :: tail ->
             let updates = calcUpdates(ladderSnapshot, head)
             let groups = split updates
-            let teams = groups |> List.collect findTeams
+            let teams = groups |> List.collect findTeamsInGroup
             teams
 
-    let updateProcessor region bracket = MailboxProcessor<UpdateAgentMessage>.Start(fun agent ->
-        logInfo "UpdateProcessor for %s, %s started" region.code bracket.url
+    let isCurrent (snapshot: LadderSnapshot) =
+        (SystemClock.Instance.Now - snapshot.timeTaken) < duplicateCheckPeriod
 
-        let snapshotRepo = SnapshotRepository(region, bracket)
-        let teamRepo = SnapshotRepository(region, bracket)
-        
-        let rec loop history = async {
-            // TODO: filter out expired entries from history
-            let! updateMsg = agent.Receive()
+    let processUpdate snapshot oldHistory =
+        let history = oldHistory |> List.filter (isCurrent)
 
-            match updateMsg with
-            | Update(storageLocation) ->
-                try
-                    use webClient = new WebClient()
-                    logInfo "fetching laddersnapshot from %A" storageLocation
-                    let! snapshotJson =  webClient.AsyncDownloadString storageLocation
-                    let snapshot = JsonConvert.DeserializeObject<LadderSnapshot> snapshotJson
-                    let teams = processUpdate snapshot history
-                    return! loop (snapshot::history)
-                with
-                | ex -> 
-                    logError "Exception while handling message for %s, %s: %A" region.code bracket.url ex
-                    return! loop history
-            | Stop ->
-                logInfo "UpdateProcessor for %s, %s stopped." region.code bracket.url
-        }
-
-        loop []
-    )
-
-    let watch (updateTopic: SubscriptionClient) (waitHandle: WaitHandle) = async {
-        logInfo "FotM.Athena entry point called, starting listening to armory updates..."
-
-        // creating processor agents
-        let processors = 
-            [
-                for region in Regions.all do
-                for bracket in Brackets.all do
-                yield (region, bracket), updateProcessor region bracket
-            ]
-            |> Map.ofList
-
-        // subscribing to messages
-        updateTopic.OnMessage(fun msg->
-            logInfo "************ UpdateMessage received: %A ***********" msg
-            let body = msg.GetBody<UpdateMesage>()
-
-            let processor = processors.[body.region, body.bracket]
-            processor.Post (Update body.storageLocation)
-        )
-
-        // waiting until service requests shutdown
-        waitHandle.WaitOne() |> ignore
-
-        // stopping processor agents
-        for p in processors do p.Value.Post Stop
-    }
+        if history |> List.exists (fun entry -> entry.ladder = snapshot.ladder) then
+            history
+        else
+            let teams = findTeams snapshot history
+            // post update
+            for team in teams do printfn "%A" team
+            snapshot :: history
