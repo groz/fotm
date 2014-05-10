@@ -83,12 +83,18 @@ type Bracket = {
     teamSize: int;
 }
 
+type Team = PlayerEntry array
+
 [<StructuralEquality;NoComparison>]
-type LadderSnapshot = {
+type LadderSnapshot<'a> = {
     bracket: Bracket
-    ladder: PlayerEntry[]
+    ladder: 'a array
     timeTaken: NodaTime.Instant
 }
+
+type PlayerLadderSnapshot = LadderSnapshot<PlayerEntry>
+
+type TeamLadderSnapshot = LadderSnapshot<Team>
 
 module Brackets =
     let twos = { url = "2v2"; teamSize = 2 }

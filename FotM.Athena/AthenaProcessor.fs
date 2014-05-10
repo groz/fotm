@@ -31,7 +31,7 @@ module AthenaProcessor =
                     logInfo "Fetching ladder snapshot from %A for %s, %s..." storageLocation region.code bracket.url
                     use webClient = new WebClient()
                     let! snapshotJson =  webClient.AsyncDownloadString storageLocation
-                    let snapshot = JsonConvert.DeserializeObject<LadderSnapshot> snapshotJson
+                    let snapshot = JsonConvert.DeserializeObject<PlayerLadderSnapshot> snapshotJson
                     logInfo "Processing snapshot for %s, %s..." region.code bracket.url
                     return! loop (Athena.processUpdate snapshot history)
                 with

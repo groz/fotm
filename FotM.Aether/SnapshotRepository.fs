@@ -25,7 +25,7 @@ type SnapshotRepository(region: RegionalSettings, bracket: Bracket, ?storageConn
         printfn "initializing blob container at %A" container.Uri
         container.CreateIfNotExists(BlobContainerPublicAccessType.Blob) |> ignore
 
-    member this.uploadSnapshot (snapshot: LadderSnapshot) = 
+    member this.uploadSnapshot (snapshot: PlayerLadderSnapshot) = 
         let snapshotId = Guid.NewGuid()
         let blobName = Regions.getPath region bracket snapshotId
 

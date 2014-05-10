@@ -17,7 +17,7 @@ module Athena =
 
     let duplicateCheckPeriod = Duration.FromHours(1L)
 
-    let calcUpdates (currentSnapshot: LadderSnapshot, previousSnapshot: LadderSnapshot) =
+    let calcUpdates currentSnapshot previousSnapshot =
         let previousMap = previousSnapshot.ladder |> Array.map (fun e -> e.player, e) |> Map.ofArray
 
         currentSnapshot.ladder
@@ -72,12 +72,12 @@ module Athena =
         match history with
         | [] -> []
         | head :: tail ->
-            let updates = calcUpdates(ladderSnapshot, head)
+            let updates = calcUpdates ladderSnapshot head
             let groups = split updates
             let teams = groups |> List.collect findTeamsInGroup
             teams
 
-    let isCurrent (snapshot: LadderSnapshot) =
+    let isCurrent snapshot =
         (SystemClock.Instance.Now - snapshot.timeTaken) < duplicateCheckPeriod
 
     let processUpdate snapshot oldHistory =

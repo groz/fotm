@@ -11,7 +11,7 @@ module Argus =
     let armoryPollTimeoutInMilliseconds = int (armoryPollTimeout.ToTimeSpan().TotalMilliseconds)
     let duplicateCheckPeriod = Duration.FromHours(1L)
 
-    let shouldRetain(snapshot: LadderSnapshot) =
+    let shouldRetain snapshot =
          (SystemClock.Instance.Now - snapshot.timeTaken) < duplicateCheckPeriod
 
     let armoryUpdates region bracket = 
