@@ -67,7 +67,7 @@ type PlayerEntry = {
     weeklyLosses: int;
 } 
 with
-    static member (-) (current: PlayerEntry, previous: PlayerEntry) = {
+    static member (-) (current: PlayerEntry, previous: PlayerEntry) : PlayerUpdate = {
         player = current.player;
         ranking = current.ranking;
         rating = current.rating;

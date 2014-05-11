@@ -8,9 +8,13 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
     let distance = squaredEuclideanDistance
 
     let ``kmeans++`` (matrix: float[][]) (k: int) (rng: System.Random) =
-        let rec buildCentroids(centroids: float[] list)(i: int)=
-            if i < k then 
-                let distanceToClosestCentroid(v: Vector): float = centroids |> List.map (distance v) |> List.min
+
+        let rec buildCentroids (centroids: Vector list) n =
+            if n < k then 
+                let distanceToClosestCentroid v = 
+                    centroids 
+                    |> List.map (distance v) 
+                    |> List.min
 
                 let distances = matrix |> Array.map distanceToClosestCentroid
 
@@ -18,15 +22,15 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
 
                 let rec nextCentroid runningSum i =
                     if runningSum < border then nextCentroid (runningSum + distances.[i]) (i+1)
-                    else matrix.[i-1]
+                    else matrix.[i]
                 
                 let next = nextCentroid 0.0 0
 
-                buildCentroids (next::centroids) (i+1)
+                buildCentroids (next::centroids) (n + 1)
             else
                 centroids
-                                
-        buildCentroids [matrix.[rng.Next(matrix.Length)]] 1
+
+        buildCentroids [matrix |> Array.randomElement rng]  1
 
     let getPointsForCluster (clustering: int[]) (clusterNum: int) (matrix: Vector[])  =
         clustering

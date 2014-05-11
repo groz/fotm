@@ -3,6 +3,7 @@
 open System
 open FotM.Data
 open FotM.Hephaestus.TraceLogging
+open FotM.Hephaestus.CollectionExtensions
 open Math
 open NodaTime
 
@@ -21,15 +22,21 @@ module Athena =
         let previousMap = previousSnapshot.ladder |> Array.map (fun e -> e.player, e) |> Map.ofArray
 
         currentSnapshot.ladder
-        |> Array.map (fun currentEntry -> currentEntry, previousMap.TryFind(currentEntry.player))
-        |> Array.map (
-            function
-            | current, None -> None
-            | current, Some(previous) when current = previous -> None
-            | current, Some(previous) -> Some(current, previous))
-        |> Array.choose id
-        |> Array.map (fun (current, previous) -> current - previous)
-        |> Array.toList
+        |> Seq.map (fun current -> 
+            match previousMap.TryFind(current.player) with
+            | None -> None
+            | Some(previous) -> 
+                let currentTotal = current.seasonWins + current.seasonLosses
+                let previousTotal = previous.seasonWins + previous.seasonLosses
+
+                if currentTotal = previousTotal then
+                    None
+                else
+                    logInfo "%A updated to %A" current previous
+                    Some(current - previous)
+            )
+        |> Seq.choose id
+        |> Seq.toList
 
     let split(updates: PlayerUpdate list): PlayerUpdate list list =
         // 2. split into non-intersecting groups
@@ -73,6 +80,9 @@ module Athena =
         | [] -> []
         | previousSnapshot :: tail ->
             let updates = calcUpdates snapshot previousSnapshot
+
+            logInfo "Total players updated: %i" updates.Length
+
             let groups = split updates
             let teams = groups |> List.collect findTeamsInGroup
             teams
