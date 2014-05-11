@@ -68,11 +68,11 @@ module Athena =
         let clusters = clusterer.computeGroups (updateGroup |> List.toArray) 3
         []
     
-    let findTeams ladderSnapshot history =
-        match history with
+    let findTeams snapshot snapshotHistory teamHistory =
+        match snapshotHistory with
         | [] -> []
-        | head :: tail ->
-            let updates = calcUpdates ladderSnapshot head
+        | previousSnapshot :: tail ->
+            let updates = calcUpdates snapshot previousSnapshot
             let groups = split updates
             let teams = groups |> List.collect findTeamsInGroup
             teams
@@ -80,13 +80,22 @@ module Athena =
     let isCurrent snapshot =
         (SystemClock.Instance.Now - snapshot.timeTaken) < duplicateCheckPeriod
 
-    let processUpdate snapshot oldHistory =
-        let history = oldHistory |> List.filter (isCurrent)
+    let update teamLadder teams =
+        teamLadder
 
-        if history |> List.exists (fun entry -> entry.ladder = snapshot.ladder) then
-            history
+    let processUpdate snapshot snapshotHistory teamHistory =
+        let currentSnapshotHistory = snapshotHistory |> List.filter isCurrent
+
+        if currentSnapshotHistory |> List.exists (fun entry -> entry.ladder = snapshot.ladder) then
+            currentSnapshotHistory, teamHistory
         else
-            let teams = findTeams snapshot history
-            // post update
-            for team in teams do printfn "%A" team
-            snapshot :: history
+            let teams = findTeams snapshot currentSnapshotHistory teamHistory
+
+            for team in teams do 
+                logInfo "%A" team
+
+            let teamLadder = update teamHistory teams
+
+            // TODO: post update
+
+            snapshot :: currentSnapshotHistory, teamLadder

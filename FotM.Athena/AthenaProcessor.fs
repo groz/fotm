@@ -12,40 +12,44 @@ open NodaTime
 open System.Net
 
 type UpdateAgentMessage =
-| Update of Uri
-| Stop
+| UpdateMessage of Uri
+| StopMessage
 
 module AthenaProcessor =
+
+    let fetchSnapshot storageLocation = async {
+        logInfo "Fetching ladder snapshot from %A" storageLocation
+        use webClient = new WebClient()
+        let! snapshotJson =  webClient.AsyncDownloadString storageLocation
+        return JsonConvert.DeserializeObject<PlayerLadderSnapshot> snapshotJson
+    }
+
     let updateProcessor region bracket = MailboxProcessor<UpdateAgentMessage>.Start(fun agent ->
         logInfo "UpdateProcessor for %s, %s started" region.code bracket.url
 
         let snapshotRepo = SnapshotRepository(region, bracket)
         let teamRepo = SnapshotRepository(region, bracket)
         
-        let rec loop history = async {
+        let rec loop (history, teamLadder) = async {
             let! updateMsg = agent.Receive()
 
             match updateMsg with
-            | Update(storageLocation) ->
+            | UpdateMessage(storageLocation) ->
                 try
-                    logInfo "Fetching ladder snapshot from %A for %s, %s..." storageLocation region.code bracket.url
-                    use webClient = new WebClient()
-                    let! snapshotJson =  webClient.AsyncDownloadString storageLocation
-                    let snapshot = JsonConvert.DeserializeObject<PlayerLadderSnapshot> snapshotJson
-                    logInfo "Processing snapshot for %s, %s..." region.code bracket.url
-                    return! loop (Athena.processUpdate snapshot history)
+                    let! snapshot = fetchSnapshot storageLocation
+                    return! loop (Athena.processUpdate snapshot history teamLadder)
                 with
                 | ex -> 
                     logError "Exception while handling message for %s, %s: %A" region.code bracket.url ex
-                    return! loop history
-            | Stop ->
+                    return! loop (history, teamLadder)
+            | StopMessage ->
                 logInfo "UpdateProcessor for %s, %s stopped." region.code bracket.url
         }
 
-        loop []
+        loop ([], [||])
     )
 
-    let watch (updateTopic: SubscriptionClient) (waitHandle: WaitHandle) = async {
+    let watch (updateListener: SubscriptionClient) (waitHandle: WaitHandle) = async {
         logInfo "FotM.Athena entry point called, starting listening to armory updates..."
 
         // creating processor agents
@@ -58,12 +62,12 @@ module AthenaProcessor =
             |> Map.ofList
 
         // subscribing to messages
-        updateTopic.OnMessage(fun msg ->
+        updateListener.OnMessage(fun msg ->
             logInfo "UpdateMessage received: %A" msg
             let body = msg.GetBody<UpdateMesage>()
 
             let processor = processors.[body.region, body.bracket]
-            processor.Post (Update body.storageLocation)
+            processor.Post (UpdateMessage body.storageLocation)
             msg.Complete()
         )
 
@@ -71,6 +75,7 @@ module AthenaProcessor =
         waitHandle.WaitOne() |> ignore
 
         // stopping processor agents
-        for p in processors do p.Value.Post Stop
+        for p in processors do 
+            p.Value.Post StopMessage
     }
 
