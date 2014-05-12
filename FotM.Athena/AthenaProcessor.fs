@@ -31,23 +31,23 @@ module AthenaProcessor =
         let snapshotRepo = SnapshotRepository(region, bracket)
         let teamRepo = SnapshotRepository(region, bracket)
         
-        let rec loop (history, teamLadder) = async {
+        let rec loop (snapshotHistory, teamHistory) = async {
             let! updateMsg = agent.Receive()
 
             match updateMsg with
             | UpdateMessage(storageLocation) ->
                 try
                     let! snapshot = fetchSnapshot storageLocation
-                    return! loop (Athena.processUpdate snapshot history teamLadder)
+                    return! loop (Athena.processUpdate snapshot snapshotHistory teamHistory)
                 with
                 | ex -> 
                     logError "Exception while handling message for %s, %s: %A" region.code bracket.url ex
-                    return! loop (history, teamLadder)
+                    return! loop (snapshotHistory, teamHistory)
             | StopMessage ->
                 logInfo "UpdateProcessor for %s, %s stopped." region.code bracket.url
         }
 
-        loop ([], [||])
+        loop ([], [])
     )
 
     let watch (updateListener: SubscriptionClient) (waitHandle: WaitHandle) =

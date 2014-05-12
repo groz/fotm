@@ -32,14 +32,22 @@ type Race =
 | ``Pandaren Alliance`` = 25
 | ``Pandaren Horde`` = 26
 
-type Player = {
-    name: string;
-    realm: Realm;
-    faction: Faction
-    race: Race;
-    gender: Gender;
-    classSpec: Class;
-}
+[<CustomEquality; NoComparison>]
+type Player = 
+    { 
+        name: string
+        realm: Realm
+        faction: Faction
+        classSpec: Class 
+        race: Race
+        gender: Gender
+    }
+    member this.key = (this.name, this.realm, this.faction, this.classSpec)
+    override this.Equals(other) =
+        match other with
+        | :? Player as otherPlayer -> this.key = otherPlayer.key
+        | _ -> false
+    override this.GetHashCode() = hash this.key
 
 type PlayerUpdate = {
     player: Player;
@@ -57,33 +65,37 @@ type PlayerUpdate = {
 }
 
 type PlayerEntry = {
-    player: Player;
+    player: Player
 
-    ranking: int;
-    rating: int;
-    seasonWins: int;
-    seasonLosses: int;
-    weeklyWins: int;
-    weeklyLosses: int;
+    ranking: int
+    rating: int
+    seasonWins: int
+    seasonLosses: int
+    weeklyWins: int
+    weeklyLosses: int
 } 
 with
     static member (-) (current: PlayerEntry, previous: PlayerEntry) : PlayerUpdate = {
-        player = current.player;
-        ranking = current.ranking;
-        rating = current.rating;
-        weeklyWins = current.weeklyWins;
-        weeklyLosses = current.weeklyLosses;
-        seasonWins = current.seasonWins;
-        seasonLosses = current.seasonLosses;
-        ratingDiff = current.rating - previous.rating;
+        player = current.player
+        ranking = current.ranking
+        rating = current.rating
+        weeklyWins = current.weeklyWins
+        weeklyLosses = current.weeklyLosses
+        seasonWins = current.seasonWins
+        seasonLosses = current.seasonLosses
+        ratingDiff = current.rating - previous.rating
     }
 
 type Bracket = {
-    url: string;
-    teamSize: int;
+    url: string
+    teamSize: int
 }
 
-type Team = PlayerEntry array
+type TeamEntry = {
+    players: Player list
+    ratingChange: int
+    timeTaken: NodaTime.Instant
+}
 
 [<StructuralEquality;NoComparison>]
 type LadderSnapshot<'a> = {
@@ -94,7 +106,7 @@ type LadderSnapshot<'a> = {
 
 type PlayerLadderSnapshot = LadderSnapshot<PlayerEntry>
 
-type TeamLadderSnapshot = LadderSnapshot<Team>
+type TeamLadderSnapshot = LadderSnapshot<TeamEntry>
 
 module Brackets =
     let twos = { url = "2v2"; teamSize = 2 }
