@@ -32,22 +32,14 @@ type Race =
 | ``Pandaren Alliance`` = 25
 | ``Pandaren Horde`` = 26
 
-[<CustomEquality; NoComparison>]
-type Player = 
-    { 
-        name: string
-        realm: Realm
-        faction: Faction
-        classSpec: Class 
-        race: Race
-        gender: Gender
-    }
-    member this.key = (this.name, this.realm, this.faction, this.classSpec)
-    override this.Equals(other) =
-        match other with
-        | :? Player as otherPlayer -> this.key = otherPlayer.key
-        | _ -> false
-    override this.GetHashCode() = hash this.key
+type Player = { 
+    name: string
+    realm: Realm
+    faction: Faction
+    classSpec: Class 
+    race: Race
+    gender: Gender
+}
 
 type PlayerUpdate = {
     player: Player;
@@ -94,8 +86,23 @@ type Bracket = {
 type TeamEntry = {
     players: Player list
     ratingChange: int
-    timeTaken: NodaTime.Instant
+    snapshotTime: NodaTime.Instant
 }
+
+module Teams =
+    let createEntry (snapshotTime: NodaTime.Instant) (playerUpdates: PlayerUpdate list) = 
+        {
+            TeamEntry.players = 
+                playerUpdates 
+                |> List.map (fun pu -> pu.player)
+                |> List.sortBy (fun p -> (p.classSpec, p))
+            ratingChange = 
+                playerUpdates 
+                |> List.map (fun pu -> float pu.ratingDiff)
+                |> List.average
+                |> int
+            snapshotTime = snapshotTime
+        }
 
 [<StructuralEquality;NoComparison>]
 type LadderSnapshot<'a> = {

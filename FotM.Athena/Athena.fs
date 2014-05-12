@@ -69,7 +69,7 @@ module Athena =
             float pu.seasonLosses
         |]        
 
-    let findTeamsInGroup (teamSize) (updateGroup: PlayerUpdate list) : Team list =
+    let findTeamsInGroup (teamSize) (snapshotTime: NodaTime.Instant) (updateGroup: PlayerUpdate list) =
         let g = updateGroup |> Array.ofList
 
         if g.Length < teamSize then
@@ -82,7 +82,7 @@ module Athena =
             |> Seq.mapi (fun i ci -> ci, g.[i])
             |> toMultiMap
             |> Map.toList
-            |> List.map (fun (i, updateList) -> updateList |> List.map (fun pu -> pu.player))
+            |> List.map (fun (i, updateList) -> updateList |> Teams.createEntry snapshotTime)
 
     let findTeams snapshot snapshotHistory teamHistory =
         match snapshotHistory with
@@ -93,7 +93,7 @@ module Athena =
             logInfo "Total players updated: %i" updates.Length
 
             let groups = split updates
-            let teams = groups |> List.collect (findTeamsInGroup snapshot.bracket.teamSize)
+            let teams = groups |> List.collect (findTeamsInGroup snapshot.bracket.teamSize snapshot.timeTaken)
             teams
 
     let isCurrent snapshot =
