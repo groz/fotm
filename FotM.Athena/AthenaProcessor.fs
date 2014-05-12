@@ -10,8 +10,9 @@ open System.Threading
 open Newtonsoft.Json
 open NodaTime
 open System.Net
+open FotM.Hephaestus.Async
 
-type UpdateAgentMessage =
+type UpdateProcessorMessage =
 | UpdateMessage of Uri
 | StopMessage
 
@@ -24,7 +25,7 @@ module AthenaProcessor =
         return JsonConvert.DeserializeObject<PlayerLadderSnapshot> snapshotJson
     }
 
-    let updateProcessor region bracket = MailboxProcessor<UpdateAgentMessage>.Start(fun agent ->
+    let updateProcessor region bracket = Agent<UpdateProcessorMessage>.Start(fun agent ->
         logInfo "UpdateProcessor for %s, %s started" region.code bracket.url
 
         let snapshotRepo = SnapshotRepository(region, bracket)
@@ -49,7 +50,7 @@ module AthenaProcessor =
         loop ([], [||])
     )
 
-    let watch (updateListener: SubscriptionClient) (waitHandle: WaitHandle) = async {
+    let watch (updateListener: SubscriptionClient) (waitHandle: WaitHandle) =
         logInfo "FotM.Athena entry point called, starting listening to armory updates..."
 
         // creating processor agents
@@ -77,5 +78,3 @@ module AthenaProcessor =
         // stopping processor agents
         for p in processors do 
             p.Value.Post StopMessage
-    }
-

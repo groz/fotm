@@ -22,7 +22,7 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
 
                 let rec nextCentroid runningSum i =
                     if runningSum < border then nextCentroid (runningSum + distances.[i]) (i+1)
-                    else matrix.[i]
+                    else matrix.[i-1]
                 
                 let next = nextCentroid 0.0 0
 
@@ -34,9 +34,10 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
 
     let getPointsForCluster (clustering: int[]) (clusterNum: int) (matrix: Vector[])  =
         clustering
-        |> Array.mapi (fun i ci -> i, ci)
-        |> Array.filter (fun idx -> snd idx = clusterNum)
-        |> Array.map (fun idx -> matrix.[fst idx])
+        |> Seq.mapi (fun i ci -> i, ci)
+        |> Seq.filter (fun idx -> snd idx = clusterNum)
+        |> Seq.map (fun idx -> matrix.[fst idx])
+        |> Array.ofSeq
 
     let getClusterMean (centroid: Vector) (clusterPoints: Vector array) =
         if clusterPoints.Length = 0 then Array.zeroCreate centroid.Length else VectorOps.mean clusterPoints

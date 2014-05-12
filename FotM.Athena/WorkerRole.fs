@@ -17,9 +17,8 @@ open FotM.Aether
 
 type WorkerRole() =
     inherit RoleEntryPoint() 
-    
-    let cts = new CancellationTokenSource()
-    let waitHandle = new AutoResetEvent(false)
+
+    let waitHandle = new ManualResetEvent(false)
 
     override wr.Run() = 
         let serviceBus = ServiceBus()
@@ -31,7 +30,8 @@ type WorkerRole() =
                 Dns.GetHostName() + Guid.NewGuid().ToString().Substring(0, 4)
 
         let updateTopic = serviceBus.subscribe "updates" subscriptionName
-        Async.RunSynchronously(AthenaProcessor.watch updateTopic waitHandle, cancellationToken = cts.Token)
+
+        AthenaProcessor.watch updateTopic waitHandle
 
     override wr.OnStart() = 
         ServicePointManager.DefaultConnectionLimit <- 12
@@ -39,7 +39,5 @@ type WorkerRole() =
 
     override wr.OnStop() =
         logInfo "Graceful shutdown initiated. Cancellation signaled..."
-        cts.Cancel()
         waitHandle.Set() |> ignore
-        cts.Dispose()
         waitHandle.Dispose()

@@ -49,7 +49,7 @@ module Athena =
             match splitConditions with
             | [] -> currentPartitions
             | headCondition :: tail -> 
-                let subPartitions = // TODO: fix this non-sense
+                let subPartitions =
                     currentPartitions
                     |> List.map (List.partition headCondition)      // partitions into tuples of (list, list)
                     |> List.map (fun (left, right) -> left @ right) // merge tuple into list
@@ -69,12 +69,21 @@ module Athena =
             float pu.seasonLosses
         |]        
 
-    let findTeamsInGroup(updateGroup: PlayerUpdate list): PlayerUpdate list list =
-        // TODO: implement this
-        let clusterer = AthenaKMeans(featureExtractor, true, true)
-        let clusters = clusterer.computeGroups (updateGroup |> List.toArray) 3
-        []
-    
+    let findTeamsInGroup (teamSize) (updateGroup: PlayerUpdate list) : PlayerUpdate list list =
+        let g = updateGroup |> Array.ofList
+
+        if g.Length < teamSize then
+            []
+        else
+            let clusterer = AthenaKMeans(featureExtractor, true, true)
+            let clustering = clusterer.computeGroups g teamSize
+            
+            clustering
+            |> Seq.mapi (fun i ci -> ci, g.[i])
+            |> toMultiMap
+            |> Map.toList
+            |> List.map snd
+
     let findTeams snapshot snapshotHistory teamHistory =
         match snapshotHistory with
         | [] -> []
@@ -84,7 +93,7 @@ module Athena =
             logInfo "Total players updated: %i" updates.Length
 
             let groups = split updates
-            let teams = groups |> List.collect findTeamsInGroup
+            let teams = groups |> List.collect (findTeamsInGroup snapshot.bracket.teamSize)
             teams
 
     let isCurrent snapshot =
