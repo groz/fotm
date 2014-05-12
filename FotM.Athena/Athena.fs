@@ -99,8 +99,16 @@ module Athena =
     let isCurrent snapshot =
         (SystemClock.Instance.Now - snapshot.timeTaken) < duplicateCheckPeriod
 
-    let update teamLadder teams =
-        teamLadder
+    let negate x = -x
+
+    let calculateLadder (teamHistory: TeamEntry list) =
+        teamHistory
+        |> Seq.groupBy (fun teamEntry -> teamEntry.players)
+        |> Seq.map (fun (players, teamEntries) -> 
+            players, teamEntries |> Seq.sortBy(fun te -> te.snapshotTime) )
+        |> Seq.sortBy (fun (players, teamEntries) -> -(teamEntries |> Seq.head).rating)
+        |> Seq.map (fun (players, teamEntries) -> teamEntries |> Teams.createTeamInfo)
+        |> List.ofSeq
 
     let processUpdate snapshot snapshotHistory teamHistory =
         let currentSnapshotHistory = snapshotHistory |> List.filter isCurrent
@@ -113,8 +121,10 @@ module Athena =
             for team in teams do 
                 logInfo "<<< Team found: %A >>>" team
 
-            let teamLadder = update teamHistory teams
+            let newTeamHistory = teams @ teamHistory
 
             // TODO: post update
+            let teamLadder = calculateLadder newTeamHistory
+            logInfo "******* Current ladder : %A *************" teamLadder
 
-            snapshot :: currentSnapshotHistory, teams @ teamHistory
+            snapshot :: currentSnapshotHistory, newTeamHistory

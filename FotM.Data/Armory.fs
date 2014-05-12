@@ -86,22 +86,45 @@ type Bracket = {
 type TeamEntry = {
     players: Player list
     ratingChange: int
+    rating: int
     snapshotTime: NodaTime.Instant
 }
 
+type TeamInfo = 
+    {
+        lastEntry: TeamEntry
+        totalWins: int
+        totalLosses: int
+    }
+    member this.totalGames = this.totalWins + this.totalLosses
+    member this.winRatio = float this.totalWins / float this.totalGames
+
 module Teams =
-    let createEntry (snapshotTime: NodaTime.Instant) (playerUpdates: PlayerUpdate list) = 
+    let createEntry (snapshotTime: NodaTime.Instant) (playerUpdates: PlayerUpdate list) = {
+        TeamEntry.players = 
+            playerUpdates 
+            |> List.map (fun pu -> pu.player)
+            |> List.sortBy (fun p -> (p.classSpec, p))
+        ratingChange = 
+            playerUpdates 
+            |> List.map (fun pu -> float pu.ratingDiff)
+            |> List.average
+            |> int
+        rating =
+            playerUpdates 
+            |> List.map (fun pu -> float pu.rating)
+            |> List.average
+            |> int
+        snapshotTime = snapshotTime
+    }
+
+    let createTeamInfo (teamEntries: TeamEntry seq) = 
+        let won, lost = teamEntries |> Array.ofSeq |> Array.partition (fun e -> e.ratingChange > 0)
+
         {
-            TeamEntry.players = 
-                playerUpdates 
-                |> List.map (fun pu -> pu.player)
-                |> List.sortBy (fun p -> (p.classSpec, p))
-            ratingChange = 
-                playerUpdates 
-                |> List.map (fun pu -> float pu.ratingDiff)
-                |> List.average
-                |> int
-            snapshotTime = snapshotTime
+            lastEntry = teamEntries |> Seq.head
+            totalWins = won.Length
+            totalLosses = lost.Length
         }
 
 [<StructuralEquality;NoComparison>]
