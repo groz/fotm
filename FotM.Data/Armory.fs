@@ -8,8 +8,8 @@ type Realm = {
 }
 
 type Faction =
-| Horde = 0
-| Alliance = 1
+| Alliance = 0
+| Horde = 1
 
 type Gender =
 | Male = 0
@@ -129,6 +129,7 @@ module Teams =
 
 [<StructuralEquality;NoComparison>]
 type LadderSnapshot<'a> = {
+    region: string
     bracket: Bracket
     ladder: 'a array
     timeTaken: NodaTime.Instant

@@ -32,7 +32,7 @@ module Athena =
                 if currentTotal = previousTotal then
                     None
                 else
-                    logInfo "%A updated to %A" current previous
+                    logInfo "%A updated to %A" previous current
                     Some(current - previous)
             )
         |> Seq.choose id
@@ -90,16 +90,18 @@ module Athena =
         | previousSnapshot :: tail ->
             let updates = calcUpdates snapshot previousSnapshot
 
-            logInfo "Total players updated: %i" updates.Length
+            logInfo "[%s, %s] Total players updated: %i" snapshot.region snapshot.bracket.url updates.Length
 
             let groups = split updates
+
+            for g in groups do
+                logInfo "(-- [%s, %s] group: %A --)" snapshot.region snapshot.bracket.url g
+
             let teams = groups |> List.collect (findTeamsInGroup snapshot.bracket.teamSize snapshot.timeTaken)
             teams
 
     let isCurrent snapshot =
         (SystemClock.Instance.Now - snapshot.timeTaken) < duplicateCheckPeriod
-
-    let negate x = -x
 
     let calculateLadder (teamHistory: TeamEntry list) =
         teamHistory
@@ -119,12 +121,12 @@ module Athena =
             let teams = findTeams snapshot currentSnapshotHistory teamHistory
 
             for team in teams do 
-                logInfo "<<< Team found: %A >>>" team
+                logInfo "<<< [%s, %s] Team found: %A >>>" snapshot.region snapshot.bracket.url team
 
             let newTeamHistory = teams @ teamHistory
 
             // TODO: post update
             let teamLadder = calculateLadder newTeamHistory
-            logInfo "******* Current ladder : %A *************" teamLadder
+            logInfo "******* [%s, %s] Current ladder : %A *************" snapshot.region snapshot.bracket.url teamLadder
 
             snapshot :: currentSnapshotHistory, newTeamHistory

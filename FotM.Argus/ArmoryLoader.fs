@@ -63,6 +63,7 @@ module ArmoryLoader =
             |> Array.mapi (fun i row -> toDomainPlayer(i + 1, row))
 
         return {
+            region = region.code
             bracket = bracket
             ladder = ladder
             timeTaken = SystemClock.Instance.Now
