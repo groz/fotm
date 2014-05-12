@@ -40,23 +40,12 @@ module Athena =
 
     let split(updates: PlayerUpdate list): PlayerUpdate list list =
         // 2. split into non-intersecting groups
-        let splitConditions = [
-            fun (update: PlayerUpdate) -> update.player.faction = Faction.Horde
-            fun (update: PlayerUpdate) -> update.ratingDiff > 0
-        ]
-
-        let rec partitionAll (currentPartitions: PlayerUpdate list list, splitConditions: (PlayerUpdate -> bool) list): PlayerUpdate list list =
-            match splitConditions with
-            | [] -> currentPartitions
-            | headCondition :: tail -> 
-                let subPartitions =
-                    currentPartitions
-                    |> List.map (List.partition headCondition)      // partitions into tuples of (list, list)
-                    |> List.map (fun (left, right) -> left @ right) // merge tuple into list
-
-                partitionAll(subPartitions, tail)
+        let horde, alliance = updates |> List.partition (fun u -> u.player.faction = Faction.Horde)
         
-        partitionAll([updates], splitConditions)
+        let hw, hl = horde |> List.partition (fun u -> u.ratingDiff > 0)
+        let aw, al = alliance |> List.partition (fun u -> u.ratingDiff > 0)
+
+        [hw; hl; aw; al] |> List.filter (fun g -> not g.IsEmpty)
 
     let featureExtractor (pu: PlayerUpdate) =
         [|
