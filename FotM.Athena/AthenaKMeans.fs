@@ -60,12 +60,12 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
 
         iterate centroids [||]
 
-    let distortionMetric (matrix: float[][]) (centroids: Vector[], clustering: int[]) : float = 
+    let distortionMetric (matrix: Vector[]) (centroids: Vector[], clustering: int[]) : float = 
         matrix
         |> Array.mapi (fun i row -> distance row centroids.[clustering.[i]])
         |> Array.sum
 
-    let resultMetric (size: int) (matrix: float[][]) (centroids: Vector[], clustering: int[]) =
+    let resultMetric (size: int) (matrix: Vector[]) (centroids: Vector[], clustering: int[]) =
             let groups = clustering |> Seq.groupBy id
             let nGroups = groups |> Seq.length
             let nOverbooked = groups |> Seq.filter (fun g -> snd g |> Seq.length > size) |> Seq.length
@@ -78,50 +78,6 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
                 distortionMetric matrix (centroids, clustering) // out of those get whatever has smaller distortion
             )
 
-    let orderByPopularity (k: int) (matrix: Vector[]) (results: (Vector[] * int[]) list) =
-        // calculate popularity of each group among all results
-        let nResults = results.Length
-
-        let allGroups = 
-            results 
-            |> List.mapi (fun i (centroids, clustering) -> 
-                let groups = 
-                    clustering
-                    |> Seq.mapi (fun i ci -> ci, matrix.[i])
-                    |> toMultiMap
-                    |> Map.toList
-                    |> List.map (fun (ci, group) -> group |> List.sort)
-                i, groups
-            )
-            |> Map.ofList
-
-        let counters = 
-            allGroups 
-            |> Map.toSeq 
-            |> Seq.collect (fun (i, groups) -> 
-                groups
-                |> List.map (fun g -> g, 1)
-            )
-            |> toMultiMap
-            |> Map.toSeq
-            |> Seq.map (fun (g, counters) -> g, List.sum counters)
-            |> Map.ofSeq
-
-        results
-        |> Seq.mapi(fun i (centroids, clustering) ->
-            let groups = allGroups.[i]
-            let total = 
-                groups 
-                |> List.map (fun g -> 
-                    if g.Length <= k then counters.[g]
-                    else 0
-                )
-                |> List.sum
-            total, centroids, clustering
-        )
-        |> Seq.sortBy(fun (total, centroids, clustering) -> -total)
-        |> Seq.map (fun (total, centroids, clustering) -> centroids, clustering)
-
     member this.computeGroups (dataSet: 'a array) (nGroups: int) =
         let input = dataSet |> Array.map featureExtractor
         let matrix = if shouldNormalize then normalize input else input
@@ -133,30 +89,11 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
         if applyMetric then
             let nClusteringIterations = 200
 
-            let results = [for i in 0..nClusteringIterations do yield matrix |> cluster 0 nGroups rng]
-
-            let sortedResults = 
-                results 
-                |> orderByPopularity groupSize matrix
-                //|> List.sortBy (fun clustering -> clustering |> resultMetric groupSize matrix)                
-                |> Seq.take 10
-                |> List.ofSeq
-
-            sortedResults 
+            [for i in 0..nClusteringIterations do 
+                yield matrix |> cluster 0 nGroups rng]
             |> List.sortBy (fun clustering -> clustering |> resultMetric groupSize matrix)                
             |> Seq.head
             |> snd
-
-                (*
-                results
-                |> List.sortBy (fun clustering -> clustering |> resultMetric groupSize matrix)
-                |> Seq.take 20
-
-            //|> Seq.head
-            //|> snd
-
-            sortedResults |> selectBestClustering groupSize matrix
-            *)
         else
             snd (matrix |> cluster 0 nGroups rng)
 
