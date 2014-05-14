@@ -47,16 +47,18 @@ module Athena =
 
         [hw; hl; aw; al] |> List.filter (fun g -> not g.IsEmpty)
 
-    let featureExtractor (pu: PlayerUpdate) =
+    let featureExtractor (pu: PlayerUpdate) : Vector =
         [|
-            float pu.ratingDiff
-            float pu.ranking
-            float pu.rating
-            float pu.weeklyWins
-            float pu.weeklyLosses
-            float pu.seasonWins
-            float pu.seasonLosses
-        |]        
+            pu.player.realm.realmId
+            pu.ratingDiff
+            pu.ranking
+            pu.rating
+            pu.weeklyWins
+            pu.weeklyLosses
+            pu.seasonWins
+            pu.seasonLosses
+        |]  
+        |> Array.map float      
 
     let findTeamsInGroup (teamSize) (snapshotTime: NodaTime.Instant) (updateGroup: PlayerUpdate list) =
         let g = updateGroup |> Array.ofList

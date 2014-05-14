@@ -87,7 +87,7 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
         let groupSize = int (ceil (matrix.Length ./. nGroups))
             
         if applyMetric then
-            let nClusteringIterations = 200
+            let nClusteringIterations = 100
 
             [for i in 0..nClusteringIterations do 
                 yield matrix |> cluster 0 nGroups rng]

@@ -48,6 +48,9 @@ namespace FotM.Cassandra
 
         public string RealmSlug { get; set; }
         public int SpecId { get; set; }
+
+        [numl.Model.Feature]
+        [CassandraFeature(Weight = 1)]
         public int RealmId { get; private set; }
 
         [numl.Model.Feature]
