@@ -22,7 +22,6 @@ module Argus =
             if history |> List.exists (fun entry -> entry.ladder = currentSnapshot.ladder) then
                 Some(None, history)
             else
-                // TODO: discard updats with > 1 game diff between them
                 Some(Some(currentSnapshot), currentSnapshot :: history)
         ) [] // initial state is empty history
 

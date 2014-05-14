@@ -7,6 +7,12 @@ open FotM.Hephaestus.CollectionExtensions
 open Math
 open NodaTime
 
+type UpdateValidationResult =
+| OutdatedUpdate
+| DuplicateUpdate
+| ExcessiveUpdate
+| ValidUpdate
+
 module Athena =
     (*
         1. calculate updates/diffs
@@ -29,7 +35,7 @@ module Athena =
                 let currentTotal = current.seasonWins + current.seasonLosses
                 let previousTotal = previous.seasonWins + previous.seasonLosses
 
-                if currentTotal = previousTotal then
+                if currentTotal <= previousTotal then
                     None
                 else
                     logInfo "%A updated to %A" previous current
@@ -75,21 +81,17 @@ module Athena =
             |> Map.toList
             |> List.map (fun (i, updateList) -> updateList |> Teams.createEntry snapshotTime)
 
-    let findTeams snapshot snapshotHistory teamHistory =
-        match snapshotHistory with
-        | [] -> []
-        | previousSnapshot :: tail ->
-            let updates = calcUpdates snapshot previousSnapshot
+    let findTeams snapshot previousSnapshot =
+        let updates = calcUpdates snapshot previousSnapshot
+        logInfo "[%s, %s] Total players updated: %i" snapshot.region snapshot.bracket.url updates.Length
 
-            logInfo "[%s, %s] Total players updated: %i" snapshot.region snapshot.bracket.url updates.Length
+        let groups = split updates
 
-            let groups = split updates
+        for g in groups do
+            logInfo "(-- [%s, %s] group: %A --)" snapshot.region snapshot.bracket.url g
 
-            for g in groups do
-                logInfo "(-- [%s, %s] group: %A --)" snapshot.region snapshot.bracket.url g
-
-            let teams = groups |> List.collect (findTeamsInGroup snapshot.bracket.teamSize snapshot.timeTaken)
-            teams
+        let teams = groups |> List.collect (findTeamsInGroup snapshot.bracket.teamSize snapshot.timeTaken)
+        teams
 
     let isCurrent snapshot =
         (SystemClock.Instance.Now - snapshot.timeTaken) < duplicateCheckPeriod
@@ -102,23 +104,62 @@ module Athena =
         |> Seq.map (fun (players, teamEntries) -> teamEntries |> Teams.createTeamInfo)
         |> List.ofSeq
 
+    let validateUpdate currentSnapshot previousSnapshot =
+        let previousMap = previousSnapshot.ladder |> Array.map (fun e -> e.player, e) |> Map.ofArray
+
+        let updatedPairs = 
+            currentSnapshot.ladder
+            |> Seq.map (fun current -> 
+                match previousMap.TryFind(current.player) with
+                | Some(previous) when current.seasonTotal <> previous.seasonTotal -> 
+                    Some(current.seasonTotal - previous.seasonTotal)
+                | _ -> None
+            )
+            |> Seq.choose id
+            |> Seq.toList
+
+        let outdated, ok = updatedPairs |> List.partition ((<) 0)
+
+        if outdated.Length > 0 then OutdatedUpdate
+        else 
+            let normal, excessive = ok |> List.partition ((=) 1)
+
+            if excessive.Length > 0 then ExcessiveUpdate
+            else if normal.Length > 0 || currentSnapshot.ladder <> previousSnapshot.ladder then ValidUpdate
+            else DuplicateUpdate
+
     let processUpdate snapshot snapshotHistory teamHistory =
         let currentSnapshotHistory = snapshotHistory |> List.filter isCurrent
 
         if currentSnapshotHistory |> List.exists (fun entry -> entry.ladder = snapshot.ladder) then
             currentSnapshotHistory, teamHistory
         else
-            let teams = 
-                findTeams snapshot currentSnapshotHistory teamHistory
-                |> List.filter (fun t -> t.players.Length = snapshot.bracket.teamSize)
+            match currentSnapshotHistory with
+            | previousSnapshot :: tail  ->
 
-            for team in teams do 
-                logInfo "<<< [%s, %s] Team found: %A >>>" snapshot.region snapshot.bracket.url team
+                match validateUpdate snapshot previousSnapshot with
+                | ValidUpdate ->
+                    let teams = 
+                        findTeams snapshot previousSnapshot
+                        |> List.filter (fun t -> t.players.Length = snapshot.bracket.teamSize)
 
-            let newTeamHistory = teams @ teamHistory
+                    for team in teams do 
+                        logInfo "<<< [%s, %s] Team found: %A >>>" snapshot.region snapshot.bracket.url team
 
-            // TODO: post update
-            let teamLadder = calculateLadder newTeamHistory
-            logInfo "******* [%s, %s] Current ladder : %A *************" snapshot.region snapshot.bracket.url teamLadder
+                    let newTeamHistory = teams @ teamHistory
 
-            snapshot :: currentSnapshotHistory, newTeamHistory
+                    // TODO: post update
+                    let teamLadder = calculateLadder newTeamHistory
+                    logInfo "******* [%s, %s] Current ladder : %A *************" snapshot.region snapshot.bracket.url teamLadder
+
+                    snapshot :: currentSnapshotHistory, newTeamHistory
+                | DuplicateUpdate -> 
+                    logInfo "[%s, %s] Duplicate update. Skipping..." snapshot.region snapshot.bracket.url
+                    currentSnapshotHistory, teamHistory
+                | OutdatedUpdate ->
+                    logInfo "[%s, %s] Outdated update. Skipping..." snapshot.region snapshot.bracket.url
+                    currentSnapshotHistory, teamHistory
+                | ExcessiveUpdate ->
+                    logInfo "[%s, %s] Excessive update. Skipping..." snapshot.region snapshot.bracket.url
+                    snapshot :: currentSnapshotHistory, teamHistory
+            | _ -> snapshot :: currentSnapshotHistory, teamHistory

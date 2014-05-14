@@ -77,6 +77,8 @@ with
         seasonLosses = current.seasonLosses
         ratingDiff = current.rating - previous.rating
     }
+    member this.seasonTotal = this.seasonWins + this.seasonLosses
+    member this.weeklyTotal = this.seasonWins + this.weeklyTotal
 
 type Bracket = {
     url: string
