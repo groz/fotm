@@ -39,9 +39,7 @@ module Argus =
                 match update with
                 | None -> logInfo "%s duplicate or outdated update" armoryInfo
                 | Some(snapshot) ->
-                    let path = sprintf "%A.json" (System.Guid.NewGuid())
-                    let uri = repository.upload path snapshot
-                    logInfo "%s uploaded update to %A" armoryInfo uri
+                    let uri = repository.upload (snapshot)
                     use msg = new BrokeredMessage {
                             storageLocation = uri
                             region = region
