@@ -49,7 +49,7 @@ module Athena =
 
     let featureExtractor (pu: PlayerUpdate) : Vector =
         [|
-            pu.player.realm.realmId
+            pu.player.realm.realmId // TODO: scale down this feature and/or use Hamming distance
             pu.ratingDiff
             pu.ranking
             pu.rating
@@ -58,7 +58,7 @@ module Athena =
             pu.seasonWins
             pu.seasonLosses
         |]  
-        |> Array.map float      
+        |> Array.map float
 
     let findTeamsInGroup (teamSize) (snapshotTime: NodaTime.Instant) (updateGroup: PlayerUpdate list) =
         let g = updateGroup |> Array.ofList
