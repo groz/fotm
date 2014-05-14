@@ -1,11 +1,13 @@
 ﻿namespace FotM.Athena
 
 open System
+open FotM.Aether
 open FotM.Data
 open FotM.Hephaestus.TraceLogging
 open FotM.Hephaestus.CollectionExtensions
 open Math
 open NodaTime
+open Microsoft.ServiceBus.Messaging
 
 type UpdateValidationResult =
 | OutdatedUpdate
@@ -32,10 +34,7 @@ module Athena =
             match previousMap.TryFind(current.player) with
             | None -> None
             | Some(previous) -> 
-                let currentTotal = current.seasonWins + current.seasonLosses
-                let previousTotal = previous.seasonWins + previous.seasonLosses
-
-                if currentTotal <= previousTotal then
+                if current.seasonTotal <= previous.seasonTotal then
                     None
                 else
                     logInfo "%A updated to %A" previous current
@@ -128,7 +127,7 @@ module Athena =
             else if normal.Length > 0 || currentSnapshot.ladder <> previousSnapshot.ladder then ValidUpdate
             else DuplicateUpdate
 
-    let processUpdate snapshot snapshotHistory teamHistory =
+    let processUpdate snapshot snapshotHistory teamHistory (storage: Storage) (updatePublisher: TopicClient) =
         let currentSnapshotHistory = snapshotHistory |> List.filter isCurrent
 
         if currentSnapshotHistory |> List.exists (fun entry -> entry.ladder = snapshot.ladder) then
@@ -148,10 +147,24 @@ module Athena =
 
                     let newTeamHistory = teams @ teamHistory
 
-                    // TODO: post update
-                    let teamLadder = calculateLadder newTeamHistory
-                    logInfo "******* [%s, %s] Current ladder : %A *************" snapshot.region snapshot.bracket.url teamLadder
+                    if teams.Length <> 0 then
+                        logInfo "[%s, %s] Posting ladder update..." snapshot.region snapshot.bracket.url
 
+                        let teamLadder = calculateLadder newTeamHistory
+                    
+                        let ladderUrl = storage.upload (teamLadder)
+
+                        use msg = new BrokeredMessage {
+                            storageLocation = ladderUrl
+                            region = snapshot.region
+                            bracket = snapshot.bracket
+                        }
+
+                        logInfo "[%s, %s] publishing update message %A" snapshot.region snapshot.bracket.url msg
+                        updatePublisher.Send msg
+                    else
+                        logInfo "[%s, %s] No new teams found." snapshot.region snapshot.bracket.url
+                    
                     snapshot :: currentSnapshotHistory, newTeamHistory
                 | DuplicateUpdate -> 
                     logInfo "[%s, %s] Duplicate update. Skipping..." snapshot.region snapshot.bracket.url

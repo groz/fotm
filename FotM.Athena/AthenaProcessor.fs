@@ -25,8 +25,8 @@ module AthenaProcessor =
         return JsonConvert.DeserializeObject<PlayerLadderSnapshot> snapshotJson
     }
 
-    let updateProcessor region bracket = Agent<UpdateProcessorMessage>.Start(fun agent ->
-        logInfo "UpdateProcessor for %s, %s started" region.code bracket.url
+    let updateProcessor processorId storage topic = Agent<UpdateProcessorMessage>.Start(fun agent ->
+        logInfo "UpdateProcessor for %s started" processorId
 
         let rec loop (snapshotHistory, teamHistory) = async {
             let! updateMsg = agent.Receive()
@@ -35,27 +35,33 @@ module AthenaProcessor =
             | UpdateMessage(storageLocation) ->
                 try
                     let! snapshot = fetchSnapshot storageLocation
-                    return! loop (Athena.processUpdate snapshot snapshotHistory teamHistory)
+                    return! loop (Athena.processUpdate snapshot snapshotHistory teamHistory storage topic)
                 with
                 | ex -> 
-                    logError "Exception while handling message for %s, %s: %A" region.code bracket.url ex
+                    logError "Exception while handling message for %s: %A" processorId ex
                     return! loop (snapshotHistory, teamHistory)
             | StopMessage ->
-                logInfo "UpdateProcessor for %s, %s stopped." region.code bracket.url
+                logInfo "UpdateProcessor for %s stopped." processorId
         }
 
         loop ([], [])
     )
 
-    let watch (updateListener: SubscriptionClient) (waitHandle: WaitHandle) =
+    let getStorage region bracket =
+        let prefix = sprintf "%s/%s" region.code bracket.url
+        Storage("ladders", pathPrefix = prefix)
+
+    let watch (updateListener: SubscriptionClient) (updatePublisher) (waitHandle: WaitHandle) =
         logInfo "FotM.Athena entry point called, starting listening to armory updates..."
+
+        let getProcessorId region bracket = sprintf "[%s, %s]" region.code bracket.url
 
         // creating processor agents
         let processors = 
             [
                 for region in Regions.all do
                 for bracket in Brackets.all do
-                yield (region, bracket), updateProcessor region bracket
+                yield (region.code, bracket), updateProcessor (getProcessorId region bracket) (getStorage region bracket) updatePublisher
             ]
             |> Map.ofList
 

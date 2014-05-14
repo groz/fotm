@@ -31,7 +31,9 @@ type WorkerRole() =
 
         let updateTopic = serviceBus.subscribe "updates" subscriptionName
 
-        AthenaProcessor.watch updateTopic waitHandle
+        let updatePublisher = serviceBus.topic "ladders"
+
+        AthenaProcessor.watch updateTopic updatePublisher waitHandle
 
     override wr.OnStart() = 
         ServicePointManager.DefaultConnectionLimit <- 12

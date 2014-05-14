@@ -42,7 +42,7 @@ module Argus =
                     let uri = repository.upload (snapshot)
                     use msg = new BrokeredMessage {
                             storageLocation = uri
-                            region = region
+                            region = region.code
                             bracket = bracket
                         }
                     logInfo "%s publishing update message %A" armoryInfo msg
