@@ -97,8 +97,7 @@ module Athena =
     let calculateLadder (teamHistory: TeamEntry list) =
         teamHistory
         |> Seq.groupBy (fun teamEntry -> teamEntry.players)
-        |> Seq.map (fun (players, teamEntries) -> 
-            players, teamEntries |> Seq.sortBy(fun te -> te.snapshotTime) )
+        |> Seq.map (fun (players, teamEntries) -> players, teamEntries |> Seq.sortBy(fun te -> te.snapshotTime) )
         |> Seq.sortBy (fun (players, teamEntries) -> -(teamEntries |> Seq.head).rating)
         |> Seq.map (fun (players, teamEntries) -> teamEntries |> Teams.createTeamInfo)
         |> List.ofSeq
@@ -109,7 +108,9 @@ module Athena =
         if currentSnapshotHistory |> List.exists (fun entry -> entry.ladder = snapshot.ladder) then
             currentSnapshotHistory, teamHistory
         else
-            let teams = findTeams snapshot currentSnapshotHistory teamHistory
+            let teams = 
+                findTeams snapshot currentSnapshotHistory teamHistory
+                |> List.filter (fun t -> t.players.Length = snapshot.bracket.teamSize)
 
             for team in teams do 
                 logInfo "<<< [%s, %s] Team found: %A >>>" snapshot.region snapshot.bracket.url team
