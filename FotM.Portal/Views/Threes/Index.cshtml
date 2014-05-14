@@ -10,8 +10,6 @@
     <!-- TODO: switch to release(minified) versions of scripts -->
     @Scripts.Render("~/bundles/activeView")
     <script src="~/signalr/hubs"></script>
-    @*<script src="~/Scripts/Home/index_01.js"></script>*@
-    @*<script src="~/Scripts/Home/main.js"></script>*@
     @Scripts.Render("~/bundles/3v3")
 }
 
@@ -29,16 +27,16 @@
 <div class="hidden" data-bind="css: {hidden: false}">
 
     <div class="row pager">
-        <a role="button" class="btn btn-lg btn-default"
-           data-bind="css: { active: leaderboardSelected }, click: leaderboardClicked"
-           id="leaderboardBtn">
-            Leaderboard
-        </a>
-        <a role="button" class="btn btn-lg btn-default"
-           data-bind="css: { active: playingNowSelected }, click: playingNowClicked"
-           id="playingNowBtn">
-            Playing now
-        </a>
+            <a role="button" class="btn btn-lg btn-default"
+               data-bind="css: { active: leaderboardSelected }, click: leaderboardClicked"
+               id="leaderboardBtn">
+                Leaderboard
+            </a>
+            <a role="button" class="btn btn-lg btn-default"
+               data-bind="css: { active: playingNowSelected }, click: playingNowClicked"
+               id="playingNowBtn">
+                Playing now
+            </a>
     </div>
 
     <div class="row" data-bind="visible: playingNowSelected">
@@ -158,8 +156,7 @@
             </table>
 
             <br />
-
-            @Html.Partial("DonateButton", RegionalConfig.Instance.Region)
+            
         </div>
 
         <!-- FOTM SELECTED SETUP -->

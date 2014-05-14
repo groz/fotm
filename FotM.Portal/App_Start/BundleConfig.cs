@@ -27,7 +27,7 @@ namespace FotM.Portal
 #if DEBUG
             bundles.Add(new ScriptBundle("~/bundles/activeView").Include(
                 "~/Scripts/knockout-3.1.0.debug.js",
-                "~/Scripts/jquery.signalR-2.0.2.js",
+                "~/Scripts/jquery.signalR-2.0.*",
                 "~/Scripts/underscore.js"));
 #else
             bundles.Add(new ScriptBundle("~/bundles/activeView").Include(
