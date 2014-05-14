@@ -7,7 +7,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>75f9096c-44cb-420f-bee9-25437fe92bb9</ProjectGuid>
+    <ProjectGuid>626d26d0-9213-4172-9b10-dcea301b3e5a</ProjectGuid>
     <ProjectTypeGuids>{349C5851-65DF-11DA-9384-00065B846F21};{F2A71F9B-5D33-465A-A702-920D77279786}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -123,12 +123,12 @@
     <Content Include="Scripts\jquery-2.1.0.min.js" />
     <Content Include="Scripts\jquery-2.1.0.js" />
     <Content Include="Scripts\jquery-2.1.0.intellisense.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
     <Content Include="Scripts\respond.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
-    <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\modernizr-2.7.2.js" />
     <Compile Include="Controllers\HomeController.fs" />
     <Compile Include="Controllers\ValuesController.fs" />
