@@ -50,7 +50,7 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
         let centroids = ``kmeans++`` matrix k rng
 
         let rec iterate (centroids: Vector list) (currentClustering: int[]) =
-            let newClustering = matrix |> Array.map (fun input -> fst( centroids |> List.miniBy(distance input) ) )
+            let newClustering = matrix |> Array.map (fun input -> fst( centroids |> Seq.miniBy(distance input) ) )
 
             if newClustering <> currentClustering then
                 let newCentroids = centroids |> List.mapi (fun i c -> matrix |> getPointsForCluster newClustering i |> getClusterMean c)
@@ -73,27 +73,90 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
 
             (
                 nOverbooked,    // prioritize clusterings with less overbooked teams
-                -nRegular,      // out of those prioritize clusterings with most teams of right size
-                -nGroups,       // out of those prioritize clusterings with more total teams (that's for when we have overbooked teams at all)
+                //-nRegular,      // out of those prioritize clusterings with most teams of right size
+                //-nGroups,       // out of those prioritize clusterings with more total teams (that's for when we have overbooked teams at all)
                 distortionMetric matrix (centroids, clustering) // out of those get whatever has smaller distortion
             )
+
+    let orderByPopularity (k: int) (matrix: Vector[]) (results: (Vector[] * int[]) list) =
+        // calculate popularity of each group among all results
+        let nResults = results.Length
+
+        let allGroups = 
+            results 
+            |> List.mapi (fun i (centroids, clustering) -> 
+                let groups = 
+                    clustering
+                    |> Seq.mapi (fun i ci -> ci, matrix.[i])
+                    |> toMultiMap
+                    |> Map.toList
+                    |> List.map (fun (ci, group) -> group |> List.sort)
+                i, groups
+            )
+            |> Map.ofList
+
+        let counters = 
+            allGroups 
+            |> Map.toSeq 
+            |> Seq.collect (fun (i, groups) -> 
+                groups
+                |> List.map (fun g -> g, 1)
+            )
+            |> toMultiMap
+            |> Map.toSeq
+            |> Seq.map (fun (g, counters) -> g, List.sum counters)
+            |> Map.ofSeq
+
+        results
+        |> Seq.mapi(fun i (centroids, clustering) ->
+            let groups = allGroups.[i]
+            let total = 
+                groups 
+                |> List.map (fun g -> 
+                    if g.Length <= k then counters.[g]
+                    else 0
+                )
+                |> List.sum
+            total, centroids, clustering
+        )
+        |> Seq.sortBy(fun (total, centroids, clustering) -> -total)
+        |> Seq.map (fun (total, centroids, clustering) -> centroids, clustering)
 
     member this.computeGroups (dataSet: 'a array) (nGroups: int) =
         let input = dataSet |> Array.map featureExtractor
         let matrix = if shouldNormalize then normalize input else input
 
-        let rng = System.Random()
+        let rng = System.Random(111)
 
         let groupSize = int (ceil (matrix.Length ./. nGroups))
             
         if applyMetric then
-            let nClusteringIterations = 100
+            let nClusteringIterations = 200
 
-            let orderedResults = 
-                [for i in 0..nClusteringIterations do yield matrix |> cluster 0 nGroups rng]
+            let results = [for i in 0..nClusteringIterations do yield matrix |> cluster 0 nGroups rng]
+
+            let sortedResults = 
+                results 
+                |> orderByPopularity groupSize matrix
+                //|> List.sortBy (fun clustering -> clustering |> resultMetric groupSize matrix)                
+                |> Seq.take 10
+                |> List.ofSeq
+
+            sortedResults 
+            |> List.sortBy (fun clustering -> clustering |> resultMetric groupSize matrix)                
+            |> Seq.head
+            |> snd
+
+                (*
+                results
                 |> List.sortBy (fun clustering -> clustering |> resultMetric groupSize matrix)
+                |> Seq.take 20
 
-            snd orderedResults.Head
+            //|> Seq.head
+            //|> snd
+
+            sortedResults |> selectBestClustering groupSize matrix
+            *)
         else
             snd (matrix |> cluster 0 nGroups rng)
 

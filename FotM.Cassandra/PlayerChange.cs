@@ -56,8 +56,6 @@ namespace FotM.Cassandra
 
         public int RankingDiff { get; private set; }
 
-        [numl.Model.Feature]
-        [CassandraFeature(Weight = 2)]
         public int Ranking { get; private set; }
 
         [numl.Model.Feature]
