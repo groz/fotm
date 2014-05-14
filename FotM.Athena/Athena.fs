@@ -117,15 +117,21 @@ module Athena =
             |> Seq.choose id
             |> Seq.toList
 
-        let outdated, ok = updatedPairs |> List.partition ((<) 0)
+        let outdated, ok = updatedPairs |> List.partition ((>) 0)
 
-        if outdated.Length > 0 then OutdatedUpdate
+        if outdated.Length > 0 then 
+            logInfo "[%s, %s] outdated update: %A" currentSnapshot.region currentSnapshot.bracket.url outdated 
+            OutdatedUpdate
         else 
             let normal, excessive = ok |> List.partition ((=) 1)
 
-            if excessive.Length > 0 then ExcessiveUpdate
+            if excessive.Length > 0 then 
+                logInfo "[%s, %s] excessive update: %A" currentSnapshot.region currentSnapshot.bracket.url excessive
+                ExcessiveUpdate
             else if normal.Length > 0 || currentSnapshot.ladder <> previousSnapshot.ladder then ValidUpdate
-            else DuplicateUpdate
+            else
+                logInfo "[%s, %s] duplicate update" currentSnapshot.region currentSnapshot.bracket.url
+                DuplicateUpdate
 
     let processUpdate snapshot snapshotHistory teamHistory (storage: Storage) (updatePublisher: TopicClient) =
         let currentSnapshotHistory = snapshotHistory |> List.filter isCurrent
