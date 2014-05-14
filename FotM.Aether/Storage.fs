@@ -12,28 +12,26 @@ open FotM.Data
 module RepoSync =
     let lockobj = new System.Object()
 
-type SnapshotRepository(region: RegionalSettings, bracket: Bracket, ?storageConnectionString) =
+type Storage (containerName, ?storageConnectionString, ?pathPrefix) =
 
     let connectionString = defaultArg storageConnectionString (CloudConfigurationManager.GetSetting "Microsoft.Storage.ConnectionString")
+    let prefix = defaultArg pathPrefix ""
     let storageAccount = CloudStorageAccount.Parse connectionString
 
     let blobClient = storageAccount.CreateCloudBlobClient()
 
-    let container = blobClient.GetContainerReference Regions.snapshotsContainer
+    let container = blobClient.GetContainerReference containerName
 
     do
         printfn "initializing blob container at %A" container.Uri
         container.CreateIfNotExists(BlobContainerPublicAccessType.Blob) |> ignore
 
-    member this.uploadSnapshot (snapshot: PlayerLadderSnapshot) = 
-        let snapshotId = Guid.NewGuid()
-        let blobName = Regions.getPath region bracket snapshotId
-
-        let blob = container.GetBlockBlobReference(blobName)
+    member this.upload path data = 
+        let blob = container.GetBlockBlobReference (Path.Combine (prefix, path))
 
         try
             lock RepoSync.lockobj (fun () ->
-                blob.UploadText (JsonConvert.SerializeObject snapshot) // serialization is not threadsafe here
+                blob.UploadText (JsonConvert.SerializeObject data) // serialization is not threadsafe here
             )
         with
             | :? System.NullReferenceException -> 

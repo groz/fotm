@@ -60,9 +60,10 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="app.config" />
-    <Compile Include="Aether.fs" />
-    <Compile Include="SnapshotRepository.fs" />
+    <Compile Include="ServiceBus.fs" />
+    <Compile Include="Storage.fs" />
     <None Include="Performance\Microsoft.ServiceBus.MessagingPerformanceCounters.man" />
+    <Compile Include="UpdateMessage.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Data.Edm">

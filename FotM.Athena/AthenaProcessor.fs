@@ -28,9 +28,6 @@ module AthenaProcessor =
     let updateProcessor region bracket = Agent<UpdateProcessorMessage>.Start(fun agent ->
         logInfo "UpdateProcessor for %s, %s started" region.code bracket.url
 
-        let snapshotRepo = SnapshotRepository(region, bracket)
-        let teamRepo = SnapshotRepository(region, bracket)
-        
         let rec loop (snapshotHistory, teamHistory) = async {
             let! updateMsg = agent.Receive()
 

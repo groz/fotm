@@ -16,9 +16,7 @@ module Regions =
 
     let snapshotsContainer = "snapshots"
 
-    let ladderContainer = "ladder"
-
-    let getPath region bracket snapshotId = sprintf "%s/%s/%A.json" region.code bracket.url snapshotId
+    let laddersContainer = "ladders"
 
     let US = {
         code = "US"

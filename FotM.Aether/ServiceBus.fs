@@ -6,13 +6,6 @@ open Microsoft.WindowsAzure
 open Microsoft.ServiceBus
 open Microsoft.ServiceBus.Messaging
 open FotM.Hephaestus.TraceLogging
-open FotM.Data
-
-type UpdateMesage = {
-    storageLocation: Uri
-    region: RegionalSettings
-    bracket: Bracket
-}
 
 type ServiceBus(?connectionString) =
 

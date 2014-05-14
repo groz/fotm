@@ -29,8 +29,9 @@ module Argus =
         let armoryInfo = sprintf "[%A, %A]" region.code bracket.url
 
         logInfo "%s started processing armory..." armoryInfo
-
-        let repository = SnapshotRepository(region, bracket)
+                
+        let pathPrefix = sprintf "%s/%s" region.code bracket.url
+        let repository = Storage(Regions.snapshotsContainer, pathPrefix = pathPrefix)
         let updatesStream = armoryUpdates region bracket
 
         try
@@ -38,7 +39,8 @@ module Argus =
                 match update with
                 | None -> logInfo "%s duplicate or outdated update" armoryInfo
                 | Some(snapshot) ->
-                    let uri = repository.uploadSnapshot snapshot
+                    let path = sprintf "%A.json" (System.Guid.NewGuid())
+                    let uri = repository.upload path snapshot
                     logInfo "%s uploaded update to %A" armoryInfo uri
                     use msg = new BrokeredMessage {
                             storageLocation = uri

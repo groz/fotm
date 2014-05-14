@@ -22,7 +22,7 @@ type WorkerRole() =
 
     override wr.Run() = 
         let serviceBus = ServiceBus()
-        let publisher = serviceBus.topic("updates")
+        let publisher = serviceBus.topic "updates"
         Async.RunSynchronously(Argus.watch publisher, cancellationToken = cts.Token)
 
     override wr.OnStart() = 
