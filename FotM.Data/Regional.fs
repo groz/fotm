@@ -28,7 +28,6 @@ module Regions =
     let KR = {
         code = "KR"
         blizzardApiRoot = "http://kr.battle.net/api/wow/leaderboard/"
-
     }
 
     let TW = {
