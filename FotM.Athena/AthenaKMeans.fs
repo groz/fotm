@@ -72,8 +72,8 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
             let nRegular = groups |> Seq.filter (fun g -> snd g |> Seq.length = size) |> Seq.length
 
             (
+                -nRegular,      // prioritize clusterings with most teams of right size
                 nOverbooked,    // prioritize clusterings with less overbooked teams
-                //-nRegular,      // out of those prioritize clusterings with most teams of right size
                 //-nGroups,       // out of those prioritize clusterings with more total teams (that's for when we have overbooked teams at all)
                 distortionMetric matrix (centroids, clustering) // out of those get whatever has smaller distortion
             )

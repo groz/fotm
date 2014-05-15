@@ -255,7 +255,7 @@ namespace FotM.Cassandra.Tests
                 bool win = Rng.Next(2) == 0;
                 int opponentRating = 2300 + Rng.Next(-100, 100);
 
-                bool skipOne = true;
+                bool skipOne = false;
 
                 // For each of them generate rating change, update players and create new leaderboard
                 var newLeaderboard = Play(leaderboard, playingTeams,
