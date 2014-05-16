@@ -1,19 +1,19 @@
 ﻿namespace FotM.Data
 
+module GlobalSettings =
+    let playerLaddersContainer = "snapshots"
+    let teamLaddersContainer = "ladders"
+    let playerUpdatesTopic = "player-updates"
+    let teamUpdatesTopic = "team-updates"
+    let googleAnalyticsPropertyCode = ""
+    let googleAnalyticsPropertyWebSite = ""
+
 type RegionalSettings = {
     code: string;
     blizzardApiRoot: string;
 }
 
-module Regions = 
-
-    let snapshotsContainer = "snapshots"
-
-    let laddersContainer = "ladders"
-
-    let googleAnalyticsPropertyCode = ""
-
-    let googleAnalyticsPropertyWebSite = ""
+module Regions =
 
     let US = {
         code = "US"

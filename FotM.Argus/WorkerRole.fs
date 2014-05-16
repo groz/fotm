@@ -14,6 +14,7 @@ open Microsoft.WindowsAzure
 open Microsoft.WindowsAzure.ServiceRuntime
 open FotM.Hephaestus.TraceLogging
 open FotM.Aether
+open FotM.Data
 
 type WorkerRole() =
     inherit RoleEntryPoint() 
@@ -22,7 +23,7 @@ type WorkerRole() =
 
     override wr.Run() = 
         let serviceBus = ServiceBus()
-        let publisher = serviceBus.topic "updates"
+        let publisher = serviceBus.topic GlobalSettings.playerUpdatesTopic
         Async.RunSynchronously(Argus.watch publisher, cancellationToken = cts.Token)
 
     override wr.OnStart() = 

@@ -64,3 +64,5 @@ type Global() =
         Global.RegisterFilters(GlobalFilters.Filters)
         Global.RegisterRoutes(RouteTable.Routes)
         BundleConfig.RegisterBundles BundleTable.Bundles
+
+        Main.Startup()

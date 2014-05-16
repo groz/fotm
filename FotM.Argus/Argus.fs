@@ -31,7 +31,7 @@ module Argus =
         logInfo "%s started processing armory..." armoryInfo
                 
         let pathPrefix = sprintf "%s/%s" region.code bracket.url
-        let repository = Storage(Regions.snapshotsContainer, pathPrefix = pathPrefix)
+        let repository = Storage(GlobalSettings.playerLaddersContainer, pathPrefix = pathPrefix)
         let updatesStream = armoryUpdates region bracket
 
         try

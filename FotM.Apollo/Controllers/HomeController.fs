@@ -8,12 +8,12 @@ open System.Web.Mvc
 open System.Web.Mvc.Ajax
 
 type IndexModel = {
-    title: string
+    title: Uri
 }    
 
 type HomeController() =
     inherit Controller()
 
     member this.Index () = 
-        let model = { title = "IndexModelTitle "}
+        let model = { title = FotM.Apollo.Main.latestUpdate.Value.storageLocation }
         this.View(model)

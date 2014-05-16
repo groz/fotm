@@ -1,18 +1,38 @@
 @model dynamic
 
 @section scripts {
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
-    <script src="~/Scripts/my/main.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.8/angular.js"></script>
+    @*<script src="~/Scripts/my/main.js"></script>*@
+
+    <script>
+        function SimpleController($scope) {
+
+            $scope.persons = [
+                { name: 'Tagir', city: 'Seattle'},
+                { name: 'Sergey', city: 'Sydney' },
+                { name: 'Maga', city: 'Moscow' },
+                { name: 'Albina', city: 'Makhachkala' }
+            ];
+
+        }
+    </script>
+
 }
 
-<div ng-app="fotmApp" ng-controller="fotmController">
-    
+<div ng-app>
+
     <h1>@Model.title</h1>
 
-    <ul>
-        <li ng-repeat="integer in list">
-            {{$index}} = {{integer}}
-        </li>
-    </ul>
+    <div class="container" ng-controller="SimpleController">
+
+        Name: <input type="text" ng-model="name" /> {{ name }}
+
+        <ul>
+            <li ng-repeat="p in persons | filter:name | orderBy:'city'">
+                {{ p.name }} - {{ p.city }}
+            </li>
+        </ul>
+
+    </div>
 
 </div>

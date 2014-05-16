@@ -14,6 +14,7 @@ open System.Net
 open Microsoft.WindowsAzure.ServiceRuntime
 open FotM.Hephaestus.TraceLogging
 open FotM.Aether
+open FotM.Data
 
 type WorkerRole() =
     inherit RoleEntryPoint() 
@@ -29,11 +30,11 @@ type WorkerRole() =
             else
                 Dns.GetHostName() + Guid.NewGuid().ToString().Substring(0, 4)
 
-        let updateTopic = serviceBus.subscribe "updates" subscriptionName
+        let updateListener = serviceBus.subscribe GlobalSettings.playerUpdatesTopic subscriptionName
 
-        let updatePublisher = serviceBus.topic "ladders"
+        let updatePublisher = serviceBus.topic GlobalSettings.teamUpdatesTopic
 
-        AthenaProcessor.watch updateTopic updatePublisher waitHandle
+        AthenaProcessor.watch updateListener updatePublisher waitHandle
 
     override wr.OnStart() = 
         ServicePointManager.DefaultConnectionLimit <- 12

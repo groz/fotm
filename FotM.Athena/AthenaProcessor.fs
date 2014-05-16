@@ -49,7 +49,7 @@ module AthenaProcessor =
 
     let getStorage region bracket =
         let prefix = sprintf "%s/%s" region.code bracket.url
-        Storage("ladders", pathPrefix = prefix)
+        Storage(GlobalSettings.teamLaddersContainer, pathPrefix = prefix)
 
     let watch (updateListener: SubscriptionClient) (updatePublisher) (waitHandle: WaitHandle) =
         logInfo "FotM.Athena entry point called, starting listening to armory updates..."

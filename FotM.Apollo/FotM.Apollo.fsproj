@@ -131,6 +131,7 @@
     <Content Include="Scripts\jquery-2.1.1.min.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-2.1.1.intellisense.js" />
+    <Compile Include="Main.fs" />
     <Compile Include="Controllers\HomeController.fs" />
     <Compile Include="Controllers\ValuesController.fs" />
     <Content Include="Views\Web.config" />
@@ -149,14 +150,23 @@
     <None Include="fonts\glyphicons-halflings-regular.ttf" />
     <None Include="fonts\glyphicons-halflings-regular.svg" />
     <None Include="fonts\glyphicons-halflings-regular.eot" />
+    <None Include="Performance\Microsoft.ServiceBus.MessagingPerformanceCounters.man" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.ServiceBus">
+      <HintPath>..\packages\WindowsAzure.ServiceBus.2.3.2.0\lib\net40-full\Microsoft.ServiceBus.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Microsoft.Web.Infrastructure">
       <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAzure.Configuration">
+      <HintPath>..\packages\Microsoft.WindowsAzure.ConfigurationManager.2.0.3\lib\net40\Microsoft.WindowsAzure.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
@@ -165,6 +175,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions.dll" />
     <Reference Include="System.Net.Http" />
@@ -173,6 +184,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices.dll" />
     <Reference Include="System.Web.DynamicData.dll" />
