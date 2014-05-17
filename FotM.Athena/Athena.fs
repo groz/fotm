@@ -72,7 +72,8 @@ module Athena =
             []
         else
             let clusterer = AthenaKMeans(featureExtractor, true, true)
-            let clustering = clusterer.computeGroups g teamSize
+            let nGroups = int( ceil (g.Length ./. teamSize) )
+            let clustering = clusterer.computeGroups g nGroups
             
             clustering
             |> Seq.mapi (fun i ci -> ci, g.[i])
@@ -89,8 +90,8 @@ module Athena =
         for g in groups do
             logInfo "(-- [%s, %s] group: %A --)" snapshot.region snapshot.bracket.url g
 
-        let teams = groups |> List.collect (findTeamsInGroup snapshot.bracket.teamSize snapshot.timeTaken)
-        teams
+        groups 
+        |> List.fold (fun acc g -> acc @ findTeamsInGroup snapshot.bracket.teamSize snapshot.timeTaken g) []
 
     let isCurrent snapshot =
         (SystemClock.Instance.Now - snapshot.timeTaken) < duplicateCheckPeriod

@@ -89,11 +89,14 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
         if applyMetric then
             let nClusteringIterations = 100
 
-            [for i in 0..nClusteringIterations do 
-                yield matrix |> cluster 0 nGroups rng]
-            |> List.sortBy (fun clustering -> clustering |> resultMetric groupSize matrix)                
-            |> Seq.head
-            |> snd
+            let allClusterings = 
+                [for i in 0..nClusteringIterations do yield matrix |> cluster 0 nGroups rng]
+
+            let orderedClusterings = 
+                allClusterings 
+                |> List.sortBy (fun clustering -> clustering |> resultMetric groupSize matrix)                
+            
+            orderedClusterings |> Seq.head |> snd
         else
             snd (matrix |> cluster 0 nGroups rng)
 
