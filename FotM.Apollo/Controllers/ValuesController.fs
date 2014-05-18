@@ -10,8 +10,6 @@ open Newtonsoft.Json
 open FotM.Hephaestus.TraceLogging
 open FotM.Data
 
-type TeamList = TeamInfo list
-
 /// Retrieves values.
 [<RoutePrefix("api2/values")>]
 type ValuesController() =
@@ -23,13 +21,14 @@ type ValuesController() =
         logInfo "Fetching ladder snapshot from %A" storageLocation
         use webClient = new WebClient()
         let ladderJson = webClient.DownloadString storageLocation
-        JsonConvert.DeserializeObject<TeamList> ladderJson
+        JsonConvert.DeserializeObject<TeamInfo list> ladderJson
 
     let ladder = fetchSnapshot url
 
     /// Gets all values.
     [<Route("")>]
-    member x.Get() = ladder
+    member x.Get() = 
+        ladder        
 
     /// Gets the value with index id.
     (*[<Route("{id:int}")>]

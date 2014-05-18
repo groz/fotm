@@ -42,18 +42,18 @@ type Player = {
 }
 
 type PlayerUpdate = {
-    player: Player;
+    player: Player
 
     // features
-    ranking: int;
-    rating: int;
-    weeklyWins: int;
-    weeklyLosses: int;
-    seasonWins: int;
-    seasonLosses: int;
+    ranking: int
+    rating: int
+    weeklyWins: int
+    weeklyLosses: int
+    seasonWins: int
+    seasonLosses: int
 
     // diff features
-    ratingDiff: int;
+    ratingDiff: int
 }
 
 type PlayerEntry = {
@@ -146,6 +146,7 @@ module Brackets =
     let threes = { url = "3v3"; teamSize = 3 }
     let fives = { url = "5v5"; teamSize = 5 }
     let rbg = { url = "rbg"; teamSize = 10 }
+
     let all = [twos; threes; fives; rbg]
 
 (* /DOMAIN TYPES *)

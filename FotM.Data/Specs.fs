@@ -1,10 +1,5 @@
 ﻿namespace FotM.Data
 
-open Microsoft.FSharp.Reflection 
-open System.Reflection
-open System.Runtime.Serialization
-open System.Xml
-
 type WarriorSpec =
 | Arms = 71
 | Fury = 72
@@ -61,22 +56,18 @@ type DruidSpec =
 | Guardian = 104
 | Restoration = 105
 
-[<KnownType("GetKnownTypes")>]
 type Class =
-    | Warrior of WarriorSpec option
-    | Paladin of PaladinSpec option
-    | Hunter of HunterSpec option
-    | Rogue of RogueSpec option
-    | Priest of PriestSpec option
-    | ``Death Knight`` of DeathKnightSpec option
-    | Shaman of ShamanSpec option
-    | Mage of MageSpec option
-    | Warlock of WarlockSpec option
-    | Monk of MonkSpec option
-    | Druid of DruidSpec option
-    static member GetKnownTypes() =
-        typeof<Class>.GetNestedTypes(BindingFlags.Public ||| BindingFlags.NonPublic)
-        |> Array.filter FSharpType.IsUnion
+| Warrior of WarriorSpec option
+| Paladin of PaladinSpec option
+| Hunter of HunterSpec option
+| Rogue of RogueSpec option
+| Priest of PriestSpec option
+| ``Death Knight`` of DeathKnightSpec option
+| Shaman of ShamanSpec option
+| Mage of MageSpec option
+| Warlock of WarlockSpec option
+| Monk of MonkSpec option
+| Druid of DruidSpec option
 
 module Specs = 
 

@@ -8,6 +8,7 @@ open System.Web.Mvc
 open System.Web.Routing
 open System.Web.Optimization
 open System.Net.Http.Headers
+open System.Threading.Tasks
 
 type BundleConfig() =
     static member RegisterBundles (bundles:BundleCollection) =
@@ -48,7 +49,8 @@ type Global() =
         ) |> ignore
 
         // Additional Web API settings
-        config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html") )
+        config.Formatters.Insert(0, JsonNetFormatter())
+        config.Formatters.XmlFormatter.UseXmlSerializer <- true        
 
     static member RegisterFilters(filters: GlobalFilterCollection) =
         filters.Add(new HandleErrorAttribute())
