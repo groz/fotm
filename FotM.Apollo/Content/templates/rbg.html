@@ -1,0 +1,7 @@
+Name: <input type="text" ng-model="name" /> {{ name }}
+
+<ul>
+    <li ng-repeat="p in persons | filter:name | orderBy:'city'">
+        {{ p.name }} - {{ p.city }}
+    </li>
+</ul>

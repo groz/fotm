@@ -15,5 +15,9 @@ type HomeController() =
     inherit Controller()
 
     member this.Index () = 
-        let model = { title = "some title" }
+        let model = { title = "Index" }
         this.View(model)
+
+    member this.Mindex () = 
+        let model = { title = "Mindex" }
+        this.View("Index", model)
