@@ -7,6 +7,7 @@ open System.Web.Http
 open System.Web.Mvc
 open System.Web.Routing
 open System.Web.Optimization
+open System.Net.Http.Headers
 
 type BundleConfig() =
     static member RegisterBundles (bundles:BundleCollection) =
@@ -45,7 +46,9 @@ type Global() =
             "api/{controller}/{id}", // URL with parameters
             { controller = "{controller}"; id = RouteParameter.Optional } // Parameter defaults
         ) |> ignore
+
         // Additional Web API settings
+        config.Formatters.JsonFormatter.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html") )
 
     static member RegisterFilters(filters: GlobalFilterCollection) =
         filters.Add(new HandleErrorAttribute())
