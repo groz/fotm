@@ -45,4 +45,4 @@ type JsonNetFormatter() =
         Task.Factory.StartNew (fun () -> write value stream)
 
     override this.WriteToStreamAsync (t, value, stream, content, ctx, token) =
-        this.WriteToStreamAsync(t, value, stream, content, ctx)
+        Task.Factory.StartNew ((fun () -> write value stream), token)

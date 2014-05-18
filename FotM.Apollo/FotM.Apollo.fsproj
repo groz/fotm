@@ -112,6 +112,8 @@
   </ProjectExtensions>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Helpers.fs" />
+    <Compile Include="Main.fs" />
     <Content Include="Content\Site.css" />
     <None Include="Content\bootstrap-theme.min.css" />
     <None Include="Content\bootstrap-theme.css.map" />
@@ -131,8 +133,6 @@
     <Content Include="Scripts\jquery-2.1.1.min.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-2.1.1.intellisense.js" />
-    <Compile Include="Helpers.fs" />
-    <Compile Include="Main.fs" />
     <Compile Include="Controllers\HomeController.fs" />
     <Compile Include="Controllers\ValuesController.fs" />
     <Content Include="Views\Web.config" />
