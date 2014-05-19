@@ -26,6 +26,15 @@ type BundleConfig() =
                         "~/Content/bootstrap.css",
                         "~/Content/site.css"))
 
+        bundles.Add(ScriptBundle("~/bundles/app")
+            .Include(
+                    [|
+                    "~/app/*.js"
+                    "~/app/services/*.js"
+                    "~/app/controllers/*.js"
+                    |])
+            )
+
 /// Route for ASP.NET MVC applications
 type Route = { 
     controller : string

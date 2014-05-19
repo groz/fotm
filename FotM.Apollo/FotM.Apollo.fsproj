@@ -114,6 +114,16 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="Main.fs" />
+    <None Include="app\services\api.js" />
+    <None Include="app\controllers\2v2.js" />
+    <None Include="app\controllers\3v3.js" />
+    <None Include="app\controllers\5v5.js" />
+    <None Include="app\controllers\rbg.js" />
+    <None Include="app\templates\2v2.html" />
+    <None Include="app\templates\3v3.html" />
+    <None Include="app\templates\5v5.html" />
+    <None Include="app\templates\rbg.html" />
+    <None Include="app\app.js" />
     <Content Include="Content\Site.css" />
     <None Include="Content\bootstrap-theme.min.css" />
     <None Include="Content\bootstrap-theme.css.map" />
@@ -121,10 +131,6 @@
     <None Include="Content\bootstrap.min.css" />
     <None Include="Content\bootstrap.css.map" />
     <None Include="Content\bootstrap.css" />
-    <None Include="Content\templates\2v2.html" />
-    <None Include="Content\templates\3v3.html" />
-    <None Include="Content\templates\5v5.html" />
-    <None Include="Content\templates\rbg.html" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\my\main.js" />
