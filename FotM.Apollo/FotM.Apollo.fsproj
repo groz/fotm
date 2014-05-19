@@ -115,6 +115,7 @@
     <Compile Include="Helpers.fs" />
     <Compile Include="Main.fs" />
     <None Include="app\services\api.js" />
+    <None Include="app\services\media.js" />
     <None Include="app\controllers\2v2.js" />
     <None Include="app\controllers\3v3.js" />
     <None Include="app\controllers\5v5.js" />

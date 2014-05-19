@@ -1,5 +1,31 @@
-<ul>
-    <li ng-repeat="team in teams">
-        {{ team.totalWins }} / {{ team.totalLosses }}
-    </li>
-</ul>
+<div class="row">
+    <div class="col-lg-9 col-md-9 col-sm-12">
+        <table class="table table-striped table-condensed table-responsive">
+            <tbody>
+                <tr ng-repeat="team in teams">
+                    <td class="centered">{{$index+1}}</td>
+                    <td class="hidden-xs">
+                        <img ng-src="{{media.factionImage(team)}}" alt="{{media.factionText(team)}}" />
+                    </td>
+                    <td>
+                        <div class="row">
+                            <div class="col-lg-4 col-md-4 col-sm-4" ng-repeat="player in team.lastEntry.players">
+                                <a ng-href="{{armoryLink(player)}}" class="nolink">
+                                    <img ng-src="{{media.raceImage(player.race, player.gender)}}"
+                                         alt="{{media.raceText(player.race)}}" />
+                                    <img class="hidden-xs"
+                                         ng-src="{{media.classImage(player.classSpec)}}"
+                                         alt="{{media.classText(player.classSpec)}}" />
+                                    <img ng-src="{{media.specImage(player.classSpec)}}"
+                                         alt="{{media.specText(player.classSpec)}}" />
+                                    <span>{{player.name}}</span>
+                                </a>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="centered">{{team.lastEntry.rating}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
