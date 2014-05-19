@@ -126,6 +126,11 @@
       <Project>{2427a5b5-9618-408e-af5b-15d5e53bad0d}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\FotM.Utilities\FotM.Utilities.csproj">
+      <Name>FotM.Utilities</Name>
+      <Project>{90d8a7e8-fbac-4b87-9ec2-a4e6f02b75c8}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

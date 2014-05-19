@@ -19,9 +19,7 @@ type UpdateProcessorMessage =
 module AthenaProcessor =
 
     let fetchSnapshot storageLocation = async {
-        logInfo "Fetching ladder snapshot from %A" storageLocation
-        use webClient = new WebClient()
-        let! snapshotJson =  webClient.AsyncDownloadString storageLocation
+        let snapshotJson = StorageIO.download storageLocation
         return JsonConvert.DeserializeObject<PlayerLadderSnapshot> snapshotJson
     }
 
