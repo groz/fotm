@@ -24,7 +24,7 @@ app.factory('media', function() {
         'Hunter': 3,
         'Rogue': 4,
         'Priest': 5,
-        'DeathKnight': 6,
+        'Death Knight': 6,
         'Shaman': 7,
         'Mage': 8,
         'Warlock': 9,

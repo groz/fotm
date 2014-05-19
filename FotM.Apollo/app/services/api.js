@@ -1,11 +1,12 @@
 app.factory('api', function($http) {
     
-    var apiService = {
-        loadAsync: function() {
+    return {
+
+        loadAsync: function(region, bracket) {
 
             var promise = $http({
                 method: 'GET',
-                url: '/api2/values',
+                url: '/api/'+region+'/'+bracket,
                 headers: { 'Accept': 'application/json;charset=utf-8' },
                 data: '' // Angular ignores headers when this is not set
             });
@@ -13,7 +14,5 @@ app.factory('api', function($http) {
             return promise;
         }
     }
-
-    return apiService;
 
 })
