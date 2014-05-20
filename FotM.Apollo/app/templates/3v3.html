@@ -10,7 +10,7 @@
                     <td>
                         <div class="row">
                             <div class="col-lg-4 col-md-4 col-sm-4" ng-repeat="player in team.lastEntry.players">
-                                <a ng-href="{{armoryLink(player)}}" class="nolink">
+                                <a ng-href="{{media.armoryLink(region, player)}}" class="nolink">
                                     <img ng-src="{{media.raceImage(player.race, player.gender)}}"
                                          alt="{{media.raceText(player.race)}}" />
                                     <img class="hidden-xs"

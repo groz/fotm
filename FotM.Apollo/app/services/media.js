@@ -69,6 +69,14 @@ app.factory('media', function() {
         '270': { text: 'Mistweaver Monk', url: "http://media.blizzard.com/wow/icons/18/spell_monk_mistweaver_spec.jpg" }
     }
 
+    var armoryEndPoints = {
+        "eu": "http://eu.battle.net",
+        "us": "http://us.battle.net",
+        "kr": "http://kr.battle.net",
+        "tw": "http://tw.battle.net",
+        "cn": "http://www.battlenet.com.cn"
+    };
+
     function getSpecId(classSpec) {
 
         return classSpec.Fields[0].Fields[0];
@@ -101,6 +109,11 @@ app.factory('media', function() {
             var specId = getSpecId(classSpec);
             return specs[specId].url;
         },
+
+        armoryLink: function (region, player) {
+            var regionRoot = armoryEndPoints[region];
+            return regionRoot + "/wow/en/character/" + player.realm.realmSlug + "/" + player.name + "/simple";
+        }
     }
 
     return mediaService;
