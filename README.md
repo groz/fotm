@@ -21,6 +21,7 @@ Infrastructure:
 - Divide ratings update per number of games if diff is more than 1 to avoid showing 30+ rating changes
 
 Machine learning:
+- Model realm as binary (feature1: is user from Spirestone or not, feature 2: is user from Al'Akir or not?)
 - Upgrade super test to add one team grouping with player outside of first 1000 on each turn
 - Add super tests for 2v2/5v5/rbg
 - Try evaluating all n choose 3 combinations instead of multiple k-means runs
