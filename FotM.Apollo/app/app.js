@@ -5,19 +5,28 @@ app.config(function ($routeProvider) {
     /// this is an example of how you can write unreadable javascript with any framework :(
 
     var regions = ["us", "eu", "kr", "tw", "cn"];
-    var brackets = ["2v2", "3v3", "5v5", "rbg"];
+    var brackets = {
+        "2v2": 2,
+        "3v3": 3,
+        "5v5": 5,
+        "rbg": 10
+    };
 
     var routeProvider = $routeProvider;
 
     for (var ir in regions)
-        for (var ib in brackets) {
+        for (var bracket in brackets) {
 
             var region = regions[ir];
-            var bracket = brackets[ib];
 
             // binding closures to loop variables
             var regionProvider = function(r) { return function() { return r; }; }
-            var bracketProvider = function(b) { return function() { return b; }; }
+            var bracketProvider = function(b) { return function() {
+                return {
+                    text: b,
+                    size: brackets[b]
+                };
+            }; }
 
             routeProvider = routeProvider
                 .when('/' + region + '/' + bracket,

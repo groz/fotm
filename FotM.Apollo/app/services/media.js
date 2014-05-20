@@ -19,17 +19,17 @@ app.factory('media', function() {
     };
 
     var classes = {
-        'Warrior': 1,
-        'Paladin': 2,
-        'Hunter': 3,
-        'Rogue': 4,
-        'Priest': 5,
-        'Death Knight': 6,
-        'Shaman': 7,
-        'Mage': 8,
-        'Warlock': 9,
-        'Monk': 10,
-        'Druid': 11
+        'Warrior': { id: 1, specs: [71, 72, 73] },
+        'Paladin': { id: 2, specs: [65, 66, 70] },
+        'Hunter': { id: 3, specs: [253, 254, 255] },
+        'Rogue': { id: 4, specs: [259, 260, 261] },
+        'Priest': { id: 5, specs: [256, 257, 258] },
+        'Death Knight': { id: 6, specs: [250, 251, 252] },
+        'Shaman': { id: 7, specs: [262, 263, 264] },
+        'Mage': { id: 8, specs: [62, 63, 64] },
+        'Warlock': { id: 9, specs: [265, 266, 267] },
+        'Monk': { id: 10, specs: [268, 269, 270] },
+        'Druid': { id: 11, specs: [102, 103, 104, 105] }
     };
 
     var specs = {
@@ -91,8 +91,12 @@ app.factory('media', function() {
             return 'http://media.blizzard.com/wow/icons/18/race_' + race + '_' + gender + '.jpg';
         },
 
-        classImage: function(classSpec) {
-            var classId = classes[classSpec.Case];
+        classImageForSpec: function(classSpec) {
+            return this.classImage(classSpec.Case);
+        },
+
+        classImage: function (className) {
+            var classId = classes[className].id;
             return 'http://media.blizzard.com/wow/icons/18/class_' + classId + '.jpg';
         },
 
@@ -113,7 +117,10 @@ app.factory('media', function() {
         armoryLink: function (region, player) {
             var regionRoot = armoryEndPoints[region];
             return regionRoot + "/wow/en/character/" + player.realm.realmSlug + "/" + player.name + "/simple";
-        }
+        },
+
+        classes: classes,
+        specs: specs
     }
 
     return mediaService;
