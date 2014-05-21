@@ -2,13 +2,12 @@ app.factory('api', function($http) {
     
     return {
 
-        loadAsync: function(region, bracket) {
+        loadAsync: function(region, bracket, fotmFilters) {
 
             var promise = $http({
                 method: 'GET',
                 url: '/api/'+region+'/'+bracket,
-                headers: { 'Accept': 'application/json;charset=utf-8' },
-                data: '' // Angular ignores headers when this is not set
+                params: { filters: fotmFilters }
             });
 
             return promise;

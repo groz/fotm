@@ -77,20 +77,46 @@ module Specs =
         else
             Some(LanguagePrimitives.EnumOfValue<int, 'a> value)
 
-    let toClass classId specId = 
+    let toClassOption classId specId = 
 
         if (classId < 1 || classId > 11) then 
-            invalidArg "classId" (classId.ToString())
+            None
+        else
+            Some ( 
+                match classId with
+                | 1 -> Warrior( toSpecEnum specId )
+                | 2 -> Paladin( toSpecEnum specId )
+                | 3 -> Hunter( toSpecEnum specId )
+                | 4 -> Rogue( toSpecEnum specId )
+                | 5 -> Priest( toSpecEnum specId )
+                | 6 -> ``Death Knight``( toSpecEnum specId )
+                | 7 -> Shaman( toSpecEnum specId )
+                | 8 -> Mage( toSpecEnum specId )
+                | 9 -> Warlock( toSpecEnum specId )
+                | 10 -> Monk( toSpecEnum specId )
+                | 11 -> Druid( toSpecEnum specId )
+            )
 
-        match classId with
-        | 1 -> Warrior( toSpecEnum specId )
-        | 2 -> Paladin( toSpecEnum specId )
-        | 3 -> Hunter( toSpecEnum specId )
-        | 4 -> Rogue( toSpecEnum specId )
-        | 5 -> Priest( toSpecEnum specId )
-        | 6 -> ``Death Knight``( toSpecEnum specId )
-        | 7 -> Shaman( toSpecEnum specId )
-        | 8 -> Mage( toSpecEnum specId )
-        | 9 -> Warlock( toSpecEnum specId )
-        | 10 -> Monk( toSpecEnum specId )
-        | 11 -> Druid( toSpecEnum specId )
+    let toClass classId specId = 
+        match toClassOption classId specId with
+        | None -> invalidArg "classId" (classId.ToString())
+        | Some(c) -> c
+
+    let fromString className specId =
+
+        let classId = 
+            match className with
+                | "Warrior" -> 1
+                | "Paladin" -> 2
+                | "Hunter" -> 3
+                | "Rogue" -> 4
+                | "Priest" -> 5
+                | "Death Knight" -> 6
+                | "Shaman" -> 7
+                | "Mage" -> 8
+                | "Warlock" -> 9
+                | "Monk" -> 10
+                | "Druid" -> 11
+                | _ -> -1
+
+        toClassOption classId specId

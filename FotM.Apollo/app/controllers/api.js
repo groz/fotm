@@ -1,11 +1,11 @@
 app.controller('ApiController', function (filterFactory, media, api, region, bracket, $scope, $routeParams, $location) {
     console.log(filterFactory);
-    var inputFilter = $routeParams.filter;
+    var inputFilters = $routeParams.filter;
 
-    if (typeof (inputFilter) == "string")
-        inputFilter = [inputFilter];
+    if (typeof (inputFilters) == "string")
+        inputFilters = [inputFilters];
 
-    console.log("apiController called for", region, bracket, inputFilter);
+    console.log("apiController called for", region, bracket, inputFilters);
 
     $scope.region = region;
     $scope.bracket = bracket;
@@ -16,15 +16,15 @@ app.controller('ApiController', function (filterFactory, media, api, region, bra
     $scope.fotmFilters = [];
 
     for (var i = 0; i < bracket.size; ++i) {
-        var ithFilter = (inputFilter && inputFilter[i])
-                        ? filterFactory.createFromString(inputFilter[i])
+        var ithFilter = (inputFilters && inputFilters[i])
+                        ? filterFactory.createFromString(inputFilters[i])
                         : filterFactory.create(null, null);
 
         console.log("applying filter", ithFilter);
         $scope.fotmFilters.push(ithFilter);
     }
 
-    api.loadAsync($scope.region, $scope.bracket.text).then(function (response) {
+    api.loadAsync($scope.region, $scope.bracket.text, $scope.fotmFilters).then(function (response) {
         console.log("received data:", response.data);
         $scope.teams = response.data;
     });

@@ -27,5 +27,14 @@ type ValuesController() =
     let ladder = fetchSnapshot url
 
     [<Route("{region}/{bracket}")>]
-    member this.Get(region: string, bracket: string) = 
+    member this.Get(region: string, bracket: string, [<FromUri>]filters: string seq) =
+        let fotmFilters = 
+            filters
+            |> Seq.map (fun str -> JsonConvert.DeserializeObject<Dictionary<string, string>>(str))
+            |> Seq.map (fun dict -> dict.["className"], dict.["specId"])
+            |> Seq.map (fun (className, specIdStr) -> 
+                let specId = if specIdStr = null then -1 else (int specIdStr)
+                Specs.fromString className specId)
+            |> Seq.toArray
+            
         ladder
