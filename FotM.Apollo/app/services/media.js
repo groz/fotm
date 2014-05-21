@@ -119,8 +119,20 @@ app.factory('media', function() {
             return regionRoot + "/wow/en/character/" + player.realm.realmSlug + "/" + player.name + "/simple";
         },
 
+        getSpecInfo: function (specId) {
+            return specs[specId];
+        },
+
+        getSpecsFor: function(className) {
+            if (className !== null) {
+                var specIds = classes[className].specs;
+                return specIds;
+            }
+            return [];
+        },
+
         classes: classes,
-        specs: specs
+        specs: specs,
     }
 
     return mediaService;

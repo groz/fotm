@@ -1,8 +1,11 @@
-app.controller('ApiController', function(media, api, region, bracket, $scope, $routeParams) {
+app.controller('ApiController', function (filterFactory, media, api, region, bracket, $scope, $routeParams, $location) {
+    console.log(filterFactory);
+    var inputFilter = $routeParams.filter;
 
-    var filter = $routeParams.filter;
+    if (typeof (inputFilter) == "string")
+        inputFilter = [inputFilter];
 
-    console.log("apiController called for", region, bracket, filter);
+    console.log("apiController called for", region, bracket, inputFilter);
 
     $scope.region = region;
     $scope.bracket = bracket;
@@ -13,35 +16,47 @@ app.controller('ApiController', function(media, api, region, bracket, $scope, $r
     $scope.fotmFilters = [];
 
     for (var i = 0; i < bracket.size; ++i) {
-        $scope.fotmFilters.push({
-            classFilter: null,
-            specFilter: null
-        });
+        var ithFilter = (inputFilter && inputFilter[i])
+                        ? filterFactory.createFromString(inputFilter[i])
+                        : filterFactory.create(null, null);
+
+        console.log("applying filter", ithFilter);
+        $scope.fotmFilters.push(ithFilter);
     }
-    
+
     api.loadAsync($scope.region, $scope.bracket.text).then(function (response) {
         console.log("received data:", response.data);
         $scope.teams = response.data;
     });
 
     $scope.getSpecsFor = function (idx) {
-        var f = $scope.fotmFilters[idx];
-        console.log(f);
+        var specIds = media.getSpecsFor($scope.fotmFilters[idx].className);
 
-        if (f.classFilter !== null) {
-            var specIds = media.classes[f.classFilter].specs;
+        return specIds.reduce(function (obj, id) {
+            obj[id] = media.getSpecInfo(id);
+            return obj;
+        }, {});
+    };
 
-            var specs = {};
+    $scope.redirectToFilter = function() {
+        console.log("redirectToFilter");
 
-            for (var is in specIds) {
-                var specId = specIds[is];
-                specs[specId] = media.specs[specId];
-            }
+        var filterStrings = $scope.fotmFilters.reduce(function(arr, f) {
+            var filterString = f.toString();
+            console.log(f, "reduced to", filterString);
 
-            console.log(specs);
-            return specs;
-        }
-        return [];
+            arr.push(filterString);
+            return arr;
+        }, []);
+
+        $location.search({
+            filter: filterStrings
+        });
+    };
+
+    $scope.getSpecForFilter = function (filterIndex) {
+        var filter = $scope.fotmFilters[filterIndex];
+        return media.getSpecInfo(filter.specId);
     };
 
 });

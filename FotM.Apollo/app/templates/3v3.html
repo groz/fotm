@@ -18,11 +18,11 @@
                             class="dropdown-toggle btn btn-default"
                             data-toggle="dropdown">
 
-                        <img ng-if="fotmFilters[$index].classFilter"
-                             ng-src="{{media.classImage(fotmFilters[$index].classFilter)}}"
-                             alt="{{fotmFilters[$index].classFilter}}" />
+                        <img ng-if="fotmFilters[$index].className"
+                             ng-src="{{media.classImage(fotmFilters[$index].className)}}"
+                             alt="{{fotmFilters[$index].className}}" />
 
-                        <span ng-if="!fotmFilters[$index].classFilter">
+                        <span ng-if="!fotmFilters[$index].className">
                             All
                         </span>
 
@@ -33,14 +33,14 @@
 
                         <li ng-repeat="(className, classId) in media.classes">
 
-                            <a ng-click="fotmFilters[$parent.$index].classFilter = className; fotmFilters[$parent.$index].specFilter = null">
+                            <a ng-click="fotmFilters[$parent.$index].className = className; fotmFilters[$parent.$index].specId = null; redirectToFilter();">
                                 <img ng-src="{{media.classImage(className)}}" alt="{{className}}" />
                             </a>
 
                         </li>
 
                         <li class="notext">
-                            <a ng-click="fotmFilters[$index].classFilter = null; fotmFilters[$index].specFilter = null">
+                            <a ng-click="fotmFilters[$index].className = null; fotmFilters[$index].specId = null; redirectToFilter();">
                                 All
                             </a>
                         </li>
@@ -56,11 +56,11 @@
                             class="dropdown-toggle btn btn-default"
                             data-toggle="dropdown">
 
-                        <img ng-if="fotmFilters[$index].specFilter"
-                             ng-src="{{fotmFilters[$index].specFilter.url}}"
-                             alt="{{fotmFilters[$index].specFilter.text}}" />
+                        <img ng-if="fotmFilters[$index].specId"
+                             ng-src="{{getSpecForFilter($index).url}}"
+                             alt="{{getSpecForFilter($index).text}}" />
 
-                        <span ng-if="!fotmFilters[$index].specFilter">
+                        <span ng-if="!fotmFilters[$index].specId">
                             All
                         </span>
 
@@ -69,17 +69,17 @@
                     <!-- Dropdown menu -->
                     <ul class="dropdown-menu" role="menu">
 
-                        <li ng-if="fotmFilters[$parent.$index].classFilter"
+                        <li ng-if="fotmFilters[$parent.$index].className"
                             ng-repeat="(specId, spec) in getSpecsFor($index)">
 
-                            <a ng-click="fotmFilters[$parent.$parent.$index].specFilter = spec">
+                            <a ng-click="fotmFilters[$parent.$parent.$index].specId = specId; redirectToFilter();">
                                 <img ng-src="{{spec.url}}" alt="{{spec.text}}" />
                             </a>
 
                         </li>
 
                         <li class="notext">
-                            <a ng-click="fotmFilters[$index].specFilter = null">All</a>
+                            <a ng-click="fotmFilters[$index].specId = null; redirectToFilter();">All</a>
                         </li>
 
                     </ul>

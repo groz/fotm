@@ -116,6 +116,7 @@
     <Compile Include="Main.fs" />
     <None Include="app\services\api.js" />
     <None Include="app\services\media.js" />
+    <None Include="app\services\filterFactory.js" />
     <None Include="app\controllers\api.js" />
     <None Include="app\templates\2v2.html" />
     <None Include="app\templates\3v3.html" />
