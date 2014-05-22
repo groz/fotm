@@ -5,7 +5,7 @@ open FotM.Aether
 open FotM.Data
 open FotM.Hephaestus.TraceLogging
 open FotM.Hephaestus.CollectionExtensions
-open Math
+open FotM.Hephaestus.Math
 open NodaTime
 open Microsoft.ServiceBus.Messaging
 

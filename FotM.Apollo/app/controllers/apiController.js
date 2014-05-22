@@ -12,6 +12,7 @@ app.controller('ApiController', function (filterFactory, media, api, region, bra
     $scope.media = media;
 
     $scope.teams = {}
+    $scope.setups = {}
 
     $scope.fotmFilters = [];
 
@@ -26,7 +27,8 @@ app.controller('ApiController', function (filterFactory, media, api, region, bra
 
     api.loadAsync($scope.region, $scope.bracket.text, $scope.fotmFilters).then(function (response) {
         console.log("received data:", response.data);
-        $scope.teams = response.data;
+        $scope.teams = response.data.Item1;
+        $scope.setups = response.data.Item2;
     });
 
     $scope.getSpecsFor = function (idx) {

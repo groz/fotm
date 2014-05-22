@@ -38,7 +38,6 @@
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\FSharp\Microsoft.FSharp.Targets')" />
   <ItemGroup>
     <None Include="app.config" />
-    <Compile Include="Math.fs" />
     <Compile Include="AthenaKMeans.fs" />
     <Compile Include="Athena.fs" />
     <Compile Include="AthenaProcessor.fs" />

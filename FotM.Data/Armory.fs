@@ -85,12 +85,20 @@ type Bracket = {
     teamSize: int
 }
 
-type TeamEntry = {
-    players: Player list
-    ratingChange: int
-    rating: int
-    snapshotTime: NodaTime.Instant
-}
+type TeamEntry = 
+    {
+        players: Player list
+        ratingChange: int
+        rating: int
+        snapshotTime: NodaTime.Instant
+    }
+    member this.getClasses() = 
+        this.players
+        |> List.map(fun p -> p.classSpec)
+        |> List.sortBy(fun spec -> spec.isHealer, spec.isRanged)
+    member this.getPlayers() = 
+        this.players
+        |> List.sortBy(fun p -> p.classSpec.isHealer, p.classSpec.isRanged, p.name, p.realm)
 
 type TeamInfo = 
     {
@@ -100,22 +108,6 @@ type TeamInfo =
     }
     member this.totalGames = this.totalWins + this.totalLosses
     member this.winRatio = float this.totalWins / float this.totalGames
-    member this.matchesFilter (classFilters: Class array) =
-        let teamClasses= this.lastEntry.players |> Seq.map(fun p -> p.classSpec) |> Array.ofSeq
-
-        let countMatchingPlayers (classFilter: Class) =
-            teamClasses
-            |> Seq.filter (fun c -> c.matchesFilter classFilter)
-            |> Seq.length
-        
-        let passingFilters =
-            classFilters
-            |> Seq.countBy (fun classFilter -> classFilter)
-            |> Seq.filter (fun (classFilter, count) -> (countMatchingPlayers classFilter) >= count)
-
-        Seq.length(passingFilters) = Array.length(classFilters)
-
-
 
 module Teams =
     let createEntry (snapshotTime: NodaTime.Instant) (playerUpdates: PlayerUpdate list) = {
@@ -144,6 +136,23 @@ module Teams =
             totalWins = won.Length
             totalLosses = lost.Length
         }
+
+    let matchesFilter (classFilters: Class array) (teamClasses: Class seq) =
+        let countMatchingPlayers (classFilter: Class) =
+            teamClasses
+            |> Seq.filter (fun c -> c.matchesFilter classFilter)
+            |> Seq.length
+        
+        let passingFilters =
+            classFilters
+            |> Seq.countBy (fun classFilter -> classFilter)
+            |> Seq.filter (fun (classFilter, count) -> (countMatchingPlayers classFilter) >= count)
+
+        Seq.length(passingFilters) = Array.length(classFilters)
+
+    let teamMatchesFilter (classFilters: Class array) teamInfo =
+        teamInfo.lastEntry.getClasses() |> matchesFilter classFilters
+
 
 [<StructuralEquality;NoComparison>]
 type LadderSnapshot<'a> = {

@@ -1,4 +1,4 @@
-﻿namespace FotM.Athena
+﻿namespace FotM.Hephaestus
 
 module Math =
 

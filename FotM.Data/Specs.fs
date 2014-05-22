@@ -68,7 +68,8 @@ type Class =
 | Warlock of WarlockSpec option
 | Monk of MonkSpec option
 | Druid of DruidSpec option
-with member c.matchesFilter (classFilter: Class)  = 
+
+    member c.matchesFilter (classFilter: Class)  = 
         match classFilter with
         | Warrior(None) -> (match c with | Warrior(_) -> true | _ -> false)
         | Paladin(None) -> (match c with | Paladin(_) -> true | _ -> false)
@@ -82,6 +83,36 @@ with member c.matchesFilter (classFilter: Class)  =
         | Monk(None) -> (match c with | Monk(_) -> true | _ -> false)
         | Druid(None) -> (match c with | Druid(_) -> true | _ -> false)
         | _  -> c = classFilter
+
+    member c.isHealer =
+        let healers = [
+            Druid(Some(DruidSpec.Restoration))
+            Shaman(Some(ShamanSpec.Restoration))
+            Paladin(Some(PaladinSpec.Holy))
+            Priest(Some(PriestSpec.Holy))
+            Priest(Some(PriestSpec.Discipline))
+            Monk(Some(MonkSpec.Mistweaver))
+        ]
+        healers |> Seq.exists ((=) c)
+
+    member c.isRanged =
+        let ranged = [
+            Mage(Some(MageSpec.Arcane))
+            Mage(Some(MageSpec.Fire))
+            Mage(Some(MageSpec.Frost))
+            Druid(Some(DruidSpec.Balance))
+            Druid(Some(DruidSpec.Guardian))
+            Hunter(Some(HunterSpec.``Beast Mastery``))
+            Hunter(Some(HunterSpec.Marksmanship))
+            Hunter(Some(HunterSpec.Survival))
+            Priest(Some(PriestSpec.Shadow))
+            Shaman(Some(ShamanSpec.Elemental))
+            Warlock(Some(WarlockSpec.Affliction))
+            Warlock(Some(WarlockSpec.Demonology))
+            Warlock(Some(WarlockSpec.Destruction))
+        ]
+        ranged |> Seq.exists ((=) c)
+
 
 module Specs = 
 

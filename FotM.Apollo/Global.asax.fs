@@ -23,7 +23,7 @@ type BundleConfig() =
                         "~/Scripts/respond.js"))
 
         bundles.Add(StyleBundle("~/Content/css").Include(
-                        "~/Content/bootstrap.css",
+                        "~/Content/Themes/Slate/bootstrap.css",
                         "~/Content/site.css"))
 
         bundles.Add(ScriptBundle("~/bundles/app")

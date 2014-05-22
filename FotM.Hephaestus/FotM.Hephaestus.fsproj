@@ -45,6 +45,7 @@
     <Compile Include="TraceLogging.fs" />
     <Compile Include="CollectionExtensions.fs" />
     <Compile Include="Async.fs" />
+    <Compile Include="Math.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

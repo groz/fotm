@@ -1,7 +1,7 @@
 ﻿namespace FotM.Athena
 
 open System
-open Math
+open FotM.Hephaestus.Math
 open FotM.Data
 open FotM.Aether
 open FotM.Hephaestus.TraceLogging

@@ -9,9 +9,19 @@ open System.Net
 open System.Text
 open Newtonsoft.Json
 open FotM.Hephaestus.TraceLogging
+open FotM.Hephaestus.Math
 open FotM.Data
 open FotM.Apollo
 open FotM.Aether
+
+type TeamViewModel (rank: int, teamInfo: TeamInfo)=
+    member this.rank = rank
+    member this.teamInfo = teamInfo
+
+type SetupViewModel (rank: int, specs: Class list, ratio: float) =
+    member this.rank = rank
+    member this.specs = specs
+    member this.percent = sprintf "%.1f%%" (ratio * 100.0)
 
 /// Retrieves values.
 [<RoutePrefix("api")>]
@@ -20,11 +30,11 @@ type ValuesController() =
 
     let url = @"http://127.0.0.1:10000/devstoreaccount1/ladders/US/3v3/883499d2-470e-4d64-8761-93858f7204ad"
 
-    let fetchSnapshot (storageLocation: string) =
-        let ladderJson = StorageIO.download( Uri(storageLocation) )
+    let fetchSnapshot storageLocation =
+        let ladderJson = StorageIO.download storageLocation
         JsonConvert.DeserializeObject<TeamInfo list> ladderJson
 
-    let ladder = fetchSnapshot url
+    let ladder = fetchSnapshot (Uri url)
 
     [<Route("{region}/{bracket}")>]
     member this.Get(region: string, bracket: string, [<FromUri>]filters: string seq) =
@@ -38,7 +48,28 @@ type ValuesController() =
             |> Seq.choose id
             |> Seq.toArray
 
-        ladder 
-        |> Seq.filter (fun t -> t.matchesFilter fotmFilters)
+        let teams =
+            ladder
+            |> Seq.mapi (fun i t -> i+1, t)
 
+        let filteredTeams =
+            teams
+            |> Seq.filter (fun (i, t) -> t |> Teams.teamMatchesFilter fotmFilters)
+            //|> Seq.map (fun (rank, teamInfo) -> teamInfo, TeamViewModel(rank, teamInfo))
+            //|> Map.ofSeq
 
+        let totalGames = ladder |> Seq.sumBy(fun t -> t.totalGames)
+
+        let setups =
+            teams
+            |> Seq.groupBy (fun (rank, teamInfo) -> teamInfo.lastEntry.getClasses())
+            |> Seq.map (fun (specs, group) -> specs, group |> Seq.sumBy(fun (rank, teamInfo) -> teamInfo.totalGames))
+            |> Seq.sortBy (fun (specs, count) -> -count)
+
+        let filteredSetups = 
+            setups
+            |> Seq.mapi(fun i setup -> i+1, setup)
+            |> Seq.filter(fun (rank, setup) -> fst setup |> Teams.matchesFilter fotmFilters)
+
+        filteredTeams |> Seq.map(fun t -> TeamViewModel t), 
+        filteredSetups |> Seq.map(fun (rank, s) -> SetupViewModel(rank, fst s, snd s ./. totalGames))
