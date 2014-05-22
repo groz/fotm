@@ -56,8 +56,6 @@ type ValuesController() =
         let filteredTeams =
             teams
             |> Seq.filter (fun (i, t) -> t |> Teams.teamMatchesFilter fotmFilters)
-            //|> Seq.map (fun (rank, teamInfo) -> teamInfo, TeamViewModel(rank, teamInfo))
-            //|> Map.ofSeq
 
         let totalGames = ladder |> Seq.sumBy(fun t -> t.totalGames)
 
