@@ -113,12 +113,12 @@
                     <td class="centered">{{team.rank}}</td>
 
                     <td class="hidden-xs">
-                        <img ng-src="{{media.factionImage(team.teamInfo)}}" alt="{{media.factionText(team.teamInfo)}}" />
+                        <img ng-src="{{media.factionImage(team.factionId)}}" alt="{{media.factionText(team.factionId)}}" />
                     </td>
 
                     <td>
                         <div class="row">
-                            <div class="col-lg-4 col-md-4 col-sm-4" ng-repeat="player in team.teamInfo.lastEntry.players">
+                            <div class="col-lg-4 col-md-4 col-sm-4" ng-repeat="player in team.players">
 
                                 <a ng-href="{{media.armoryLink(region, player)}}" class="nolink">
 
@@ -139,7 +139,7 @@
                         </div>
                     </td>
 
-                    <td class="centered">{{team.teamInfo.lastEntry.rating}}</td>
+                    <td class="centered">{{team.rating}}</td>
 
                 </tr>
             </tbody>

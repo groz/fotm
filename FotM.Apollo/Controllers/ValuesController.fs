@@ -16,7 +16,8 @@ open FotM.Aether
 
 type TeamViewModel (rank: int, teamInfo: TeamInfo)=
     member this.rank = rank
-    member this.teamInfo = teamInfo
+    member this.players = teamInfo.lastEntry.players
+    member this.factionId = int (teamInfo.lastEntry.players |> Seq.head).faction
 
 type SetupViewModel (rank: int, specs: Class list, ratio: float) =
     member this.rank = rank

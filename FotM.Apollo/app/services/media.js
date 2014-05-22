@@ -1,5 +1,10 @@
 app.factory('media', function() {
 
+    var factions = {
+        0: { text: 'Alliance', url: "http://media.blizzard.com/wow/icons/18/faction_0.jpg" },
+        1: { text: 'Horde', url: "http://media.blizzard.com/wow/icons/18/faction_1.jpg" },
+    };
+
     var races = {
         '1': 'Human',
         '2': 'Orc',
@@ -129,6 +134,14 @@ app.factory('media', function() {
                 return specIds;
             }
             return [];
+        },
+
+        factionText: function(factionId) {
+            return factions[factionId].text;
+        },
+
+        factionImage: function (factionId) {
+            return factions[factionId].url;
         },
 
         classes: classes,
