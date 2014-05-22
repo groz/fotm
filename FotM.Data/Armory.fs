@@ -100,6 +100,22 @@ type TeamInfo =
     }
     member this.totalGames = this.totalWins + this.totalLosses
     member this.winRatio = float this.totalWins / float this.totalGames
+    member this.matchesFilter (classFilters: Class array) =
+        let teamClasses= this.lastEntry.players |> Seq.map(fun p -> p.classSpec) |> Array.ofSeq
+
+        let countMatchingPlayers (classFilter: Class) =
+            teamClasses
+            |> Seq.filter (fun c -> c.matchesFilter classFilter)
+            |> Seq.length
+        
+        let passingFilters =
+            classFilters
+            |> Seq.countBy (fun classFilter -> classFilter)
+            |> Seq.filter (fun (classFilter, count) -> (countMatchingPlayers classFilter) >= count)
+
+        Seq.length(passingFilters) = Array.length(classFilters)
+
+
 
 module Teams =
     let createEntry (snapshotTime: NodaTime.Instant) (playerUpdates: PlayerUpdate list) = {
