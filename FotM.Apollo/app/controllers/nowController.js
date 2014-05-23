@@ -15,6 +15,7 @@ app.controller('NowController', function (media, api, settings, $scope, $routePa
         .then(function(response) {
             console.log("received data from now webapi:", response.data);
             $scope.teams = response.data;
+            $scope.empty = $scope.teams.length == 0;
         });
 
     $scope.toLocalTime = function(t) {

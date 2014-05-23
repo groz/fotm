@@ -77,12 +77,12 @@ type ValuesController() =
     member this.Get(region: string, bracket: string) =
         let now = NodaTime.SystemClock.Instance.Now
 
-        let period = NodaTime.Duration.FromStandardDays(30L)
+        let period = NodaTime.Duration.FromStandardDays(10L)
 
         let seen teamInfo = teamInfo.lastEntry.snapshotTime
 
         let filteredTeams =
             teams
-            |> Seq.filter(fun (rank, team) -> seen team - now < period)
+            |> Seq.filter(fun (rank, team) -> now - seen team < period)
         
         filteredTeams |> Seq.map(fun t -> TeamViewModel t)
