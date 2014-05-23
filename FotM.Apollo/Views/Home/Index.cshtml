@@ -22,10 +22,26 @@
 
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li ng-repeat="region in shared.regions"
+                    
+                    <li ng-repeat="region in shared.regions" class="dropdown"
                         ng-class="{active: region == shared.currentRegion}">
-                        <a>{{region | uppercase}}</a>
+
+                        <!-- Dropdown button -->
+                        <a class="dropdown-toggle notext"
+                           data-toggle="dropdown">
+                            {{region | uppercase}}
+                        </a>
+
+                        <!-- Dropdown menu -->
+                        <ul class="dropdown-menu" role="menu">
+                            <li ng-repeat="(bracket, size) in shared.brackets">
+                                <a class="notext" ng-href="{{'#/'+region+'/'+bracket}}">
+                                    {{bracket}}
+                                </a>
+                            </li>
+                        </ul>
                     </li>
+
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                 </ul>
             </div>
