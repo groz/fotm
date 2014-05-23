@@ -22,7 +22,7 @@
 
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    
+
                     <li ng-repeat="region in shared.regions" class="dropdown"
                         ng-class="{active: region == shared.currentRegion}">
 
@@ -42,15 +42,16 @@
                         </ul>
                     </li>
 
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                    <li ng-class="{active: shared.currentRegion == 'about'}">
+                        <a href="#/about">About</a>
+                    </li>
                 </ul>
             </div>
         </div>
     </div>
     <!-- /Navigation menu on top -->
+    <br/>
 
-    <h1>@Model.title</h1>
-    
     <div ng-view>
     </div>
 

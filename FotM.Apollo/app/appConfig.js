@@ -68,7 +68,13 @@ app.config(function ($routeProvider, sharedProvider) {
             });
     }
 
-    routeProvider.otherwise({ redirectTo: '/us/3v3' });
+    routeProvider
+        .when("/about",
+        {
+            controller: "AboutController",
+            templateUrl: "app/templates/about.html"
+        })
+        .otherwise({ redirectTo: '/us/3v3' });
 });
 
 app.run(function ($rootScope, shared) {
