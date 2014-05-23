@@ -1,5 +1,3 @@
-console.log("appConfig.js");
-
 app.config(function ($routeProvider, sharedProvider) {
     // this is an example of how you can write unreadable javascript with any framework :(
 
