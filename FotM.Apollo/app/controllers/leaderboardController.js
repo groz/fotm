@@ -1,11 +1,10 @@
-app.controller('ApiController', function (filterFactory, media, api, settings, $scope, $routeParams, $location) {
-    console.log(filterFactory);
+app.controller('LeaderboardController', function (filterFactory, media, api, settings, $scope, $routeParams, $location) {
     var inputFilters = $routeParams.filter;
 
     if (typeof (inputFilters) == "string")
         inputFilters = [inputFilters];
 
-    console.log("apiController called for", settings);
+    console.log("leaderboardController called for", settings);
 
     console.log("shared:", $scope.shared);
 
@@ -15,17 +14,20 @@ app.controller('ApiController', function (filterFactory, media, api, settings, $
 
     // notify parent frame of selected region
     $scope.shared.currentRegion = $scope.region;
+    $scope.shared.currentBracket = $scope.bracket;
+    $scope.shared.now = false;
 
     $scope.teams = {}
     $scope.setups = {}
 
     $scope.fotmFilters = filterFactory.createFilters($scope.bracket.size, inputFilters);
 
-    api.loadAsync($scope.region, $scope.bracket.text, $scope.fotmFilters).then(function (response) {
-        console.log("received data:", response.data);
-        $scope.teams = response.data.Item1;
-        $scope.setups = response.data.Item2;
-    });
+    api.loadLeaderboardAsync($scope.region, $scope.bracket.text, $scope.fotmFilters)
+        .then(function(response) {
+            console.log("received data from webapi:", response.data);
+            $scope.teams = response.data.Item1;
+            $scope.setups = response.data.Item2;
+        });
 
     $scope.getSpecsFor = function (idx) {
         var className = $scope.fotmFilters[idx].className;
@@ -65,7 +67,4 @@ app.controller('ApiController', function (filterFactory, media, api, settings, $
         return media.getSpecInfo(filter.specId);
     };
 
-});
-
-app.controller('MainController', function ($scope) {
 });

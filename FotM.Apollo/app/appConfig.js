@@ -1,9 +1,12 @@
 console.log("appConfig.js");
 
 app.config(function ($routeProvider, sharedProvider) {
+    // this is an example of how you can write unreadable javascript with any framework :(
 
     var sharedProperties = {
         currentRegion: "US",
+
+        currentBracket: "3v3",
 
         regions: ["us", "eu", "kr", "tw", "cn"],
 
@@ -17,67 +20,58 @@ app.config(function ($routeProvider, sharedProvider) {
 
     sharedProvider.set(sharedProperties);
 
-    // this is an example of how you can write unreadable javascript with any framework :(
+    function createSettingsProvider(r, b) {
+
+        var provider = function () {
+            return {
+                region: r,
+                bracket: {
+                    text: b,
+                    size: brackets[b]
+                }
+            };
+        };
+
+        return provider;
+
+    }
+
     var routeProvider = $routeProvider;
 
     var regions = sharedProperties.regions;
     var brackets = sharedProperties.brackets;
 
-    for (var ir in regions)
+    for (var ir in regions) {
+        var region = regions[ir];
+        var regionRoot = '/' + region;
+
         for (var bracket in brackets) {
-
-            var region = regions[ir];
-
-            // binding closures to loop variables
-            var createSettingsProvider = function (r, b, now) {
-
-                var provider = function() {
-                    return {
-                        region: r,
-                        bracket: {
-                            text: b,
-                            size: brackets[b]
-                        },
-                        now: now
-                    };
-                };
-
-                return provider;
-
-            }
 
             var url = '/' + region + '/' + bracket;
 
-            routeProvider = routeProvider
+            var settingsProvider = createSettingsProvider(region, bracket, false);
+
+            routeProvider
                 .when(url,
                 {
-                    controller: "ApiController",
+                    controller: "LeaderboardController",
                     templateUrl: "app/templates/" + bracket + ".html",
                     resolve: {
-                        settings: createSettingsProvider(region, bracket, false)
+                        settings: settingsProvider
                     }
                 })
                 .when(url + '/now',
                 {
-                    controller: "ApiController",
-                    templateUrl: "app/templates/" + bracket + ".html",
+                    controller: "NowController",
+                    templateUrl: "app/templates/" + bracket + "_now.html",
                     resolve: {
-                        settings: createSettingsProvider(region, bracket, true)
+                        settings: settingsProvider
                     }
                 });
-        };
+        }
 
-    for (var ir in regions) {
-        var region = regions[ir];
-
-        var regionRoot = '/' + region;
-
-        routeProvider = routeProvider
+        routeProvider
             .when(regionRoot,
-            {
-                redirectTo: regionRoot + "/3v3"
-            })
-            .when(regionRoot + '/:filter',
             {
                 redirectTo: regionRoot + "/3v3"
             });

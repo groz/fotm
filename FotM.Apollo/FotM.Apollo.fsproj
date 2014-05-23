@@ -117,16 +117,19 @@
     <None Include="app\services\apiService.js" />
     <None Include="app\services\media.js" />
     <None Include="app\services\filterFactory.js" />
-	<None Include="app\services\sharedProvider.js" />
-	<None Include="app\controllers\aboutController.js" />
-    <None Include="app\controllers\apiController.js" />
+    <None Include="app\services\sharedProvider.js" />
+    <None Include="app\controllers\aboutController.js" />
+    <None Include="app\controllers\leaderboardController.js" />
+    <None Include="app\controllers\nowController.js" />
+    <None Include="app\controllers\mainController.js" />
     <None Include="app\templates\2v2.html" />
     <None Include="app\templates\3v3.html" />
+    <None Include="app\templates\3v3_now.html" />
     <None Include="app\templates\5v5.html" />
     <None Include="app\templates\rbg.html" />
-	<None Include="app\templates\about.html" />
+    <None Include="app\templates\about.html" />
     <None Include="app\app.js" />
-	<None Include="app\appConfig.js" />
+    <None Include="app\appConfig.js" />
     <None Include="Content\Site.css" />
     <None Include="Content\bootstrap-theme.min.css" />
     <None Include="Content\bootstrap-theme.css.map" />
@@ -188,6 +191,10 @@
     <Reference Include="mscorlib" />
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.6.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NodaTime">
+      <HintPath>..\packages\NodaTime.1.2.0\lib\net35-Client\NodaTime.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />

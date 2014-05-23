@@ -50,6 +50,22 @@
         </div>
     </div>
     <!-- /Navigation menu on top -->
+    
+    <!-- Leaderboard-Now Selector -->
+    <div class="row pager"
+         ng-if="shared.currentRegion != 'about'">
+        <a role="button" class="btn btn-lg btn-default"
+           ng-class="{active: !shared.now}"
+           ng-href="{{'#/'+shared.currentRegion+'/'+shared.currentBracket.text}}">
+            Leaderboard
+        </a>
+        <a role="button" class="btn btn-lg btn-default"
+           ng-class="{active: shared.now}"
+           ng-href="{{'#/'+shared.currentRegion+'/'+shared.currentBracket.text+'/now'}}">
+            Playing now
+        </a>
+    </div>
+    <!-- /Leaderboard-Now Selector -->
     <br/>
 
     <div ng-view>

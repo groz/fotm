@@ -18,6 +18,9 @@ type TeamViewModel (rank: int, teamInfo: TeamInfo)=
     member this.rank = rank
     member this.players = teamInfo.lastEntry.players
     member this.factionId = int (teamInfo.lastEntry.players |> Seq.head).faction
+    member this.rating = teamInfo.lastEntry.rating
+    member this.ratingChange = teamInfo.lastEntry.ratingChange
+    member this.seen = teamInfo.lastEntry.snapshotTime.ToDateTimeUtc().ToString()
 
 type SetupViewModel (rank: int, specs: Class list, ratio: float) =
     member this.rank = rank

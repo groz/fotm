@@ -2,7 +2,7 @@ app.factory('api', function($http) {
     
     return {
 
-        loadAsync: function(region, bracket, fotmFilters) {
+        loadLeaderboardAsync: function(region, bracket, fotmFilters) {
 
             var promise = $http({
                 method: 'GET',
