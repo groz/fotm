@@ -12,18 +12,21 @@ Frontend:
 - Add Google Analytics virtual pages
 - Add donate button
 - Add sharing options:
-- - Facebook share/like
-- - Google +1
-- - VK
+  - Facebook share/like
+  - Google +1
+  - VK
 - Brackets:
-- - 2v2, take most stuff from 3v3 and check on lower sizes
-- - 5v5, remove names?
-- - rbg, remove names, classes, redesign filters?
+  - 2v2, take most stuff from 3v3 and check on lower sizes
+  - 5v5, remove names?
+  - rbg, remove names, classes, redesign filters?
 
 Infrastructure:
 - Backfill Athena and Apollo on startup from the latest update in storage
 - Deploy Avatars
 - Deploy Apollo
+- Create new Google Analytics property
+- Register new domain
+- Add redirects from old domains (i.e. fotm.eu -> fotm.info/#/eu/3v3)
 
 Machine learning:
 - Model realm as binary (feature1: is user from Spirestone or not, feature 2: is user from Al'Akir or not?)
