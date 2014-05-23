@@ -1,17 +1,26 @@
 app.factory('api', function($http) {
-    
-    return {
 
+    return {
         loadLeaderboardAsync: function(region, bracket, fotmFilters) {
 
             var promise = $http({
                 method: 'GET',
-                url: '/api/'+region+'/'+bracket,
+                url: '/api/' + region + '/' + bracket,
                 params: { filters: fotmFilters }
+            });
+
+            return promise;
+        },
+
+        loadPlayingNowAsync: function(region, bracket) {
+
+            var promise = $http({
+                method: 'GET',
+                url: '/api/' + region + '/' + bracket+'/now'
             });
 
             return promise;
         }
     }
 
-})
+});

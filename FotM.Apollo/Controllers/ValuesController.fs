@@ -39,6 +39,7 @@ type ValuesController() =
         JsonConvert.DeserializeObject<TeamInfo list> ladderJson
 
     let ladder = fetchSnapshot (Uri url)
+    let teams = ladder |> Seq.mapi (fun i t -> i+1, t)
 
     [<Route("{region}/{bracket}")>]
     member this.Get(region: string, bracket: string, [<FromUri>]filters: string seq) =
@@ -52,15 +53,11 @@ type ValuesController() =
             |> Seq.choose id
             |> Seq.toArray
 
-        let teams =
-            ladder
-            |> Seq.mapi (fun i t -> i+1, t)
-
         let filteredTeams =
             teams
             |> Seq.filter (fun (i, t) -> t |> Teams.teamMatchesFilter fotmFilters)
 
-        let totalGames = ladder |> Seq.sumBy(fun t -> t.totalGames)
+        let totalGames = teams |> Seq.sumBy(fun (rank, team) -> team.totalGames)
 
         let setups =
             teams
@@ -75,3 +72,17 @@ type ValuesController() =
 
         filteredTeams |> Seq.map(fun t -> TeamViewModel t), 
         filteredSetups |> Seq.map(fun (rank, s) -> SetupViewModel(rank, fst s, snd s ./. totalGames))
+
+    [<Route("{region}/{bracket}/now")>]
+    member this.Get(region: string, bracket: string) =
+        let now = NodaTime.SystemClock.Instance.Now
+
+        let period = NodaTime.Duration.FromStandardDays(30L)
+
+        let seen teamInfo = teamInfo.lastEntry.snapshotTime
+
+        let filteredTeams =
+            teams
+            |> Seq.filter(fun (rank, team) -> seen team - now < period)
+        
+        filteredTeams |> Seq.map(fun t -> TeamViewModel t)

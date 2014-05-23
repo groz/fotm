@@ -11,10 +11,10 @@ app.controller('NowController', function (media, api, settings, $scope, $routePa
     $scope.shared.currentBracket = $scope.bracket;
     $scope.shared.now = true;
 
-    api.loadLeaderboardAsync($scope.region, $scope.bracket.text, [])
+    api.loadPlayingNowAsync($scope.region, $scope.bracket.text, [])
         .then(function(response) {
-            console.log("received data from webapi:", response.data);
-            $scope.teams = response.data.Item1;
+            console.log("received data from now webapi:", response.data);
+            $scope.teams = response.data;
         });
 
     $scope.toLocalTime = function(t) {
