@@ -12,13 +12,13 @@ Frontend:
 - Add Google Analytics virtual pages
 - Add donate button
 - Add sharing options:
--- Facebook share/like
--- Google +1
--- VK
+- - Facebook share/like
+- - Google +1
+- - VK
 - Brackets:
--- 2v2, take most stuff from 3v3 and check on lower sizes
--- 5v5, remove names?
--- rbg, remove names, classes, redesign filters?
+- - 2v2, take most stuff from 3v3 and check on lower sizes
+- - 5v5, remove names?
+- - rbg, remove names, classes, redesign filters?
 
 Infrastructure:
 - Backfill Athena and Apollo on startup from the latest update in storage
