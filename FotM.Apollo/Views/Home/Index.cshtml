@@ -9,7 +9,7 @@
 <div ng-app="app">
     
     <!-- Navigation menu on top -->
-    <div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar navbar-inverse navbar-fixed-top" ng-controller="MainController">
         <div class="container">
             <div class="navbar-header">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -22,9 +22,10 @@
 
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="http://www.fotm.eu">EU</a></li>
-                    <li><a href="http://www.fotm.us">US</a></li>
-                    <li><a href="http://www.fotm.kr">KR</a></li>
+                    <li ng-repeat="region in shared.regions"
+                        ng-class="{active: region == shared.currentRegion}">
+                        <a>{{region | uppercase}}</a>
+                    </li>
                     <li>@Html.ActionLink("About", "About", "Home")</li>
                 </ul>
             </div>

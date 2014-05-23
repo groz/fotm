@@ -29,9 +29,10 @@ type BundleConfig() =
         bundles.Add(ScriptBundle("~/bundles/app")
             .Include(
                     [|
-                    "~/app/*.js"
+                    "~/app/app.js"
                     "~/app/services/*.js"
                     "~/app/controllers/*.js"
+                    "~/app/appConfig.js"
                     |])
             )
 

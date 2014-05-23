@@ -7,9 +7,14 @@ app.controller('ApiController', function (filterFactory, media, api, region, bra
 
     console.log("apiController called for", region, bracket, inputFilters);
 
+    console.log("shared:", $scope.shared);
+
     $scope.region = region;
     $scope.bracket = bracket;
     $scope.media = media;
+
+    // notify parent frame of selected region
+    $scope.shared.currentRegion = region;
 
     $scope.teams = {}
     $scope.setups = {}
@@ -60,4 +65,7 @@ app.controller('ApiController', function (filterFactory, media, api, region, bra
         return media.getSpecInfo(filter.specId);
     };
 
+});
+
+app.controller('MainController', function ($scope) {
 });
