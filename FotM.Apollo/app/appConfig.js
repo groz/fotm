@@ -29,27 +29,42 @@ app.config(function ($routeProvider, sharedProvider) {
             var region = regions[ir];
 
             // binding closures to loop variables
-            var regionProvider = function (r) { return function () { return r; }; }
-            var bracketProvider = function (b) {
-                return function () {
+            var createSettingsProvider = function (r, b, now) {
+
+                var provider = function() {
                     return {
-                        text: b,
-                        size: brackets[b]
+                        region: r,
+                        bracket: {
+                            text: b,
+                            size: brackets[b]
+                        },
+                        now: now
                     };
                 };
+
+                return provider;
+
             }
 
+            var url = '/' + region + '/' + bracket;
+
             routeProvider = routeProvider
-                .when('/' + region + '/' + bracket,
+                .when(url,
                 {
                     controller: "ApiController",
                     templateUrl: "app/templates/" + bracket + ".html",
                     resolve: {
-                        region: regionProvider(region),
-                        bracket: bracketProvider(bracket)
+                        settings: createSettingsProvider(region, bracket, false)
+                    }
+                })
+                .when(url + '/now',
+                {
+                    controller: "ApiController",
+                    templateUrl: "app/templates/" + bracket + ".html",
+                    resolve: {
+                        settings: createSettingsProvider(region, bracket, true)
                     }
                 });
-
         };
 
     for (var ir in regions) {

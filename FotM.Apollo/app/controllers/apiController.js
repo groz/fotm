@@ -1,25 +1,25 @@
-app.controller('ApiController', function (filterFactory, media, api, region, bracket, $scope, $routeParams, $location) {
+app.controller('ApiController', function (filterFactory, media, api, settings, $scope, $routeParams, $location) {
     console.log(filterFactory);
     var inputFilters = $routeParams.filter;
 
     if (typeof (inputFilters) == "string")
         inputFilters = [inputFilters];
 
-    console.log("apiController called for", region, bracket, inputFilters);
+    console.log("apiController called for", settings);
 
     console.log("shared:", $scope.shared);
 
-    $scope.region = region;
-    $scope.bracket = bracket;
+    $scope.region = settings.region;
+    $scope.bracket = settings.bracket;
     $scope.media = media;
 
     // notify parent frame of selected region
-    $scope.shared.currentRegion = region;
+    $scope.shared.currentRegion = $scope.region;
 
     $scope.teams = {}
     $scope.setups = {}
 
-    $scope.fotmFilters = filterFactory.createFilters(bracket.size, inputFilters);
+    $scope.fotmFilters = filterFactory.createFilters($scope.bracket.size, inputFilters);
 
     api.loadAsync($scope.region, $scope.bracket.text, $scope.fotmFilters).then(function (response) {
         console.log("received data:", response.data);
