@@ -50,6 +50,7 @@ type Storage (containerName, ?storageConnectionString, ?pathPrefix) =
         blob.Uri
 
 module StorageIO =
+
     let download (storageLocation: Uri) =
         logInfo "Fetching %A" storageLocation
         use webClient = new WebClient()
@@ -57,3 +58,12 @@ module StorageIO =
         let compressed = webClient.DownloadString storageLocation
         let json = CompressionUtils.UnzipFromBase64 compressed
         json
+
+    let downloadAsync (storageLocation: Uri) = async {
+        logInfo "Fetching %A" storageLocation
+        use webClient = new WebClient()
+        webClient.Encoding <- Encoding.UTF8
+        let! compressed = webClient.AsyncDownloadString storageLocation
+        let json = CompressionUtils.UnzipFromBase64 compressed
+        return json
+    }

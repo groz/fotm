@@ -80,4 +80,4 @@ type Global() =
         Global.RegisterRoutes(RouteTable.Routes)
         BundleConfig.RegisterBundles BundleTable.Bundles
 
-        Main.Startup()
+        Main.OnStart()
