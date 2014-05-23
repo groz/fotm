@@ -7,11 +7,34 @@
 }
 
 <div ng-app="app">
+    
+    <!-- Navigation menu on top -->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("FotM", "Index", "Home", null, new { @class = "navbar-brand" })
+            </div>
+
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li><a href="http://www.fotm.eu">EU</a></li>
+                    <li><a href="http://www.fotm.us">US</a></li>
+                    <li><a href="http://www.fotm.kr">KR</a></li>
+                    <li>@Html.ActionLink("About", "About", "Home")</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /Navigation menu on top -->
 
     <h1>@Model.title</h1>
     
     <div ng-view>
     </div>
-
 
 </div>

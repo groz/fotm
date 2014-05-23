@@ -14,16 +14,7 @@ app.controller('ApiController', function (filterFactory, media, api, region, bra
     $scope.teams = {}
     $scope.setups = {}
 
-    $scope.fotmFilters = [];
-
-    for (var i = 0; i < bracket.size; ++i) {
-        var ithFilter = (inputFilters && inputFilters[i])
-                        ? filterFactory.createFromString(inputFilters[i])
-                        : filterFactory.create(null, null);
-
-        console.log("applying filter", ithFilter);
-        $scope.fotmFilters.push(ithFilter);
-    }
+    $scope.fotmFilters = filterFactory.createFilters(bracket.size, inputFilters);
 
     api.loadAsync($scope.region, $scope.bracket.text, $scope.fotmFilters).then(function (response) {
         console.log("received data:", response.data);
@@ -32,7 +23,8 @@ app.controller('ApiController', function (filterFactory, media, api, region, bra
     });
 
     $scope.getSpecsFor = function (idx) {
-        var specIds = media.getSpecsFor($scope.fotmFilters[idx].className);
+        var className = $scope.fotmFilters[idx].className;
+        var specIds = media.getSpecsFor(className);
 
         return specIds.reduce(function (obj, id) {
             obj[id] = media.getSpecInfo(id);
@@ -43,17 +35,24 @@ app.controller('ApiController', function (filterFactory, media, api, region, bra
     $scope.redirectToFilter = function() {
         console.log("redirectToFilter");
 
+        var nonEmpty = false;
+
         var filterStrings = $scope.fotmFilters.reduce(function(arr, f) {
             var filterString = f.toString();
+
+            if (filterString != null)
+                nonEmpty = true;
+
             console.log(f, "reduced to", filterString);
 
             arr.push(filterString);
             return arr;
         }, []);
 
-        $location.search({
-            filter: filterStrings
-        });
+        if (nonEmpty)
+            $location.search( { filter: filterStrings } );
+        else
+            $location.search("");
     };
 
     $scope.getSpecForFilter = function (filterIndex) {

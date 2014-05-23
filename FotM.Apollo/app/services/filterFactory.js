@@ -33,16 +33,30 @@ app.factory('filterFactory', function (media) {
         return str + "(" + this.specId + ")";
     };
 
+    var factory = {};
 
-    return {
+    factory.create = function(className, specId) {
+        return new FotMFilter(className, specId);
+    };
 
-        create: function(className, specId) {
-            return new FotMFilter(className, specId);
-        },
+    factory.createFromString = function(str) {
+        return FotMFilter.fromString(str);
+    };
 
-        createFromString: function(str) {
-            return FotMFilter.fromString(str);
+    factory.createFilters = function (bracketSize, inputFilters) {
+        var fotmFilters = [];
+
+        for (var i = 0; i < bracketSize; ++i) {
+            var ithFilter = (inputFilters && inputFilters[i])
+                ? factory.createFromString(inputFilters[i])
+                : factory.create(null, null);
+
+            console.log("applying filter", ithFilter);
+            fotmFilters.push(ithFilter);
         }
 
+        return fotmFilters;
     };
+
+    return factory;
 });
