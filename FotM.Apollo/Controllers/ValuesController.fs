@@ -38,51 +38,52 @@ type ValuesController() =
         let ladderJson = StorageIO.download storageLocation
         JsonConvert.DeserializeObject<TeamInfo list> ladderJson
 
+    let playingNowPeriod = NodaTime.Duration.FromStandardDays(10L)
+
     let ladder = fetchSnapshot (Uri url)
+
     let teams = ladder |> Seq.mapi (fun i t -> i+1, t)
+
+    let totalGames = teams |> Seq.sumBy(fun (rank, team) -> team.totalGames)
+
+    let setups =
+        teams
+        |> Seq.groupBy (fun (rank, teamInfo) -> teamInfo.lastEntry.getClasses())
+        |> Seq.map (fun (specs, group) -> specs, group |> Seq.sumBy(fun (rank, teamInfo) -> teamInfo.totalGames))
+        |> Seq.sortBy (fun (specs, count) -> -count)
+
+    let parseFilters (filters: string seq) =
+        filters
+        |> Seq.map (fun str -> 
+            let dict = JsonConvert.DeserializeObject<Dictionary<string, string>>(str)
+            Specs.fromString (dict.["className"]) (dict.["specId"]) )
+        |> Seq.choose id
+        |> Seq.toArray
 
     [<Route("{region}/{bracket}")>]
     member this.Get(region: string, bracket: string, [<FromUri>]filters: string seq) =
-        let fotmFilters = 
-            filters
-            |> Seq.map (fun str -> JsonConvert.DeserializeObject<Dictionary<string, string>>(str))
-            |> Seq.map (fun dict -> dict.["className"], dict.["specId"])
-            |> Seq.map (fun (className, specIdStr) -> 
-                let specId = if specIdStr = null then -1 else (int specIdStr)
-                Specs.fromString className specId)
-            |> Seq.choose id
-            |> Seq.toArray
+        let fotmFilters = parseFilters filters
 
         let filteredTeams =
             teams
             |> Seq.filter (fun (i, t) -> t |> Teams.teamMatchesFilter fotmFilters)
 
-        let totalGames = teams |> Seq.sumBy(fun (rank, team) -> team.totalGames)
-
-        let setups =
-            teams
-            |> Seq.groupBy (fun (rank, teamInfo) -> teamInfo.lastEntry.getClasses())
-            |> Seq.map (fun (specs, group) -> specs, group |> Seq.sumBy(fun (rank, teamInfo) -> teamInfo.totalGames))
-            |> Seq.sortBy (fun (specs, count) -> -count)
-
         let filteredSetups = 
             setups
             |> Seq.mapi(fun i setup -> i+1, setup)
             |> Seq.filter(fun (rank, setup) -> fst setup |> Teams.matchesFilter fotmFilters)
-
+            
         filteredTeams |> Seq.map(fun t -> TeamViewModel t), 
-        filteredSetups |> Seq.map(fun (rank, s) -> SetupViewModel(rank, fst s, snd s ./. totalGames))
+            filteredSetups |> Seq.map(fun (rank, s) -> SetupViewModel(rank, fst s, snd s ./. totalGames))
 
     [<Route("{region}/{bracket}/now")>]
     member this.Get(region: string, bracket: string) =
         let now = NodaTime.SystemClock.Instance.Now
 
-        let period = NodaTime.Duration.FromStandardDays(10L)
-
         let seen teamInfo = teamInfo.lastEntry.snapshotTime
 
         let filteredTeams =
             teams
-            |> Seq.filter(fun (rank, team) -> now - seen team < period)
+            |> Seq.filter(fun (rank, team) -> now - seen team < playingNowPeriod)
         
         filteredTeams |> Seq.map(fun t -> TeamViewModel t)

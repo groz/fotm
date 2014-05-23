@@ -147,7 +147,9 @@ module Specs =
         | None -> invalidArg "classId" (classId.ToString())
         | Some(c) -> c
 
-    let fromString className specId =
+    let fromString className (specIdStr: string) =
+
+        let specId = if specIdStr = null then -1 else (int specIdStr)
 
         let classId = 
             match className with
