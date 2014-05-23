@@ -1,0 +1,75 @@
+<h3>Project</h3>
+
+<div class="row">
+    <div class="col-lg-6 col-md-8 col-sm-10">
+        <p>
+            Since World of Warcraft armory changed from team-based to player-based style many players missed old
+            armory. So I've decided to give it a try and implement some data mining and machine learning to
+            bring old armory back and throw some minor features on top. Hope you find it helpful.
+        </p>
+        <p>
+            FotM chart is based on the number of games teams played in those setups, i.e. if a
+            particular setup has 10% representation shown, it was seen in 10% of all games among top players.
+        </p>
+    </div>
+</div>
+
+<h3>How it works?</h3>
+<div class="row">
+    <div class="col-lg-6 col-md-8 col-sm-10">
+        <p>
+            There's a scanner running 24/7 polling top 1000 players from Blizzard API.
+            Whenever it sees players that changed ratings it calculates diffs from their previous values.
+        </p>
+        <p>
+            The diffs are then fed to clustering algorithm that is a variation of <a href="http://en.wikipedia.org/wiki/Kmeans">k-means</a> to
+            try and divide players into the teams of 3.
+        </p>
+    </div>
+</div>
+
+<h3>Technologies used</h3>
+
+<div class="row">
+    <div class="col-lg-6 col-md-8 col-sm-10">
+        <ul>
+            <li>F# + ASP.NET</li>
+            <li>AngularJS</li>
+            <li>Windows Azure</li>
+            <li>Bootstrap</li>
+        </ul>
+        <p>
+            Almost everything I used for this project I've used for the first time,
+            so if you see that something can be improved I would appreciate the feedback.
+            The code is <a href="https://github.com/Groz/fotm">open-source</a>.
+        </p>
+    </div>
+</div>
+
+<br />
+
+<div class="row">
+    <div class="col-lg-6 col-md-8 col-sm-10">
+        <p>
+            <strong>Made by:</strong>
+            <span>Tagir Magomedov</span>
+        </p>
+    </div>
+</div>
+
+<div>
+    <p>
+        <a href="https://www.facebook.com/tagir.magomedov" class="btn btn-link">
+            <img src="http://icons.iconarchive.com/icons/danleech/simple/32/facebook-icon.png" />
+        </a>
+        <a href="https://www.twitter.com/tagmg" class="btn btn-link">
+            <img src="http://icons.iconarchive.com/icons/dakirby309/windows-8-metro/32/Web-Twitter-alt-2-Metro-icon.png" />
+        </a>
+        <a href="mailto:tagir.magomedov@gmail.com" class="btn btn-link">
+            <img src="http://icons.iconarchive.com/icons/marcus-roberto/google-play/32/Gmail-icon.png" />
+        </a>
+        <a href="https://github.com/Groz/fotm" class="btn btn-link">
+            <img src="http://icons.iconarchive.com/icons/limav/flat-gradient-social/32/Github-icon.png" />
+        </a>
+    </p>
+</div>
