@@ -37,9 +37,9 @@ type ValuesController() =
 
     let maxLeaderboardTeams = 15
     let maxSpecs = 10
-    let maxPlayingNow = 20
+    let maxPlayingNow = 15
 
-    let playingNowPeriod = NodaTime.Duration.FromStandardDays(10L)
+    let playingNowPeriod = NodaTime.Duration.FromHours(2L)
     let justPlayedPeriod = NodaTime.Duration.FromMinutes(10L)
 
     let parseFilters (filters: string seq) =
