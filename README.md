@@ -6,9 +6,9 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
+- Align social buttons
 - Show win ratio for teams (possibly setups)
 - Add Google Analytics virtual pages
-- Add donate button
 - Brackets:
   - 2v2, take most stuff from 3v3 and check on lower sizes
   - 5v5, remove names?
