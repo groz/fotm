@@ -19,6 +19,7 @@ Frontend:
   - rbg, remove names, classes, redesign filters?
 
 Infrastructure:
+- Show teams with > 1 wins and > 1 games per day in Leaderboard and > 1 games in Playing Now.
 - Backfill Athena and Apollo on startup from the latest update in storage
 - Deploy Avatars
 - Deploy Apollo
