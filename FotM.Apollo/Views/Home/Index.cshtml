@@ -8,64 +8,66 @@
 
 <div ng-app="app">
     
-    <!-- Navigation menu on top -->
-    <div class="navbar navbar-inverse navbar-fixed-top" ng-controller="MainController">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                @Html.ActionLink("FotM", "Index", "Home", null, new { @class = "navbar-brand" })
-            </div>
+    <div ng-controller="MainController">
+        <!-- Navigation menu on top -->
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="/" class="navbar-brand">FotM</a>
+                </div>
 
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
+                <div class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
 
-                    <li ng-repeat="region in shared.regions" class="dropdown"
-                        ng-class="{active: region == shared.currentRegion}">
+                        <li ng-repeat="region in shared.regions" class="dropdown"
+                            ng-class="{active: region == shared.currentRegion}">
 
-                        <!-- Dropdown button -->
-                        <a class="dropdown-toggle notext"
-                           data-toggle="dropdown">
-                            {{region | uppercase}}
-                        </a>
+                            <!-- Dropdown button -->
+                            <a class="dropdown-toggle notext"
+                               data-toggle="dropdown">
+                                {{region | uppercase}}
+                            </a>
 
-                        <!-- Dropdown menu -->
-                        <ul class="dropdown-menu" role="menu">
-                            <li ng-repeat="(bracket, size) in shared.brackets">
-                                <a class="notext" ng-href="{{'#/'+region+'/'+bracket}}">
-                                    {{bracket}}
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                            <!-- Dropdown menu -->
+                            <ul class="dropdown-menu" role="menu">
+                                <li ng-repeat="(bracket, size) in shared.brackets">
+                                    <a class="notext" ng-href="{{'#/'+region+'/'+bracket}}">
+                                        {{bracket}}
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
 
-                    <li ng-class="{active: shared.currentRegion == 'about'}">
-                        <a href="#/about">About</a>
-                    </li>
-                </ul>
+                        <li ng-class="{active: shared.currentRegion == 'about'}">
+                            <a href="#/about">About</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
+        <!-- /Navigation menu on top -->
+        <!-- Leaderboard-Now Selector -->
+        <div class="row pager"
+             ng-if="shared.currentRegion != 'about'">
+            <a role="button" class="btn btn-lg btn-default"
+               ng-class="{active: !shared.now}"
+               ng-href="{{'#/'+shared.currentRegion+'/'+shared.currentBracket.text}}">
+                Leaderboard
+            </a>
+            <a role="button" class="btn btn-lg btn-default"
+               ng-class="{active: shared.now}"
+               ng-href="{{'#/'+shared.currentRegion+'/'+shared.currentBracket.text+'/now'}}">
+                Playing now
+            </a>
+        </div>
+        <!-- /Leaderboard-Now Selector -->
+
     </div>
-    <!-- /Navigation menu on top -->
-    
-    <!-- Leaderboard-Now Selector -->
-    <div class="row pager"
-         ng-if="shared.currentRegion != 'about'">
-        <a role="button" class="btn btn-lg btn-default"
-           ng-class="{active: !shared.now}"
-           ng-href="{{'#/'+shared.currentRegion+'/'+shared.currentBracket.text}}">
-            Leaderboard
-        </a>
-        <a role="button" class="btn btn-lg btn-default"
-           ng-class="{active: shared.now}"
-           ng-href="{{'#/'+shared.currentRegion+'/'+shared.currentBracket.text+'/now'}}">
-            Playing now
-        </a>
-    </div>
-    <!-- /Leaderboard-Now Selector -->
 
     <div ng-view>
     </div>
