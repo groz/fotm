@@ -10,9 +10,6 @@ Frontend:
 - Show win ratio for teams (possibly setups)
 - Add Google Analytics virtual pages
 - Add donate button
-- Add sharing options:
-  - Google +1
-  - VK
 - Brackets:
   - 2v2, take most stuff from 3v3 and check on lower sizes
   - 5v5, remove names?
