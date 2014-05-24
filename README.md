@@ -6,7 +6,6 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Show loading spin when leaderboard is being loaded
 - Show win ratio for teams (possibly setups)
 - Add Google Analytics virtual pages
 - Add donate button
