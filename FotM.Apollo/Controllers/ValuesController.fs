@@ -16,11 +16,13 @@ open FotM.Aether
 
 type TeamViewModel (rank: int, teamInfo: TeamInfo)=
     member this.rank = rank
-    member this.players = teamInfo.lastEntry.players
     member this.factionId = int (teamInfo.lastEntry.players |> Seq.head).faction
     member this.rating = teamInfo.lastEntry.rating
     member this.ratingChange = teamInfo.lastEntry.ratingChange
     member this.seen = teamInfo.lastEntry.snapshotTime.ToDateTimeUtc().ToString()
+    member this.players = 
+        teamInfo.lastEntry.players
+        |> List.sortBy(fun p -> p.classSpec.isHealer, p.classSpec.isRanged, p.name, p.realm)
 
 type SetupViewModel (rank: int, specs: Class list, ratio: float) =
     member this.rank = rank
@@ -31,6 +33,9 @@ type SetupViewModel (rank: int, specs: Class list, ratio: float) =
 [<RoutePrefix("api")>]
 type ValuesController() =
     inherit ApiController()
+
+    let maxLeaderboardTeams = 15
+    let maxSpecs = 10
 
     let playingNowPeriod = NodaTime.Duration.FromStandardDays(10L)
 
@@ -57,10 +62,17 @@ type ValuesController() =
             |> Seq.mapi(fun i setup -> i+1, setup)
             |> Seq.filter(fun (rank, setup) -> fst setup |> Teams.matchesFilter fotmFilters)
             
-        filteredTeams |> Seq.map(fun t -> TeamViewModel t), 
-            filteredSetups |> Seq.map(fun (rank, s) -> 
-                SetupViewModel(rank, fst s, snd s ./. armoryInfo.totalGames)
-            )
+        let teamsToShow = 
+            filteredTeams 
+            |> Seq.map(fun t -> TeamViewModel t)
+            |> Seq.truncate maxLeaderboardTeams
+
+        let setupsToShow = 
+            filteredSetups 
+            |> Seq.map(fun (rank, s) -> SetupViewModel(rank, fst s, snd s ./. armoryInfo.totalGames))
+            |> Seq.truncate maxSpecs
+
+        teamsToShow, setupsToShow
 
     [<Route("{region}/{bracket}/now")>]
     member this.Get(region: string, bracket: string) =

@@ -2,8 +2,6 @@ app.controller('MainController', function ($scope, $location) {
 
     console.log("MainController activated");
 
-    //$scope.mainLink = "http://fotm.info";
-
     $scope.getCurrentLocation = function () { return $location.absUrl(); }
 
     $scope.getRoot = function() {
