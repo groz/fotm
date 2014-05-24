@@ -22,8 +22,6 @@ Infrastructure:
 - Backfill Athena and Apollo on startup from the latest update in storage
 - Deploy Avatars
 - Deploy Apollo
-- Create new Google Analytics property
-- Register new domain
 - Add redirects from old domains (i.e. fotm.eu -> fotm.info/#/eu/3v3)
 
 Machine learning:
