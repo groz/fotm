@@ -167,3 +167,17 @@ module Specs =
                 | _ -> -1
 
         toClassOption classId specId
+
+    let getClassId = 
+        function
+        | Warrior _ -> 1
+        | Paladin _ -> 2
+        | Hunter _ -> 3
+        | Rogue _ -> 4
+        | Priest _ -> 5
+        | ``Death Knight`` _ -> 6
+        | Shaman _ -> 7
+        | Mage _ -> 8
+        | Warlock _ -> 9
+        | Monk _ -> 10
+        | Druid _ -> 11

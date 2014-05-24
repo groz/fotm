@@ -14,7 +14,7 @@ open FotM.Data
 open FotM.Apollo
 open FotM.Aether
 
-type TeamViewModel (rank: int, teamInfo: TeamInfo)=
+type TeamViewModel (rank: int, teamInfo: TeamInfo, justPlayed: bool)=
     member this.rank = rank
     member this.factionId = int (teamInfo.lastEntry.players |> Seq.head).faction
     member this.rating = teamInfo.lastEntry.rating
@@ -22,7 +22,8 @@ type TeamViewModel (rank: int, teamInfo: TeamInfo)=
     member this.seen = teamInfo.lastEntry.snapshotTime.ToDateTimeUtc().ToString()
     member this.players = 
         teamInfo.lastEntry.players
-        |> List.sortBy(fun p -> p.classSpec.isHealer, p.classSpec.isRanged, p.name, p.realm)
+        |> List.sortBy(fun p -> p.classSpec.isHealer, p.classSpec.isRanged, Specs.getClassId p.classSpec, p.name, p.realm)
+    member this.justPlayed = justPlayed
 
 type SetupViewModel (rank: int, specs: Class list, ratio: float) =
     member this.rank = rank
@@ -36,8 +37,10 @@ type ValuesController() =
 
     let maxLeaderboardTeams = 15
     let maxSpecs = 10
+    let maxPlayingNow = 20
 
     let playingNowPeriod = NodaTime.Duration.FromStandardDays(10L)
+    let justPlayedPeriod = NodaTime.Duration.FromMinutes(10L)
 
     let parseFilters (filters: string seq) =
         filters
@@ -64,7 +67,7 @@ type ValuesController() =
             
         let teamsToShow = 
             filteredTeams 
-            |> Seq.map(fun t -> TeamViewModel t)
+            |> Seq.map(fun (rank, team) -> TeamViewModel(rank, team, false))
             |> Seq.truncate maxLeaderboardTeams
 
         let setupsToShow = 
@@ -85,5 +88,8 @@ type ValuesController() =
         let filteredTeams =
             armoryInfo.teams
             |> Seq.filter(fun (rank, team) -> now - seen team < playingNowPeriod)
+            |> Seq.map(fun (rank, team) -> rank, team, now - seen team < justPlayedPeriod)
         
-        filteredTeams |> Seq.map(fun t -> TeamViewModel t)
+        filteredTeams 
+        |> Seq.map(fun t -> TeamViewModel t)
+        |> Seq.truncate maxPlayingNow

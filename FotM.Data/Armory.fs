@@ -95,10 +95,10 @@ type TeamEntry =
     member this.getClasses() = 
         this.players
         |> List.map(fun p -> p.classSpec)
-        |> List.sortBy(fun spec -> spec.isHealer, spec.isRanged)
+        |> List.sortBy(fun spec -> spec.isHealer, spec.isRanged, Specs.getClassId spec)
     member this.getPlayers() = 
         this.players
-        |> List.sortBy(fun p -> p.classSpec.isHealer, p.classSpec.isRanged, p.name, p.realm)
+        |> List.sortBy(fun p -> p.classSpec.isHealer, p.classSpec.isRanged, Specs.getClassId p.classSpec, p.name, p.realm)
 
 type TeamInfo = 
     {
