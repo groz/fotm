@@ -54,7 +54,6 @@ module Athena =
 
     let featureExtractor (pu: PlayerUpdate) : Vector =
         [|
-            pu.player.realm.realmId // TODO: scale down this feature and/or use Hamming distance
             pu.ratingDiff
             pu.ranking
             pu.rating
