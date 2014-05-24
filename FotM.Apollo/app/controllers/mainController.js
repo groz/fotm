@@ -12,4 +12,10 @@ app.controller('MainController', function ($scope, $location) {
         return (port) ? (result+":"+port) : result;
     }
 
+    $scope.title = "Flavor of the Month team ratings for World of Warcraft";
+
+    $scope.description = "Website that shows currently popular team combinations for World of Warcraft arena. It allows for filtering of setups to help finding best one for your team composition and brings the feel of old single-team arenas back.";
+
+    $scope.previewUrl = function() { return $scope.getRoot() + "/preview.png"; }
+
 });

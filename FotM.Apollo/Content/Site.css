@@ -77,3 +77,8 @@ input[type="checkbox"].input-validation-error {
 .inline-it {
     display: inline-block;
 }
+
+/* This gets Google to fall into place */
+.social {
+	font-size: 1px;
+}
