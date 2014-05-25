@@ -74,12 +74,37 @@ module Main =
         loop (repository.data())
     )
 
+    let backfillFrom(storage: Storage) =
+        let storageRoots = 
+            [
+                for region in Regions.all do
+                for bracket in Brackets.all do
+                yield region.code, bracket.url
+            ]
+
+        let dir r b = r + "/" + b
+
+        let updates = 
+            storageRoots
+            |> Seq.map(fun (r, b) -> r, b, storage.allBlobs (dir r b) |> Seq.tryFind(fun _ -> true))
+            |> Seq.filter(fun (r, b, u) -> 
+                match u with
+                | None -> false
+                | Some(x) -> true)
+            |> Seq.map(fun (r, b, u) -> UpdateArmory(r, b, match u with | Some(x) -> x))
+
+        for msg in updates do
+            armoryAgent.Post msg
+
     let OnStart(): unit = 
 
         let storageConnectionString = WebConfigurationManager.ConnectionStrings.["Microsoft.Storage.ConnectionString"]
         let serviceBusConnectionString = WebConfigurationManager.ConnectionStrings.["Microsoft.ServiceBus.ConnectionString"]
         
         let storage = Storage(GlobalSettings.teamLaddersContainer, storageConnectionString.ConnectionString)
+
+        backfillFrom storage
+
         let serviceBus = ServiceBus(serviceBusConnectionString.ConnectionString)
 
         let subscriptionName = Dns.GetHostName()

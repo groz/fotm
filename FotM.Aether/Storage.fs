@@ -26,6 +26,12 @@ type Storage (containerName, ?storageConnectionString, ?pathPrefix) =
 
     let container = blobClient.GetContainerReference containerName
 
+    let getAllBlobs (directory: string) =
+        let allItems = container.ListBlobs(prefix = directory, useFlatBlobListing = true)
+        let arr = allItems |> Seq.toArray
+        logInfo "%A" arr
+        arr
+
     do
         logInfo "initializing blob container at %A" container.Uri
         container.CreateIfNotExists(BlobContainerPublicAccessType.Blob) |> ignore
@@ -48,6 +54,17 @@ type Storage (containerName, ?storageConnectionString, ?pathPrefix) =
         logInfo "uploaded update to %A" blob.Uri
 
         blob.Uri
+
+    member this.allBlobs(?directory) =
+        let allBlobs = getAllBlobs(defaultArg directory "")
+        allBlobs
+        |> Array.map(fun b -> 
+            let result = b :?> CloudBlockBlob
+            result.Uri, result.Properties.LastModified)
+        |> Seq.filter(fun (b, t) -> t.HasValue)
+        |> Seq.map(fun (b, t) -> b, t.Value)
+        |> Seq.sortBy(fun (b, t) -> -t.Ticks)
+        |> Seq.map(fun (b, t) -> b)
 
 module StorageIO =
 

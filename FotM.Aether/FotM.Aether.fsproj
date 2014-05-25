@@ -62,8 +62,8 @@
     <None Include="app.config" />
     <Compile Include="ServiceBus.fs" />
     <Compile Include="Storage.fs" />
-    <None Include="Performance\Microsoft.ServiceBus.MessagingPerformanceCounters.man" />
     <Compile Include="UpdateMessage.fs" />
+    <None Include="Performance\Microsoft.ServiceBus.MessagingPerformanceCounters.man" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Data.Edm">
@@ -83,7 +83,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.ServiceBus">
-      <HintPath>..\packages\WindowsAzure.ServiceBus.2.3.2.0\lib\net40-full\Microsoft.ServiceBus.dll</HintPath>
+      <HintPath>..\packages\WindowsAzure.ServiceBus.2.3.2.2\lib\net40-full\Microsoft.ServiceBus.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Configuration">
@@ -91,7 +91,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.WindowsAzure.Storage">
-      <HintPath>..\packages\WindowsAzure.Storage.4.0.0\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
+      <HintPath>..\packages\WindowsAzure.Storage.4.0.1\lib\net40\Microsoft.WindowsAzure.Storage.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="mscorlib" />
