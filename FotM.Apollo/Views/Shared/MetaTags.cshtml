@@ -1,14 +1,15 @@
+@model FotM.Apollo.Controllers.MetaInformation
+
 <!-- GOOGLE PLUS TAGS -->
-<meta itemprop="name" content="{{title}}">
-<meta itemprop="description" content="{{description}}">
-<meta itemprop="image" content="{{previewUrl()}}">
+<meta itemprop="name" content="@Model.title">
+<meta itemprop="description" content="@Model.description">
+<meta itemprop="image" content="@Model.previewUrl">
 <!-- /GOOGLE PLUS TAGS -->
 
 <!-- FACEBOOK META TAGS -->
-<meta property="og:title" content="{{title}}" />
-<meta property="og:site_name" content="FotM" />
-<meta property="og:url" content="http://fotm.info" />
-<meta property="og:description" content="{{description}}" />
-<meta property="og:image" content="{{previewUrl()}}" />
-<meta property="fb:app_id" content="{{getRoot()}}" />
+<meta property="og:title" content="@Model.title" />
+<meta property="og:site_name" content="@Model.name" />
+<meta property="og:url" content="@Model.rootUrl" />
+<meta property="og:description" content="@Model.description" />
+<meta property="og:image" content="@Model.previewUrl" />
 <!-- /FACEBOOK META TAGS -->

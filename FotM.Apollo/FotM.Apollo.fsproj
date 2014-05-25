@@ -19,6 +19,7 @@
     <Name>FotM.Apollo</Name>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <NameOfLastUsedPublishProfile>fotm-info</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -65,7 +66,7 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v12.0\WebApplications\Microsoft.WebApplication.targets" Condition="true" />
   <ProjectExtensions>
     <MonoDevelop>
       <Properties VerifyCodeBehindFields="True" VerifyCodeBehindEvents="True" xmlns="">
@@ -114,34 +115,33 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Helpers.fs" />
     <Compile Include="Main.fs" />
-    <None Include="app\services\apiService.js" />
-    <None Include="app\services\media.js" />
-    <None Include="app\services\filterFactory.js" />
-    <None Include="app\services\sharedProvider.js" />
-    <None Include="app\controllers\aboutController.js" />
-    <None Include="app\controllers\leaderboardController.js" />
-    <None Include="app\controllers\nowController.js" />
-    <None Include="app\controllers\mainController.js" />
-    <None Include="app\templates\2v2.html" />
-    <None Include="app\templates\3v3.html" />
-    <None Include="app\templates\3v3_now.html" />
-    <None Include="app\templates\5v5.html" />
-    <None Include="app\templates\rbg.html" />
-    <None Include="app\templates\about.html" />
-    <None Include="app\app.js" />
-    <None Include="app\appConfig.js" />
-    <None Include="Content\Site.css" />
-    <None Include="Content\bootstrap-theme.min.css" />
-    <None Include="Content\bootstrap-theme.css.map" />
-    <None Include="Content\bootstrap-theme.css" />
-    <None Include="Content\bootstrap.min.css" />
-    <None Include="Content\bootstrap.css.map" />
-    <None Include="Content\bootstrap.css" />
-    <None Include="Content\Themes\Slate\bootstrap.css" />
-    <None Include="Content\Themes\Slate\bootstrap.min.css" />
+    <Content Include="app\services\apiService.js" />
+    <Content Include="app\services\media.js" />
+    <Content Include="app\services\filterFactory.js" />
+    <Content Include="app\services\sharedProvider.js" />
+    <Content Include="app\controllers\aboutController.js" />
+    <Content Include="app\controllers\leaderboardController.js" />
+    <Content Include="app\controllers\nowController.js" />
+    <Content Include="app\controllers\mainController.js" />
+    <Content Include="app\templates\2v2.html" />
+    <Content Include="app\templates\3v3.html" />
+    <Content Include="app\templates\3v3_now.html" />
+    <Content Include="app\templates\5v5.html" />
+    <Content Include="app\templates\rbg.html" />
+    <Content Include="app\templates\about.html" />
+    <Content Include="app\app.js" />
+    <Content Include="app\appConfig.js" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Content\bootstrap-theme.min.css" />
+    <Content Include="Content\bootstrap-theme.css.map" />
+    <Content Include="Content\bootstrap-theme.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\bootstrap.css.map" />
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\Themes\Slate\bootstrap.css" />
+    <Content Include="Content\Themes\Slate\bootstrap.min.css" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\my\main.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.min.js" />
     <Content Include="Scripts\respond.matchmedia.addListener.js" />
@@ -163,6 +163,7 @@
     <Content Include="Views\Shared\InitGPlus.cshtml" />
     <Content Include="Views\Shared\InitVK.cshtml" />
     <Content Include="Views\Shared\Paypal.cshtml" />
+    <Content Include="Views\Shared\Social.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Global.asax" />
     <Compile Include="Global.asax.fs">
@@ -181,6 +182,7 @@
     <None Include="fonts\glyphicons-halflings-regular.svg" />
     <None Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="Performance\Microsoft.ServiceBus.MessagingPerformanceCounters.man" />
+    <None Include="fotm-info.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
