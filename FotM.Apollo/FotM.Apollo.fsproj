@@ -161,6 +161,7 @@
     <Content Include="Views\Shared\GoogleAnalytics.cshtml" />
     <Content Include="Views\Shared\InitFB.cshtml" />
     <Content Include="Views\Shared\InitGPlus.cshtml" />
+    <Content Include="Views\Shared\InitTwitter.cshtml" />
     <Content Include="Views\Shared\InitVK.cshtml" />
     <Content Include="Views\Shared\Paypal.cshtml" />
     <Content Include="Views\Shared\Social.cshtml" />

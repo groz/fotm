@@ -79,6 +79,22 @@ input[type="checkbox"].input-validation-error {
 }
 
 /* This gets Google to fall into place */
-.social {
+.social li {
 	font-size: 1px;
+}
+
+li.tw_button {
+    margin-left: 30px;
+}
+
+li.vk_button {
+    margin-left: 10px;   
+}
+
+li.gplus_button {
+    margin-left: 30px;   
+}
+
+li.fb_button {
+    margin-left: 10px;
 }

@@ -1,22 +1,33 @@
 ﻿<footer class="col-lg-6">
 
     <ul class="nav navbar-nav social">
-        <li>
-            <div class="fb-share-button facebook"
-                 data-href="{{getCurrentLocation()}}"
-                 data-type="button">
-            </div>
+        <li class="tw_button">
+            <a href="https://twitter.com/share" class="twitter-share-button"
+               data-lang="en"
+               data-count="horizontal">
+                Tweet
+            </a>
         </li>
-        <li>
+
+        <li class="vk_button">
             <div id="vk_like"></div>
         </li>
-        <li>
+
+        <li class="fb_button">
+            <div class="fb-like"
+                 data-layout="button_count"
+                 data-action="like"
+                 data-show-faces="false"
+                 data-share="false">
+            </div>
+        </li>
+
+        <li class="gplus_button">
             <div class="g-plusone google"
-                 data-annotation="none"
-                 data-href="{{getCurrentLocation()}}"
                  data-size="medium">
             </div>
         </li>
+
         <li>
             <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
                 <input type="hidden" name="cmd" value="_s-xclick">
