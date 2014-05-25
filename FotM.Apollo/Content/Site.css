@@ -81,20 +81,18 @@ input[type="checkbox"].input-validation-error {
 /* This gets Google to fall into place */
 .social li {
 	font-size: 1px;
+    margin: 10px;
 }
 
 li.tw_button {
-    margin-left: 30px;
 }
 
 li.vk_button {
-    margin-left: 10px;   
 }
 
 li.gplus_button {
-    margin-left: 30px;   
+    margin-left: 30px;
 }
 
 li.fb_button {
-    margin-left: 10px;
 }

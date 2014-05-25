@@ -95,11 +95,23 @@ module Athena =
     let isCurrent snapshot =
         (SystemClock.Instance.Now - snapshot.timeTaken) < duplicateCheckPeriod
 
+    let seenOften (teamEntries: TeamEntry seq) =
+        let firstEntry = teamEntries |> Seq.minBy(fun t -> t.snapshotTime)
+        let lastEntry = teamEntries |> Seq.maxBy(fun t -> t.snapshotTime)
+        let totalTimesSeen = teamEntries |> Seq.length
+        let firstTime = firstEntry.snapshotTime.ToDateTimeUtc()
+        let lastTime = lastEntry.snapshotTime.ToDateTimeUtc()
+        let totalDays = (lastTime.Date - firstTime.Date).TotalDays |> int
+
+        if (totalDays > 0) then
+            totalTimesSeen ./. totalDays > 1.0
+        else
+            totalTimesSeen > 1
+
     let calculateLadder (teamHistory: TeamEntry list) =
         teamHistory
         |> Seq.groupBy (fun teamEntry -> teamEntry.players)
-        |> Seq.map (fun (players, teamEntries) -> players, teamEntries |> Seq.sortBy(fun te -> te.snapshotTime) )
-        |> Seq.sortBy (fun (players, teamEntries) -> -(teamEntries |> Seq.head).rating)
+        |> Seq.filter (fun (players, teamEntries) -> teamEntries |> seenOften) // confidence check
         |> Seq.map (fun (players, teamEntries) -> teamEntries |> Teams.createTeamInfo)
         |> List.ofSeq
 

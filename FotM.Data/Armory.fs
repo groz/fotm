@@ -114,7 +114,7 @@ module Teams =
         TeamEntry.players = 
             playerUpdates 
             |> List.map (fun pu -> pu.player)
-            |> List.sortBy (fun p -> (p.classSpec, p))
+            |> List.sortBy (fun p -> (p.classSpec, p.realm, p))
         ratingChange = 
             playerUpdates 
             |> List.map (fun pu -> float pu.ratingDiff)
@@ -129,6 +129,8 @@ module Teams =
     }
 
     let createTeamInfo (teamEntries: TeamEntry seq) = 
+        let teamEntries = teamEntries |> Seq.sortBy(fun te -> -te.snapshotTime.Ticks)
+
         let won, lost = teamEntries |> Array.ofSeq |> Array.partition (fun e -> e.ratingChange > 0)
 
         {
