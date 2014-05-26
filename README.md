@@ -20,7 +20,11 @@ Infrastructure:
 
 Machine learning:
 - Model realm as binary (feature1: is user from Spirestone or not, feature 2: is user from Al'Akir or not?)
-- Add super tests for 2v2/5v5/rbg
+- Add super tests for F#
+  - 2v2
+  - 3v3
+  - 5v5
+  - rbg
 
 Backlog:
 - Discussion forum per team setup?
