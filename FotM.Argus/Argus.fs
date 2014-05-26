@@ -17,12 +17,18 @@ module Argus =
     let armoryUpdates region bracket = 
         Seq.unfold (fun oldHistory ->
             let history = oldHistory |> List.filter shouldRetain
-            let currentSnapshot = ArmoryLoader.load region bracket
 
-            if history |> List.exists (fun entry -> entry.ladder = currentSnapshot.ladder) then
+            try
+                let currentSnapshot = ArmoryLoader.load region bracket
+
+                if history |> List.exists (fun entry -> entry.ladder = currentSnapshot.ladder) then
+                    Some(None, history)
+                else
+                    Some(Some(currentSnapshot), currentSnapshot :: history)
+            with
+            | ex -> 
+                logError "%s, %s armory update check generated exception: %A" region.code bracket.url ex
                 Some(None, history)
-            else
-                Some(Some(currentSnapshot), currentSnapshot :: history)
         ) [] // initial state is empty history
 
     let processArmory (region: RegionalSettings) (bracket: Bracket) (publisher: TopicClient) = async {
