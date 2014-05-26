@@ -6,7 +6,7 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Align social buttons
+- Switch #-urls to html5 style, route all ASP MVC routes to single page
 - Show win ratio for teams (possibly setups)
 - Add Google Analytics virtual pages
 - Brackets:
@@ -15,14 +15,16 @@ Frontend:
   - rbg, remove names, classes, redesign filters?
 
 Infrastructure:
-- Show teams with > 1 wins and > 1 games per day in Leaderboard and > 1 games in Playing Now.
-- Backfill Athena and Apollo on startup from the latest update in storage
-- Deploy Apollo
 - Add redirects from old domains (i.e. fotm.eu -> fotm.info/#/eu/3v3)
+- Add metrics infrastructure
 
 Machine learning:
 - Model realm as binary (feature1: is user from Spirestone or not, feature 2: is user from Al'Akir or not?)
-- Add super tests for 2v2/5v5/rbg
+- Add super tests for F#
+  - 2v2
+  - 3v3
+  - 5v5
+  - rbg
 
 Backlog:
 - Discussion forum per team setup?
