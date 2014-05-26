@@ -24,6 +24,8 @@ type TeamViewModel (rank: int, teamInfo: TeamInfo, justPlayed: bool)=
         teamInfo.lastEntry.players
         |> List.sortBy(fun p -> p.classSpec.isHealer, p.classSpec.isRanged, Specs.getClassId p.classSpec, p.name, p.realm)
     member this.justPlayed = justPlayed
+    member this.wins = teamInfo.totalWins
+    member this.losses = teamInfo.totalLosses
 
 type SetupViewModel (rank: int, specs: Class list, ratio: float) =
     member this.rank = rank

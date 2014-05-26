@@ -109,13 +109,15 @@
     <div class="col-lg-9 col-md-9 col-sm-12">
         <table class="table table-striped table-condensed table-responsive">
             <tbody>
+                <!-- Teams -->
                 <tr ng-repeat="team in teams">
                     <td class="centered">{{team.rank}}</td>
 
                     <td class="hidden-xs">
                         <img ng-src="{{media.factionImage(team.factionId)}}" alt="{{media.factionText(team.factionId)}}" />
                     </td>
-
+                    
+                    <!-- Players -->
                     <td>
                         <div class="row">
                             <div class="col-lg-4 col-md-4 col-sm-4" ng-repeat="player in team.players">
@@ -138,10 +140,15 @@
                             </div>
                         </div>
                     </td>
-
+                    <!-- /Players -->
+                    
+                    <td class="centered">{{team.wins}}</td>
+                    <td class="centered">-</td>
+                    <td class="centered">{{team.losses}}</td>
                     <td class="centered">{{team.rating}}</td>
 
                 </tr>
+                <!-- /Teams -->
             </tbody>
         </table>
     </div>
