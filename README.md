@@ -30,5 +30,3 @@ Backlog:
 - Discussion forum per team setup?
 - Add AWS SNS/SQS failover
 - Create admin push mechanism
-- Backfill on startup from storage
-  - Athena  
