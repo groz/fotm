@@ -15,7 +15,10 @@ type ArmoryAgentMessage =
 | StopAgent
 
 type ArmoryInfo(ladder : TeamInfo list) =
-    member this.teams = ladder |> Seq.mapi (fun i t -> i+1, t)
+    member this.teams = 
+        ladder 
+        |> Seq.sortBy(fun t -> -t.lastEntry.rating) 
+        |> Seq.mapi (fun i t -> i+1, t)
 
     member this.totalGames = this.teams |> Seq.sumBy(fun (rank, team) -> team.totalGames)
 

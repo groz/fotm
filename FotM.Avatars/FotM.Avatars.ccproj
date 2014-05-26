@@ -59,6 +59,7 @@
   <ItemGroup>
     <Folder Include="FotM.ArgusContent\" />
     <Folder Include="FotM.AthenaContent\" />
+    <Folder Include="Profiles" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="FotM.ArgusContent\diagnostics.wadcfg">
@@ -67,6 +68,9 @@
     <Content Include="FotM.AthenaContent\diagnostics.wadcfg">
       <SubType>Content</SubType>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PublishProfile Include="Profiles\fotm-info-avatarsProduction.azurePubxml" />
   </ItemGroup>
   <!-- Import the target files for this project template -->
   <PropertyGroup>
