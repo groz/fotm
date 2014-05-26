@@ -145,6 +145,9 @@ module Athena =
                 logInfo "[%s, %s] duplicate update" currentSnapshot.region currentSnapshot.bracket.url
                 DuplicateUpdate
 
+    let isValid (t: TeamEntry) =
+        (not (isNull t.players)) && t.players.Length <> 0
+
     let processUpdate snapshot snapshotHistory teamHistory (storage: Storage) (updatePublisher: TopicClient) (historyStorage: Storage) =
         let currentSnapshotHistory = snapshotHistory |> List.filter isCurrent
 
@@ -164,7 +167,7 @@ module Athena =
                     for team in teams do 
                         logInfo "<<< [%s, %s] Team found: %A >>>" snapshot.region snapshot.bracket.url team
 
-                    let newTeamHistory = teams @ teamHistory
+                    let newTeamHistory = (teams @ teamHistory) |> List.filter isValid
 
                     if teams.Length <> 0 then
                         logInfo "[%s, %s] Posting ladder update..." snapshot.region snapshot.bracket.url
