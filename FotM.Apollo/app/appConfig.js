@@ -1,4 +1,4 @@
-app.config(function ($routeProvider, sharedProvider) {
+app.config(function ($routeProvider, sharedProvider, $locationProvider) {
     // this is an example of how you can write unreadable javascript with any framework :(
 
     var sharedProperties = {
@@ -82,6 +82,10 @@ app.config(function ($routeProvider, sharedProvider) {
             templateUrl: "app/templates/about.html"
         })
         .otherwise({ redirectTo: '/us/3v3' });
+
+    // use HTML5 style links without #
+    // it will fallback automatically to # routes on older browsers
+    $locationProvider.html5Mode(true);
 });
 
 app.run(function ($rootScope, shared) {
