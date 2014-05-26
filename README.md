@@ -6,10 +6,7 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Brackets:
-  - 2v2, take most stuff from 3v3 and check on lower sizes
-  - 5v5, remove names?
-  - rbg, remove names, classes, redesign filters?
+- Fix 5v5 layout for asian regions (minor)
 
 Infrastructure:
 - Add redirects from old domains (i.e. fotm.eu -> fotm.info/#/eu/3v3)
