@@ -28,3 +28,4 @@ Backlog:
 - Add AWS SNS/SQS failover
 - Create admin push mechanism
 - Change Athena backfill mechanism to work with 1 item (i.e. store state on each step and load it on init)
+- Remove V1(C#) code.
