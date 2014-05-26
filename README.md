@@ -6,6 +6,7 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
+- Switch #-urls to html5 style, route all ASP MVC routes to single page
 - Show win ratio for teams (possibly setups)
 - Add Google Analytics virtual pages
 - Brackets:
