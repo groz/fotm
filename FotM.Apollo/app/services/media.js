@@ -110,7 +110,6 @@ app.factory('media', function() {
         },
 
         specText: function (classSpec) {
-            console.log(classSpec, classSpec.Fields[0]);
             if (classSpec.Fields[0] == null) return "None";
             var specId = getSpecId(classSpec);
             return specs[specId].text;
