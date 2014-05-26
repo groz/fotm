@@ -15,9 +15,8 @@ Frontend:
   - rbg, remove names, classes, redesign filters?
 
 Infrastructure:
-- Backfill on startup from storage
-  - Athena  
 - Add redirects from old domains (i.e. fotm.eu -> fotm.info/#/eu/3v3)
+- Add metrics infrastructure
 
 Machine learning:
 - Model realm as binary (feature1: is user from Spirestone or not, feature 2: is user from Al'Akir or not?)
@@ -31,3 +30,5 @@ Backlog:
 - Discussion forum per team setup?
 - Add AWS SNS/SQS failover
 - Create admin push mechanism
+- Backfill on startup from storage
+  - Athena  
