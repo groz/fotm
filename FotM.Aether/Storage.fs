@@ -10,6 +10,7 @@ open Microsoft.WindowsAzure.Storage
 open Microsoft.WindowsAzure.Storage.Blob
 open Newtonsoft.Json
 open FotM.Data
+open FotM.Hephaestus.Async
 open FotM.Hephaestus.TraceLogging
 open FotM.Hephaestus.CollectionExtensions
 open FotM.Utilities
@@ -73,19 +74,18 @@ type Storage (containerName, ?storageConnectionString, ?pathPrefix) =
 
 module StorageIO =
 
-    let download (storageLocation: Uri) =
-        logInfo "Fetching %A" storageLocation
-        use webClient = new WebClient()
-        webClient.Encoding <- Encoding.UTF8
-        let compressed = webClient.DownloadString storageLocation
-        let json = CompressionUtils.UnzipFromBase64 compressed
-        json
+    let retry = RetryBuilder(3)
 
     let downloadAsync (storageLocation: Uri) = async {
-        logInfo "Fetching %A" storageLocation
-        use webClient = new WebClient()
-        webClient.Encoding <- Encoding.UTF8
-        let! compressed = webClient.AsyncDownloadString storageLocation
-        let json = CompressionUtils.UnzipFromBase64 compressed
-        return json
+            logInfo "Fetching %A" storageLocation
+            use webClient = new WebClient()
+            webClient.Encoding <- Encoding.UTF8
+            let! compressed = webClient.AsyncDownloadString storageLocation
+            let json = CompressionUtils.UnzipFromBase64 compressed
+            return json
+    }
+
+    let download (storageLocation: Uri) = retry {
+        let result = downloadAsync storageLocation |> Async.RunSynchronously
+        return result
     }

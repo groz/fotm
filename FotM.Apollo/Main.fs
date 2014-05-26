@@ -46,7 +46,7 @@ type Repository() =
 module Main =
 
     let fetchSnapshot storageLocation = async {
-        let! snapshotJson = StorageIO.downloadAsync storageLocation
+        let snapshotJson = StorageIO.download storageLocation
         return JsonConvert.DeserializeObject<TeamInfo list> snapshotJson
     }
 
