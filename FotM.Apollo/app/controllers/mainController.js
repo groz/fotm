@@ -12,10 +12,20 @@ app.controller('MainController', function ($scope, $location, $window, $rootScop
         return (port) ? (result+":"+port) : result;
     }
 
-    $rootScope.$on('$routeChangeSuccess', function () {
+    var history = ["outside location"];
+
+    $rootScope.$on('$viewContentLoaded', function () {
         var virtualPage = $location.path();
-        console.log("logging pageview to analytics:", virtualPage);
-        $window.ga('send', 'pageview', virtualPage);
+        var previousPage = history[history.length-1];
+
+        console.log("moved from", previousPage, "to", virtualPage);
+
+        history.push(virtualPage);
+        
+        if (virtualPage != previousPage) {
+            console.log("logging pageview to analytics:", virtualPage);
+            $window.ga('send', 'pageview', virtualPage);
+        }
     });
 
 });
