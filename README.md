@@ -7,7 +7,6 @@ TODO
 
 Frontend:
 - Switch #-urls to html5 style, route all ASP MVC routes to single page
-- Show win ratio for teams (possibly setups)
 - Brackets:
   - 2v2, take most stuff from 3v3 and check on lower sizes
   - 5v5, remove names?
