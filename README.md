@@ -6,11 +6,7 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Switch #-urls to html5 style, route all ASP MVC routes to single page
-- Brackets:
-  - 2v2, take most stuff from 3v3 and check on lower sizes
-  - 5v5, remove names?
-  - rbg, remove names, classes, redesign filters?
+- Fix 5v5 layout for asian regions (minor)
 
 Infrastructure:
 - Add redirects from old domains (i.e. fotm.eu -> fotm.info/#/eu/3v3)
@@ -29,3 +25,4 @@ Backlog:
 - Add AWS SNS/SQS failover
 - Create admin push mechanism
 - Change Athena backfill mechanism to work with 1 item (i.e. store state on each step and load it on init)
+- Remove V1(C#) code.
