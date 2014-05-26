@@ -6,7 +6,6 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Switch #-urls to html5 style, route all ASP MVC routes to single page
 - Brackets:
   - 2v2, take most stuff from 3v3 and check on lower sizes
   - 5v5, remove names?
