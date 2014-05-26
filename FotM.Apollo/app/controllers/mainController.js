@@ -1,4 +1,4 @@
-app.controller('MainController', function ($scope, $location) {
+app.controller('MainController', function ($scope, $location, $window, $rootScope) {
 
     console.log("MainController activated");
 
@@ -11,5 +11,11 @@ app.controller('MainController', function ($scope, $location) {
 
         return (port) ? (result+":"+port) : result;
     }
+
+    $rootScope.$on('$routeChangeSuccess', function () {
+        var virtualPage = $location.path();
+        console.log("logging pageview to analytics:", virtualPage);
+        $window.ga('send', 'pageview', virtualPage);
+    });
 
 });
