@@ -11,6 +11,7 @@ open Microsoft.WindowsAzure.Storage.Blob
 open Newtonsoft.Json
 open FotM.Data
 open FotM.Hephaestus.TraceLogging
+open FotM.Hephaestus.CollectionExtensions
 open FotM.Utilities
 
 module RepoSync =
@@ -25,12 +26,6 @@ type Storage (containerName, ?storageConnectionString, ?pathPrefix) =
     let blobClient = storageAccount.CreateCloudBlobClient()
 
     let container = blobClient.GetContainerReference containerName
-
-    let getAllBlobs (directory: string) =
-        let allItems = container.ListBlobs(prefix = directory, useFlatBlobListing = true)
-        let arr = allItems |> Seq.toArray
-        logInfo "%A" arr
-        arr
 
     do
         logInfo "initializing blob container at %A" container.Uri
@@ -56,15 +51,25 @@ type Storage (containerName, ?storageConnectionString, ?pathPrefix) =
         blob.Uri
 
     member this.allBlobs(?directory) =
-        let allBlobs = getAllBlobs(defaultArg directory "")
+        let directory = defaultArg directory ""
+
+        let allBlobs = 
+            container.ListBlobs(prefix = directory, useFlatBlobListing = true)
+            |> Seq.toArray
+
         allBlobs
-        |> Array.map(fun b -> 
-            let result = b :?> CloudBlockBlob
-            result.Uri, result.Properties.LastModified)
-        |> Seq.filter(fun (b, t) -> t.HasValue)
-        |> Seq.map(fun (b, t) -> b, t.Value)
-        |> Seq.sortBy(fun (b, t) -> -t.Ticks)
-        |> Seq.map(fun (b, t) -> b)
+        |> Array.choose(fun b -> 
+            let blob = b :?> CloudBlockBlob
+            match blob.Properties.LastModified |> toOption with
+            | Some time -> Some(blob, time)
+            | None -> None)
+        |> Array.sortBy(fun (blob, t) -> t)
+        |> Array.map(fun (blob, t) -> blob)
+
+    member this.allFiles(?directory) =
+        let directory = defaultArg directory ""
+
+        this.allBlobs(directory) |> Array.map (fun blob -> blob.Uri)
 
 module StorageIO =
 

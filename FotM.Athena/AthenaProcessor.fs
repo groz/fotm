@@ -32,7 +32,8 @@ module AthenaProcessor =
             match updateMsg with
             | UpdateMessage(storageLocation) ->
                 try
-                    let! snapshot = fetchSnapshot storageLocation
+                    logInfo "Processing update %A" storageLocation
+                    let! snapshot = fetchSnapshot storageLocation                    
                     return! loop (Athena.processUpdate snapshot snapshotHistory teamHistory storage topic)
                 with
                 | ex -> 
@@ -62,6 +63,43 @@ module AthenaProcessor =
                 yield (region.code, bracket), updateProcessor (getProcessorId region bracket) (getStorage region bracket) updatePublisher
             ]
             |> Map.ofList
+
+        // clear outdated formats
+        for p in processors do
+            let dir (r, b) = r + "/" + b.url
+            let storage = Storage GlobalSettings.playerLaddersContainer
+            let allBlobs = storage.allBlobs (dir p.Key)
+
+            logInfo "Total updates for %A to check: %i" p.Key allBlobs.Length
+
+            allBlobs 
+            |> Seq.takeWhile(fun blob -> 
+                logInfo "[%A] trying to deserialize %A" p.Key blob.Uri
+                try
+                    let snapshot = fetchSnapshot blob.Uri |> Async.RunSynchronously
+                    // assume that everything after the first successful one is fine
+                    logInfo "*** %A cleaned successfully ***" p.Key
+                    false 
+                with
+                | ex ->
+                    logError "Deleting blob because it failed to deserialize with message: %A" ex
+                    blob.Delete()
+                    true
+            ) 
+            |> Seq.toArray
+            |> ignore
+
+        // backfill
+        for p in processors do
+            let dir (r, b) = r + "/" + b.url
+            let storage = Storage GlobalSettings.playerLaddersContainer
+            let allBlobs = storage.allFiles (dir p.Key)
+
+            logInfo "Total updates for %A to backfill: %i" p.Key allBlobs.Length
+
+            for blobUri in allBlobs do
+                logInfo "Posting backfill message for %A: %A" p.Key blobUri
+                p.Value.Post (UpdateMessage blobUri)
 
         // subscribing to messages
         updateListener.OnMessage(fun msg ->

@@ -86,12 +86,12 @@ module Main =
 
         let updates = 
             storageRoots
-            |> Seq.map(fun (r, b) -> r, b, storage.allBlobs (dir r b) |> Seq.tryFind(fun _ -> true))
-            |> Seq.filter(fun (r, b, u) -> 
-                match u with
-                | None -> false
-                | Some(x) -> true)
-            |> Seq.map(fun (r, b, u) -> UpdateArmory(r, b, match u with | Some(x) -> x))
+            |> Seq.choose(fun (region, bracket) -> 
+                let allBlobs = storage.allFiles (dir region bracket)
+                let last = allBlobs |> Array.rev |> Seq.tryFind(fun _ -> true)
+                match last with
+                | Some blob -> Some( UpdateArmory(region, bracket, blob) )
+                | None -> None)
 
         for msg in updates do
             armoryAgent.Post msg

@@ -18,3 +18,7 @@ module CollectionExtensions =
             match Map.tryFind k res with
             | Some vs -> Map.add k (v :: vs) res
             | None -> Map.add k [v] res) Map.empty xs
+
+    let toOption(x: System.Nullable<_>) =
+        if x.HasValue then Some x.Value
+        else None
