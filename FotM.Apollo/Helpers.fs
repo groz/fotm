@@ -14,11 +14,15 @@ type JsonNetFormatter() =
         base.SupportedMediaTypes.Add(new MediaTypeHeaderValue("text/html"))
         base.SupportedMediaTypes.Add(new MediaTypeHeaderValue("application/json"))
 
+    let writeLock = obj()
+
     let write value (stream: System.IO.Stream) =
-        let json = JsonConvert.SerializeObject(value, Formatting.Indented)
-        use writer = new System.IO.StreamWriter(stream)
-        writer.Write json
-        writer.Flush()
+        lock writeLock (fun () ->
+            let json = JsonConvert.SerializeObject(value, Formatting.Indented)
+            use writer = new System.IO.StreamWriter(stream)
+            writer.Write json
+            writer.Flush()
+        )
 
     let read t (stream: System.IO.Stream) =
         use reader = new System.IO.StreamReader(stream)

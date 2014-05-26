@@ -3,6 +3,7 @@
 module GlobalSettings =
     let playerLaddersContainer = "snapshots"
     let teamLaddersContainer = "ladders"
+    let athenaHistoryContainer = "history"
     let playerUpdatesTopic = "player-updates"
     let teamUpdatesTopic = "team-updates"
     let googleAnalyticsPropertyCode = ""

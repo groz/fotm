@@ -98,3 +98,8 @@ module StorageIO =
         let result = downloadAsync storageLocation |> Async.RunSynchronously
         return result
     }
+
+    let fetch<'a> storageLocation = async {
+        let snapshotJson = download storageLocation
+        return JsonConvert.DeserializeObject<'a> snapshotJson
+    }

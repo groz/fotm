@@ -22,3 +22,7 @@ module CollectionExtensions =
     let toOption(x: System.Nullable<_>) =
         if x.HasValue then Some x.Value
         else None
+
+    let inline isNull< ^a when ^a : not struct> (x:^a) =
+        obj.ReferenceEquals (x, Unchecked.defaultof<_>)
+

@@ -145,10 +145,11 @@ module Athena =
                 logInfo "[%s, %s] duplicate update" currentSnapshot.region currentSnapshot.bracket.url
                 DuplicateUpdate
 
-    let processUpdate snapshot snapshotHistory teamHistory (storage: Storage) (updatePublisher: TopicClient) =
+    let processUpdate snapshot snapshotHistory teamHistory (storage: Storage) (updatePublisher: TopicClient) (historyStorage: Storage) =
         let currentSnapshotHistory = snapshotHistory |> List.filter isCurrent
 
         if currentSnapshotHistory |> List.exists (fun entry -> entry.ladder = snapshot.ladder) then
+            logInfo "[%s, %s] Snapshot found in history. Skipping..." snapshot.region snapshot.bracket.url
             currentSnapshotHistory, teamHistory
         else
             match currentSnapshotHistory with
@@ -177,6 +178,9 @@ module Athena =
                             region = snapshot.region
                             bracket = snapshot.bracket
                         }
+
+                        let savedUri = historyStorage.upload(newTeamHistory)
+                        logInfo "Current history uploaded to %A" savedUri
 
                         logInfo "[%s, %s] publishing update message %A" snapshot.region snapshot.bracket.url msg
                         updatePublisher.Send msg

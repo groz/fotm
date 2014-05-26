@@ -4,6 +4,7 @@ open System
 open FotM.Hephaestus.Math
 open FotM.Data
 open FotM.Aether
+open FotM.Aether.StorageIO
 open FotM.Hephaestus.TraceLogging
 open Microsoft.ServiceBus.Messaging
 open System.Threading
@@ -18,12 +19,7 @@ type UpdateProcessorMessage =
 
 module AthenaProcessor =
 
-    let fetchSnapshot storageLocation = async {
-        let snapshotJson = StorageIO.download storageLocation
-        return JsonConvert.DeserializeObject<PlayerLadderSnapshot> snapshotJson
-    }
-
-    let updateProcessor processorId storage topic = Agent<UpdateProcessorMessage>.Start(fun agent ->
+    let updateProcessor processorId storage topic (historyStorage: Storage) initialHistory = Agent<UpdateProcessorMessage>.Start(fun agent ->
         logInfo "UpdateProcessor for %s started" processorId
 
         let rec loop (snapshotHistory, teamHistory) = async {
@@ -33,8 +29,9 @@ module AthenaProcessor =
             | UpdateMessage(storageLocation) ->
                 try
                     logInfo "Processing update %A" storageLocation
-                    let! snapshot = fetchSnapshot storageLocation                    
-                    return! loop (Athena.processUpdate snapshot snapshotHistory teamHistory storage topic)
+                    let! snapshot = fetch storageLocation
+                    let newSnapshotHistory, newTeamHistory = Athena.processUpdate snapshot snapshotHistory teamHistory storage topic historyStorage
+                    return! loop (newSnapshotHistory, newTeamHistory)
                 with
                 | ex -> 
                     logError "Exception while handling message for %s: %A" processorId ex
@@ -43,63 +40,57 @@ module AthenaProcessor =
                 logInfo "UpdateProcessor for %s stopped." processorId
         }
 
-        loop ([], [])
+        loop ([], initialHistory)
     )
 
     let getStorage region bracket =
         let prefix = sprintf "%s/%s" region.code bracket.url
         Storage(GlobalSettings.teamLaddersContainer, pathPrefix = prefix)
 
+    let getHistoryStorage region bracket =
+        let prefix = sprintf "%s/%s" region.code bracket.url
+        Storage(GlobalSettings.athenaHistoryContainer, pathPrefix = prefix)
+
     let watch (updateListener: SubscriptionClient) (updatePublisher) (waitHandle: WaitHandle) =
         logInfo "FotM.Athena entry point called, starting listening to armory updates..."
 
         let getProcessorId region bracket = sprintf "[%s, %s]" region.code bracket.url
 
+        let historyStorage = Storage GlobalSettings.athenaHistoryContainer
+
         // creating processor agents
-        let processors = 
+        let allRoots = 
             [
                 for region in Regions.all do
                 for bracket in Brackets.all do
-                yield (region.code, bracket), updateProcessor (getProcessorId region bracket) (getStorage region bracket) updatePublisher
+                yield (region, bracket)
             ]
+
+        // init with backfill
+        let processors = 
+            allRoots
+            |> List.map(fun (region, bracket) -> 
+                let processorId = getProcessorId region bracket
+                let storage = getStorage region bracket
+                let historyStorage = getHistoryStorage region bracket
+
+                let allBlobs = storage.allFiles (region.code + "/" + bracket.url)
+
+                let last = allBlobs |> Array.rev |> Seq.tryFind(fun _ -> true)
+
+                let backfillData = 
+                    match last with
+                    | Some blobUri -> 
+                        logInfo "History data for %s found at %A, loading..." processorId blobUri
+                        let data = fetch blobUri |> Async.RunSynchronously
+                        data
+                    | None -> 
+                        logInfo "History data for %s not found." processorId
+                        []
+
+                (region.code, bracket), updateProcessor processorId storage updatePublisher historyStorage backfillData
+            )            
             |> Map.ofList
-
-        // clear outdated formats
-        for p in processors do
-            let dir (r, b) = r + "/" + b.url
-            let storage = Storage GlobalSettings.playerLaddersContainer
-            let allBlobs = storage.allBlobs (dir p.Key)
-
-            logInfo "Total updates for %A to check: %i" p.Key allBlobs.Length
-
-            allBlobs 
-            |> Seq.takeWhile(fun blob -> 
-                logInfo "[%A] trying to deserialize %A" p.Key blob.Uri
-                try
-                    let snapshot = fetchSnapshot blob.Uri |> Async.RunSynchronously
-                    // assume that everything after the first successful one is fine
-                    logInfo "*** %A cleaned successfully ***" p.Key
-                    false 
-                with
-                | ex ->
-                    logError "Deleting blob because it failed to deserialize with message: %A" ex
-                    blob.Delete()
-                    true
-            ) 
-            |> Seq.toArray
-            |> ignore
-
-        // backfill
-        for p in processors do
-            let dir (r, b) = r + "/" + b.url
-            let storage = Storage GlobalSettings.playerLaddersContainer
-            let allBlobs = storage.allFiles (dir p.Key)
-
-            logInfo "Total updates for %A to backfill: %i" p.Key allBlobs.Length
-
-            for blobUri in allBlobs do
-                logInfo "Posting backfill message for %A: %A" p.Key blobUri
-                p.Value.Post (UpdateMessage blobUri)
 
         // subscribing to messages
         updateListener.OnMessage(fun msg ->

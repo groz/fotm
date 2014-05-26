@@ -60,7 +60,9 @@ type Global() =
 
         // Additional Web API settings
         config.Formatters.Insert(0, JsonNetFormatter())
-        config.Formatters.XmlFormatter.UseXmlSerializer <- true        
+        config.Formatters.XmlFormatter.UseXmlSerializer <- true
+
+        config.EnableSystemDiagnosticsTracing() |> ignore
 
     static member RegisterFilters(filters: GlobalFilterCollection) =
         filters.Add(new HandleErrorAttribute())

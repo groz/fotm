@@ -27,7 +27,7 @@ type WorkerRole() =
         Async.RunSynchronously(Argus.watch publisher, cancellationToken = cts.Token)
 
     override wr.OnStart() = 
-        ServicePointManager.DefaultConnectionLimit <- 12
+        ServicePointManager.DefaultConnectionLimit <- 30
         base.OnStart()
 
     override wr.OnStop() =

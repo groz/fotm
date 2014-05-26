@@ -37,7 +37,7 @@ type WorkerRole() =
         AthenaProcessor.watch updateListener updatePublisher waitHandle
 
     override wr.OnStart() = 
-        ServicePointManager.DefaultConnectionLimit <- 12
+        ServicePointManager.DefaultConnectionLimit <- 30
         base.OnStart()
 
     override wr.OnStop() =

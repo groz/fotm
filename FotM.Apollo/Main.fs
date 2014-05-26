@@ -8,17 +8,22 @@ open FotM.Aether
 open FotM.Data
 open FotM.Hephaestus.Async
 open FotM.Hephaestus.TraceLogging
+open FotM.Hephaestus.CollectionExtensions
 open Newtonsoft.Json
+open FotM.Aether.StorageIO
 
 type ArmoryAgentMessage =
 | UpdateArmory of region: string * bracket : string * storageLocation: Uri
 | StopAgent
 
 type ArmoryInfo(ladder : TeamInfo list) =
+
     member this.teams = 
-        ladder 
+        ladder
+        |> Seq.filter(fun t -> not (isNull t.lastEntry.players))
         |> Seq.sortBy(fun t -> -t.lastEntry.rating) 
         |> Seq.mapi (fun i t -> i+1, t)
+        |> Seq.toArray
 
     member this.totalGames = this.teams |> Seq.sumBy(fun (rank, team) -> team.totalGames)
 
@@ -45,15 +50,16 @@ type Repository() =
 
 module Main =
 
-    let fetchSnapshot storageLocation = async {
-        let snapshotJson = StorageIO.download storageLocation
-        return JsonConvert.DeserializeObject<TeamInfo list> snapshotJson
-    }
+    let createArmoryAgent (initialData: Map<string*string, ArmoryInfo>) (repository: Repository) = Agent<ArmoryAgentMessage>.Start(fun agent ->
 
-    let repository = Repository()
-
-    let armoryAgent = Agent<ArmoryAgentMessage>.Start(fun agent ->
-        logInfo "ArmoryAgent started..."
+        let show =
+            let divisions = 
+                initialData
+                |> Seq.map(fun kv -> sprintf "%A: %A" kv.Key kv.Value.teams.Length)
+            System.String.Join(";", divisions)
+                
+        logInfo "ArmoryAgent started with initialData: %s total teams..." show
+        repository.update initialData
 
         let rec loop (armories: Map<string*string, ArmoryInfo>) = async {
             let! msg = agent.Receive()
@@ -61,7 +67,7 @@ module Main =
             match msg with
             | UpdateArmory(region, bracket, storageLocation) ->
                 try
-                    let! snapshot = fetchSnapshot storageLocation
+                    let! snapshot = fetch storageLocation
                     let armoryInfo = ArmoryInfo snapshot
                     let updatedArmories = armories |> Map.add(region, bracket) armoryInfo
                     repository.update updatedArmories
@@ -74,8 +80,10 @@ module Main =
                 logInfo "ArmoryAgent stopped."
         }
 
-        loop (repository.data())
+        loop initialData
     )
+
+    let repository = Repository()
 
     let backfillFrom(storage: Storage) =
         let storageRoots = 
@@ -87,17 +95,25 @@ module Main =
 
         let dir r b = r + "/" + b
 
-        let updates = 
-            storageRoots
-            |> Seq.choose(fun (region, bracket) -> 
-                let allBlobs = storage.allFiles (dir region bracket)
-                let last = allBlobs |> Array.rev |> Seq.tryFind(fun _ -> true)
-                match last with
-                | Some blob -> Some( UpdateArmory(region, bracket, blob) )
-                | None -> None)
+        storageRoots
+        |> Seq.choose(fun (region, bracket) -> 
+            let allBlobs = storage.allFiles (dir region bracket)
 
-        for msg in updates do
-            armoryAgent.Post msg
+            let last = 
+                allBlobs 
+                |> Array.rev 
+                |> Seq.map(fun blobUri -> fetch<TeamInfo list> blobUri |> Async.RunSynchronously)
+                |> Seq.skipWhile(fun teams -> teams.IsEmpty)
+                |> Seq.tryFind(fun _ -> true)
+
+            match last with
+            | Some teams -> 
+                logInfo "Backfilling for %s, %s with %A" region bracket teams
+                Some((region, bracket), ArmoryInfo teams)
+            | None -> 
+                logInfo "No data found for backfill of %s, %s" region bracket
+                None)
+        |> Map.ofSeq
 
     let OnStart(): unit = 
 
@@ -106,7 +122,9 @@ module Main =
         
         let storage = Storage(GlobalSettings.teamLaddersContainer, storageConnectionString.ConnectionString)
 
-        backfillFrom storage
+        let backfillData = backfillFrom storage
+
+        let armoryAgent = createArmoryAgent backfillData repository
 
         let serviceBus = ServiceBus(serviceBusConnectionString.ConnectionString)
 
