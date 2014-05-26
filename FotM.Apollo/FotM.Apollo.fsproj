@@ -125,9 +125,12 @@
     <Content Include="app\controllers\mainController.js" />
     <Content Include="app\templates\2v2.html" />
     <Content Include="app\templates\3v3.html" />
-    <Content Include="app\templates\3v3_now.html" />
     <Content Include="app\templates\5v5.html" />
     <Content Include="app\templates\rbg.html" />
+    <Content Include="app\templates\2v2_now.html" />
+    <Content Include="app\templates\3v3_now.html" />
+    <Content Include="app\templates\5v5_now.html" />
+    <Content Include="app\templates\rbg_now.html" />
     <Content Include="app\templates\about.html" />
     <Content Include="app\app.js" />
     <Content Include="app\appConfig.js" />
