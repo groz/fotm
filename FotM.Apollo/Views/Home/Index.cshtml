@@ -55,7 +55,7 @@
                             <!-- Dropdown menu -->
                             <ul class="dropdown-menu" role="menu">
                                 <li ng-repeat="(bracket, size) in shared.brackets">
-                                    <a class="notext" ng-href="{{'#/'+region+'/'+bracket}}">
+                                    <a class="notext" ng-href="{{'/'+region+'/'+bracket}}">
                                         {{bracket}}
                                     </a>
                                 </li>
@@ -63,7 +63,7 @@
                         </li>
 
                         <li ng-class="{active: shared.currentRegion == 'about'}">
-                            <a href="#/about">About</a>
+                            <a href="/about">About</a>
                         </li>
                     </ul>
                 </div>
