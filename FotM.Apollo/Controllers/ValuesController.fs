@@ -41,7 +41,7 @@ type ValuesController() =
     let maxSpecs = 10
     let maxPlayingNow = 50
 
-    let playingNowPeriod = NodaTime.Duration.FromHours(24L)
+    let playingNowPeriod = NodaTime.Duration.FromHours(1L)
     let justPlayedPeriod = NodaTime.Duration.FromMinutes(20L)
 
     let parseFilters (filters: string seq) =
