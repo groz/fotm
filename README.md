@@ -8,7 +8,6 @@ TODO
 Frontend:
 - Switch #-urls to html5 style, route all ASP MVC routes to single page
 - Show win ratio for teams (possibly setups)
-- Add Google Analytics virtual pages
 - Brackets:
   - 2v2, take most stuff from 3v3 and check on lower sizes
   - 5v5, remove names?
@@ -30,3 +29,4 @@ Backlog:
 - Discussion forum per team setup?
 - Add AWS SNS/SQS failover
 - Create admin push mechanism
+- Change Athena backfill mechanism to work with 1 item (i.e. store state on each step and load it on init)
