@@ -6,6 +6,9 @@
                     <th>#</th>
                     <th class="hidden-xs hidden-sm">Side</th>
                     <th></th>
+                    <th>W</th>
+                    <th></th>
+                    <th>L</th>
                     <th>Rating</th>
                     <th class="hidden-xs hidden-sm">Change</th>
                     <th class="hidden-xs hidden-sm">Seen</th>
@@ -20,39 +23,45 @@
                     </td>
 
                     <td>
-                        <div class="row">
-                            <div class="col-lg-4 col-md-4 col-sm-4 nopadding" ng-repeat="player in team.players">
-                                <a ng-href="{{media.armoryLink(region, player)}}" class="nolink">
+                        <div
+                            ng-repeat="player in team.players">
+                            <a ng-href="{{media.armoryLink(region, player)}}" class="nolink">
                                     
-                                    <img ng-src="{{media.raceImage(player.race, player.gender)}}"
-                                         alt="{{media.raceText(player.race)}}" />
+                                <img ng-src="{{media.raceImage(player.race, player.gender)}}"
+                                     alt="{{media.raceText(player.race)}}" />
 
-                                    <img class="hidden-xs"
-                                         ng-src="{{media.classImageForSpec(player.classSpec)}}"
-                                         alt="{{media.classText(player.classSpec)}}" />
+                                <img class="hidden-xs"
+                                     ng-src="{{media.classImageForSpec(player.classSpec)}}"
+                                     alt="{{media.classText(player.classSpec)}}" />
 
-                                    <img ng-src="{{media.specImage(player.classSpec)}}"
-                                         alt="{{media.specText(player.classSpec)}}" />
+                                <img ng-src="{{media.specImage(player.classSpec)}}"
+                                     alt="{{media.specText(player.classSpec)}}" />
 
-                                    <span>{{player.name}}</span>
-                                    <span class="hidden-sm hidden-md">-</span>
-                                    <span class="hidden-sm hidden-md">{{player.realm.realmName}}</span>
-                                </a>
-                            </div>
+                                <span>{{player.name}}</span>
+                                <span>-</span>
+                                <span>{{player.realm.realmName}}</span>
+                            </a>
                         </div>
                     </td>
+                    <td class="vcentered">
+                        {{team.wins}}
+                    </td>
+                    <td class="vcentered">-</td>
+                    <td class="vcentered">
+                        {{team.losses}}
+                    </td>
 
-                    <td class="centered"
+                    <td class="vcentered"
                         ng-class="{success: team.justPlayed && (team.ratingChange > 0), danger: team.justPlayed && (team.ratingChange < 0)}">
                         {{team.rating}}
                     </td>
 
-                    <td class="hidden-xs centered"
+                    <td class="hidden-xs vcentered"
                         ng-class="{success: team.justPlayed && (team.ratingChange > 0), danger: team.justPlayed && (team.ratingChange < 0)}">
                         {{formatRatingChange(team.ratingChange)}}
                     </td>
 
-                    <td class="hidden-xs hidden-sm centered"
+                    <td class="hidden-xs hidden-sm vcentered"
                         ng-class="{success: team.justPlayed && (team.ratingChange > 0), danger: team.justPlayed && (team.ratingChange < 0)}">
                         {{toLocalTime(team.seen)}}
                     </td>

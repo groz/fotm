@@ -109,12 +109,16 @@ app.factory('media', function() {
             return classSpec.Case;
         },
 
-        specText: function(classSpec) {
+        specText: function (classSpec) {
+            console.log(classSpec, classSpec.Fields[0]);
+            if (classSpec.Fields[0] == null) return "None";
             var specId = getSpecId(classSpec);
             return specs[specId].text;
         },
 
-        specImage: function(classSpec) {
+        specImage: function (classSpec) {
+            if (classSpec.Fields[0] == null)
+                return "http://icons.iconarchive.com/icons/aha-soft/software/16/cancel-icon.png";
             var specId = getSpecId(classSpec);
             return specs[specId].url;
         },
