@@ -72,15 +72,24 @@ type Storage (containerName, ?storageConnectionString, ?pathPrefix) =
 
         this.allBlobs(directory) |> Array.map (fun blob -> blob.Uri)
 
+type WebClientWithTimeout(timeout: TimeSpan) =
+    inherit WebClient()
+
+    override this.GetWebRequest(uri) =
+        let wr = base.GetWebRequest(uri)
+        wr.Timeout <- int timeout.TotalMilliseconds
+        wr
+
 module StorageIO =
 
     let retry = RetryBuilder(3)
 
     let downloadAsync (storageLocation: Uri) = async {
             logInfo "Fetching %A" storageLocation
-            use webClient = new WebClient()
-            webClient.Encoding <- Encoding.UTF8
+
+            use webClient = new WebClientWithTimeout (TimeSpan.FromMinutes 2.0)
             let! compressed = webClient.AsyncDownloadString storageLocation
+
             let json = CompressionUtils.UnzipFromBase64 compressed
             return json
     }
