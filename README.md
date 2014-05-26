@@ -14,7 +14,8 @@ Frontend:
   - rbg, remove names, classes, redesign filters?
 
 Infrastructure:
-- Backfill Athena and Apollo on startup from the latest update in storage
+- Backfill on startup from storage
+  - Athena  
 - Add redirects from old domains (i.e. fotm.eu -> fotm.info/#/eu/3v3)
 
 Machine learning:
