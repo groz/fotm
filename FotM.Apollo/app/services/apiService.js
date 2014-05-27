@@ -1,4 +1,4 @@
-app.factory('api', function ($http, $cacheFactory) {
+app.factory('api', ['$http', '$cacheFactory', function ($http, $cacheFactory) {
 
     var lruCache = $cacheFactory('lruCache', { capacity: 50 });
 
@@ -28,4 +28,4 @@ app.factory('api', function ($http, $cacheFactory) {
         }
     }
 
-});
+}]);

@@ -1,6 +1,4 @@
-app.config(function ($routeProvider, sharedProvider, $locationProvider) {
-    // this is an example of how you can write unreadable javascript with any framework :(
-
+app.config(['$routeProvider', 'sharedProvider', '$locationProvider', function ($routeProvider, sharedProvider, $locationProvider) {
     var sharedProperties = {
         currentRegion: "US",
 
@@ -86,8 +84,8 @@ app.config(function ($routeProvider, sharedProvider, $locationProvider) {
     // use HTML5 style links without #
     // it will fallback automatically to # routes on older browsers
     $locationProvider.html5Mode(true);
-});
+}]);
 
-app.run(function ($rootScope, shared) {
+app.run(['$rootScope', 'shared', function ($rootScope, shared) {
     $rootScope.shared = shared; // getting shared properties into global scope
-});
+}]);

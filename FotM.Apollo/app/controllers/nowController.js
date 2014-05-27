@@ -1,4 +1,4 @@
-app.controller('NowController', function (media, api, settings, $scope, $routeParams, $location) {
+app.controller('NowController', ['media', 'api', 'settings', '$scope', function (media, api, settings, $scope) {
     console.log("nowController called for", settings);
     console.log("shared settings:", $scope.shared);
 
@@ -27,4 +27,4 @@ app.controller('NowController', function (media, api, settings, $scope, $routePa
         return (n < 0) ? n.toString() : "+" + n.toString();
     }
 
-});
+}]);

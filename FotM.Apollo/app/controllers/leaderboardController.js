@@ -1,4 +1,5 @@
-app.controller('LeaderboardController', function (filterFactory, media, api, settings, $scope, $routeParams, $location) {
+app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'settings', '$scope', '$routeParams', '$location',
+    function (filterFactory, media, api, settings, $scope, $routeParams, $location) {
     var inputFilters = $routeParams.filter;
 
     if (typeof (inputFilters) == "string")
@@ -67,4 +68,4 @@ app.controller('LeaderboardController', function (filterFactory, media, api, set
         return media.getSpecInfo(filter.specId);
     };
 
-});
+}]);

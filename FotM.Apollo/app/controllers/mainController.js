@@ -1,4 +1,4 @@
-app.controller('MainController', function ($scope, $location, $window, $rootScope) {
+app.controller('MainController', ['$scope', '$location', '$window', '$rootScope', function ($scope, $location, $window, $rootScope) {
 
     console.log("MainController activated");
 
@@ -28,4 +28,4 @@ app.controller('MainController', function ($scope, $location, $window, $rootScop
         }
     });
 
-});
+}]);

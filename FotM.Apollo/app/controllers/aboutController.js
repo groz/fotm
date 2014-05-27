@@ -1,3 +1,3 @@
-app.controller('AboutController', function ($scope) {
+app.controller('AboutController', ['$scope', function ($scope) {
     $scope.shared.currentRegion = "about";
-});
+}]);

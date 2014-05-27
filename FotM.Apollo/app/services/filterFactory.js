@@ -1,4 +1,4 @@
-app.factory('filterFactory', function (media) {
+app.factory('filterFactory', ['media', function (media) {
 
     function FotMFilter(className, specId) {
         if (className == "null")
@@ -59,4 +59,4 @@ app.factory('filterFactory', function (media) {
     };
 
     return factory;
-});
+}]);
