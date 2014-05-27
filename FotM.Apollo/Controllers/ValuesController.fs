@@ -13,6 +13,7 @@ open FotM.Hephaestus.Math
 open FotM.Data
 open FotM.Apollo
 open FotM.Aether
+open Microsoft.WindowsAzure.Storage.Blob
 
 type TeamViewModel (rank: int, teamInfo: TeamInfo, justPlayed: bool)=
     member this.rank = rank
@@ -31,6 +32,11 @@ type SetupViewModel (rank: int, specs: Class list, ratio: float) =
     member this.rank = rank
     member this.specs = specs
     member this.percent = sprintf "%.1f%%" (ratio * 100.0)
+
+type BlobViewModel (blob: CloudBlockBlob) =
+    member this.uri = blob.Uri
+    member this.time = blob.Properties.LastModified.Value.ToUniversalTime().DateTime.ToString()
+    member this.size = blob.Properties.Length
 
 /// Retrieves values.
 [<RoutePrefix("api")>]
@@ -95,3 +101,9 @@ type ValuesController() =
         filteredTeams 
         |> Seq.map(fun t -> TeamViewModel t)
         |> Seq.truncate maxPlayingNow
+            
+    [<Route("listBlobs")>]
+    member this.GetListBlobs([<FromUri>]container: string, [<FromUri>]prefix: string) =
+        let s = Storage(container, Main.storageConnectionString.ConnectionString)
+        s.allBlobs(prefix)
+        |> Array.map(fun b -> BlobViewModel b)

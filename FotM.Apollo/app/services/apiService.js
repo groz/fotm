@@ -1,4 +1,4 @@
-app.factory('api', ['$http', '$cacheFactory', function ($http, $cacheFactory) {
+function apiFactory($http, $cacheFactory) {
 
     var lruCache = $cacheFactory('lruCache', { capacity: 50 });
 
@@ -19,13 +19,30 @@ app.factory('api', ['$http', '$cacheFactory', function ($http, $cacheFactory) {
 
         loadPlayingNowAsync: function(region, bracket) {
 
-            var promise = $http({
+            return $http({
                 method: 'GET',
                 url: '/api/' + region + '/' + bracket+'/now'
             });
 
-            return promise;
-        }
+        },
+
+        listBlobsAsync: function(container, prefix) {
+
+            return $http({
+                method: 'GET',
+                url: '/api/listBlobs',
+                params: { container: container, prefix: prefix }
+            });
+
+        },
+
+        toLocalTime: function(t) {
+            var d = new Date(t + " UTC");
+            return d.toLocaleDateString() + " " + d.toLocaleTimeString();
+        },
     }
 
-}]);
+};
+
+app.factory('api', ['$http', '$cacheFactory', apiFactory]);
+appDebug.factory('api', ['$http', '$cacheFactory', apiFactory]);

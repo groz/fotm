@@ -98,12 +98,19 @@ module Main =
 
         storageRoots
         |> Seq.choose(fun (region, bracket) -> 
-            let allBlobs = storage.allFiles (dir region bracket)
+            let allBlobs = storage.allBlobs (dir region bracket)
 
             let last = 
                 allBlobs 
                 |> Array.rev 
-                |> Seq.map(fun blobUri -> fetch<TeamInfo list> blobUri |> Async.RunSynchronously)
+                |> Seq.map(fun blob -> 
+                    try
+                        fetch<TeamInfo list> blob.Uri |> Async.RunSynchronously
+                    with
+                    | ex -> 
+                        blob.Delete()
+                        []
+                    )
                 |> Seq.skipWhile(fun teams -> teams.IsEmpty)
                 |> Seq.tryFind(fun _ -> true)
 
@@ -116,11 +123,11 @@ module Main =
                 None)
         |> Map.ofSeq
 
-    let OnStart(): unit = 
+    let storageConnectionString = WebConfigurationManager.ConnectionStrings.["Microsoft.Storage.ConnectionString"]
+    let serviceBusConnectionString = WebConfigurationManager.ConnectionStrings.["Microsoft.ServiceBus.ConnectionString"]
 
-        let storageConnectionString = WebConfigurationManager.ConnectionStrings.["Microsoft.Storage.ConnectionString"]
-        let serviceBusConnectionString = WebConfigurationManager.ConnectionStrings.["Microsoft.ServiceBus.ConnectionString"]
-        
+    let OnStart(): unit = 
+            
         let storage = Storage(GlobalSettings.teamLaddersContainer, storageConnectionString.ConnectionString)
 
         let backfillData = backfillFrom storage

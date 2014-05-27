@@ -123,6 +123,7 @@
     <Content Include="app\controllers\leaderboardController.js" />
     <Content Include="app\controllers\nowController.js" />
     <Content Include="app\controllers\mainController.js" />
+    <Content Include="app\controllers\debugController.js" />
     <Content Include="app\templates\2v2.html" />
     <Content Include="app\templates\3v3.html" />
     <Content Include="app\templates\5v5.html" />
@@ -134,6 +135,7 @@
     <Content Include="app\templates\about.html" />
     <Content Include="app\app.js" />
     <Content Include="app\appConfig.js" />
+    <Content Include="app\appDebug.js" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap-theme.css.map" />
@@ -160,7 +162,7 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Debug\Index.cshtml" />
+    <Content Include="Views\Debug\Index.cshtml" />    
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\MetaTags.cshtml" />
     <Content Include="Views\Shared\GoogleAnalytics.cshtml" />
