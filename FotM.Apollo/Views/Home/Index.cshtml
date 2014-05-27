@@ -18,11 +18,6 @@
 
     @Html.Partial("GoogleAnalytics")
 
-    @Html.Partial("InitVK")
-    @Html.Partial("InitFB")
-    @Html.Partial("InitGPlus")
-    @Html.Partial("InitTwitter")
-
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
@@ -92,6 +87,11 @@
     </div>
 
     <hr />
+
+    @Html.Partial("InitVK")
+    @Html.Partial("InitFB")
+    @Html.Partial("InitGPlus")
+    @Html.Partial("InitTwitter")
 
     @Html.Partial("Social")
 
