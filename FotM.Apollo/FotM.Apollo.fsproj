@@ -156,9 +156,11 @@
     <Content Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Compile Include="Controllers\HomeController.fs" />
     <Compile Include="Controllers\ValuesController.fs" />
+    <Compile Include="Controllers\DebugController.fs" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Debug\Index.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\MetaTags.cshtml" />
     <Content Include="Views\Shared\GoogleAnalytics.cshtml" />

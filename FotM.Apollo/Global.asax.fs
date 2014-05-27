@@ -69,7 +69,14 @@ type Global() =
 
     static member RegisterRoutes(routes:RouteCollection) =
         routes.IgnoreRoute("{resource}.axd/{*pathInfo}")
-        routes.MapRoute(
+        routes
+            .MapRoute(
+            "Debug", // Route name
+            "debug/{action}", // catch all to route calls to SPA AngularJS router
+            { controller = "Debug"; action = "Index"; id = UrlParameter.Optional } // Parameter defaults
+            ) |> ignore
+        routes
+            .MapRoute(
             "Default", // Route name
             "{*catchAll}", // catch all to route calls to SPA AngularJS router
             { controller = "Home"; action = "Index"; id = UrlParameter.Optional } // Parameter defaults

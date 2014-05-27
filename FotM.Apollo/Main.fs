@@ -21,17 +21,7 @@ type ArmoryInfo(ladder : TeamInfo list) =
     member this.teams = 
         ladder
         |> Seq.filter(fun t -> not (isNull t.lastEntry.players))
-        |> Seq.filter(fun t -> 
-            // temporary confidence check for 3v3 teams to always have healers
-            if t.lastEntry.players.Length = 3 then
-                let nHealers = 
-                    t.lastEntry.players 
-                    |> Seq.filter(fun p -> p.classSpec.isHealer)
-                    |> Seq.length
-                nHealers = 1 || nHealers = 2
-            else
-                true
-            )
+        |> Seq.filter(fun t -> t.totalGames > 3)
         |> Seq.sortBy(fun t -> -t.lastEntry.rating) 
         |> Seq.mapi (fun i t -> i+1, t)
         |> Seq.toArray
