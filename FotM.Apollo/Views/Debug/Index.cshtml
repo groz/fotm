@@ -22,10 +22,30 @@
     </div>
 
     <div class="row">
+        <ul>
+            <li>
+                Total size: {{blobList.totalSize}}
+            </li>
+            <li>
+                Start: {{toLocalTime(blobList.firstDate)}}
+            </li>
+            <li>
+                End: {{toLocalTime(blobList.lastDate)}}
+            </li>
+            <li>
+                Updates per minute: {{blobList.updatesPerMinute}}
+            </li>
+            <li>
+                Average interval: {{blobList.averageInterval}}
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
         <div class="col-lg-6">
             <table class="table">
                 <tbody>
-                    <tr ng-repeat="blob in blobList">
+                    <tr ng-repeat="blob in blobList.allBlobs">
                         <td>{{toLocalTime(blob.time)}}</td>
                         <td>
                             <a href="" ng-click="showBlob(blob.uri)">

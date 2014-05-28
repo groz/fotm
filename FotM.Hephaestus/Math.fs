@@ -2,8 +2,14 @@
 
 module Math =
 
-    let (./.) x y = 
+    let (./.) (x: int) (y: int) = 
         (x |> float) / (y |> float)
+
+    let (/.) (x: float) (y: int) = 
+        x / (y |> float)
+
+    let (./) (x: int) (y: float) = 
+        (x |> float) / y
 
     let n_choose_k n k = 
         let rec choose lo  =

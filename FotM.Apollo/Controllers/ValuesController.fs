@@ -15,6 +15,12 @@ open FotM.Apollo
 open FotM.Aether
 open Microsoft.WindowsAzure.Storage.Blob
 
+module Helpers =
+    let time (blob: CloudBlockBlob) =
+        blob.Properties.LastModified.Value.ToUniversalTime().DateTime
+
+open Helpers
+
 type TeamViewModel (rank: int, teamInfo: TeamInfo, justPlayed: bool)=
     member this.rank = rank
     member this.factionId = int (teamInfo.lastEntry.players |> Seq.head).faction
@@ -35,8 +41,30 @@ type SetupViewModel (rank: int, specs: Class list, ratio: float) =
 
 type BlobViewModel (blob: CloudBlockBlob) =
     member this.uri = blob.Uri
-    member this.time = blob.Properties.LastModified.Value.ToUniversalTime().DateTime.ToString()
+    member this.time = (time blob).ToString()
     member this.size = blob.Properties.Length
+
+type BlobListViewModel (blobs: CloudBlockBlob array) =
+    let firstBlob = blobs.[0]
+    let lastBlob = blobs.[blobs.Length-1]
+
+    member this.allBlobs = 
+        blobs 
+        |> Array.rev
+        |> Array.map(fun b -> BlobViewModel b)
+
+    member this.totalSize = blobs |> Array.sumBy(fun b -> b.Properties.Length)
+    member this.firstDate = time(firstBlob).ToString()
+    member this.lastDate = time(lastBlob).ToString()
+    member this.updatesPerMinute = blobs.Length ./ (time(lastBlob) - time(firstBlob)).TotalMinutes
+    member this.averageInterval = 
+       let intervals = 
+        blobs 
+        |> Seq.map time 
+        |> Seq.windowed 2 
+        |> Seq.map(fun arr -> arr.[1] - arr.[0]) 
+       let avgInMinutes = intervals |> Seq.averageBy(fun x -> x.TotalMinutes)
+       TimeSpan.FromMinutes avgInMinutes
 
 /// Retrieves values.
 [<RoutePrefix("api")>]
@@ -107,9 +135,8 @@ type ValuesController() =
     [<Route("listBlobs")>]
     member this.GetListBlobs([<FromUri>]container: string, [<FromUri>]prefix: string) =
         let s = Storage(container, Main.storageConnectionString.ConnectionString)
-        s.allBlobs(prefix)
-        |> Array.rev
-        |> Array.map(fun b -> BlobViewModel b)
+        let blobs = s.allBlobs(prefix)        
+        BlobListViewModel blobs
 
     [<HttpGet>]
     [<Route("showBlob")>]
