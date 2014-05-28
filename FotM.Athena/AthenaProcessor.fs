@@ -19,8 +19,8 @@ type UpdateProcessorMessage =
 
 module AthenaProcessor =
 
-    let updateProcessor processorId storage topic (historyStorage: Storage) initialHistory = Agent<UpdateProcessorMessage>.Start(fun agent ->
-        logInfo "UpdateProcessor for %s started" processorId
+    let updateProcessor processorId storage topic (historyStorage: Storage) (initialHistory: TeamEntry list) = Agent<UpdateProcessorMessage>.Start(fun agent ->
+        logInfo "UpdateProcessor for %s started with backfill data of %i entries" processorId initialHistory.Length
 
         let rec loop (snapshotHistory, teamHistory) = async {
             let! updateMsg = agent.Receive()
@@ -28,9 +28,10 @@ module AthenaProcessor =
             match updateMsg with
             | UpdateMessage(storageLocation) ->
                 try
-                    logInfo "Processing update %A" storageLocation
-                    let! snapshot = fetch storageLocation
+                    logInfo "[%s, %i] Processing update %A..." processorId (teamHistory |> List.length) storageLocation
+                    let! snapshot = fetch<LadderSnapshot<PlayerEntry>> storageLocation
                     let newSnapshotHistory, newTeamHistory = Athena.processUpdate snapshot snapshotHistory teamHistory storage topic historyStorage
+                    logInfo "[%s, %i] Update %A processed." processorId (newTeamHistory |> List.length) storageLocation
                     return! loop (newSnapshotHistory, newTeamHistory)
                 with
                 | ex -> 
@@ -71,10 +72,9 @@ module AthenaProcessor =
             allRoots
             |> List.map(fun (region, bracket) -> 
                 let processorId = getProcessorId region bracket
-                let storage = getStorage region bracket
                 let historyStorage = getHistoryStorage region bracket
 
-                let allBlobs = storage.allFiles (region.code + "/" + bracket.url)
+                let allBlobs = historyStorage.allFiles (region.code + "/" + bracket.url)
 
                 let last = allBlobs |> Array.rev |> Seq.tryFind(fun _ -> true)
 
@@ -82,12 +82,14 @@ module AthenaProcessor =
                     match last with
                     | Some blobUri -> 
                         logInfo "History data for %s found at %A, loading..." processorId blobUri
-                        let data = fetch blobUri |> Async.RunSynchronously
+                        let data: TeamEntry list = fetch<TeamEntry list> blobUri |> Async.RunSynchronously
+                        logInfo "%s total history entries: %i" processorId data.Length
                         data
                     | None -> 
                         logInfo "History data for %s not found." processorId
                         []
 
+                let storage = getStorage region bracket
                 (region.code, bracket), updateProcessor processorId storage updatePublisher historyStorage backfillData
             )            
             |> Map.ofList

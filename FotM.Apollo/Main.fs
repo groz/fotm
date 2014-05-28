@@ -63,7 +63,7 @@ module Main =
             match msg with
             | UpdateArmory(region, bracket, storageLocation) ->
                 try
-                    let! snapshot = fetch storageLocation
+                    let! snapshot = fetch<TeamInfo list> storageLocation
                     let armoryInfo = ArmoryInfo(snapshot, storageLocation)
                     let updatedArmories = armories |> Map.add(region, bracket) armoryInfo
                     repository.update updatedArmories
