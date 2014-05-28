@@ -200,4 +200,6 @@ module Athena =
                 | ExcessiveUpdate ->
                     logInfo "[%s, %s] Excessive update. Skipping..." snapshot.region snapshot.bracket.url
                     snapshot :: currentSnapshotHistory, teamHistory
-            | _ -> snapshot :: currentSnapshotHistory, teamHistory
+            | _ -> 
+                logInfo "%s, %s Snapshot history is empty, couldn't calculate updates. Added snapshot to history." snapshot.region snapshot.bracket.url
+                snapshot :: currentSnapshotHistory, teamHistory
