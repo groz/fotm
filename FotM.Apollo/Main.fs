@@ -23,7 +23,7 @@ type ArmoryInfo(ladder : TeamInfo list, storageLocation: Uri) =
     member this.teams = 
         ladder
         |> Seq.filter(fun t -> not (isNull t.lastEntry.players))
-        |> Seq.filter(fun t -> t.totalGames > 3)
+        |> Seq.filter(fun t -> t.totalGames > 2)
         |> Seq.sortBy(fun t -> -t.lastEntry.rating) 
         |> Seq.mapi (fun i t -> i+1, t)
         |> Seq.toArray
