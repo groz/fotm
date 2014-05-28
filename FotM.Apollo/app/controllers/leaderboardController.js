@@ -17,6 +17,7 @@ app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'setti
     $scope.shared.currentRegion = $scope.region;
     $scope.shared.currentBracket = $scope.bracket;
     $scope.shared.now = false;
+    $scope.shared.lastSnapshotLocation = "";
 
     $scope.teams = {}
     $scope.setups = {}
@@ -28,7 +29,8 @@ app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'setti
             console.log("received data from webapi:", response.data);
             $scope.teams = response.data.Item1;
             $scope.setups = response.data.Item2;
-        });
+            $scope.shared.lastSnapshotLocation = response.data.Item3;
+    });
 
     $scope.getSpecsFor = function (idx) {
         var className = $scope.fotmFilters[idx].className;

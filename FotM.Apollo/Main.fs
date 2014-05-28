@@ -16,7 +16,9 @@ type ArmoryAgentMessage =
 | UpdateArmory of region: string * bracket : string * storageLocation: Uri
 | StopAgent
 
-type ArmoryInfo(ladder : TeamInfo list) =
+type ArmoryInfo(ladder : TeamInfo list, storageLocation: Uri) =
+
+    member this.snapshotUrl = storageLocation
 
     member this.teams = 
         ladder
@@ -35,18 +37,11 @@ type ArmoryInfo(ladder : TeamInfo list) =
         |> Seq.sortBy (fun (specs, count) -> -count)
 
 type Repository() =
-    let mutable armoryData = 
-        [
-            for region in Regions.all do
-            for bracket in Brackets.all do
-            yield (region.code, bracket.url), ArmoryInfo []
-        ]
-        |> Map.ofSeq
+    let mutable armoryData = [] |> Map.ofSeq
 
     member this.update(newData) = armoryData <- newData
-    member this.data() = armoryData
     member this.getArmory(region: string, bracket: string) =
-        let data = this.data()
+        let data = armoryData
         data.[region.ToUpper(), bracket]
 
 module Main =
@@ -69,7 +64,7 @@ module Main =
             | UpdateArmory(region, bracket, storageLocation) ->
                 try
                     let! snapshot = fetch storageLocation
-                    let armoryInfo = ArmoryInfo snapshot
+                    let armoryInfo = ArmoryInfo(snapshot, storageLocation)
                     let updatedArmories = armories |> Map.add(region, bracket) armoryInfo
                     repository.update updatedArmories
                     return! loop updatedArmories
@@ -105,19 +100,19 @@ module Main =
                 |> Array.rev 
                 |> Seq.map(fun blob -> 
                     try
-                        fetch<TeamInfo list> blob.Uri |> Async.RunSynchronously
+                        fetch<TeamInfo list> blob.Uri |> Async.RunSynchronously, blob.Uri
                     with
                     | ex -> 
                         blob.Delete()
-                        []
+                        [], Uri("")
                     )
-                |> Seq.skipWhile(fun teams -> teams.IsEmpty)
+                |> Seq.skipWhile(fun (teams, uri) -> teams.IsEmpty)
                 |> Seq.tryFind(fun _ -> true)
 
             match last with
-            | Some teams -> 
-                logInfo "Backfilling for %s, %s with %A" region bracket teams
-                Some((region, bracket), ArmoryInfo teams)
+            | Some (teams, uri) -> 
+                logInfo "Backfilling for %s, %s from %A" region bracket uri
+                Some((region, bracket), ArmoryInfo(teams, uri))
             | None -> 
                 logInfo "No data found for backfill of %s, %s" region bracket
                 None)

@@ -58,6 +58,8 @@ type ValuesController() =
         |> Seq.choose id
         |> Seq.toArray
 
+    let seen teamInfo = teamInfo.lastEntry.snapshotTime
+
     [<Route("{region}/{bracket}")>]
     member this.Get(region: string, bracket: string, [<FromUri>]filters: string seq) =
         let fotmFilters = parseFilters filters
@@ -83,13 +85,13 @@ type ValuesController() =
             |> Seq.map(fun (rank, s) -> SetupViewModel(rank, fst s, snd s ./. armoryInfo.totalGames))
             |> Seq.truncate maxSpecs
 
-        teamsToShow, setupsToShow
+        let snapshotTime = filteredTeams |> Seq.maxBy(fun t -> seen (snd t))
+
+        teamsToShow, setupsToShow, armoryInfo.snapshotUrl
 
     [<Route("{region}/{bracket}/now")>]
     member this.Get(region: string, bracket: string) =
         let now = NodaTime.SystemClock.Instance.Now
-
-        let seen teamInfo = teamInfo.lastEntry.snapshotTime
 
         let armoryInfo = Main.repository.getArmory(region, bracket)
 
