@@ -30,6 +30,7 @@ type BundleConfig() =
             .Include(
                     [|
                     "~/app/app.js"
+                    "~/app/appDebug.js"
                     "~/app/services/*.js"
                     "~/app/controllers/*.js"
                     "~/app/appConfig.js"

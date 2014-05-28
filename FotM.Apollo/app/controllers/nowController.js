@@ -18,10 +18,7 @@ app.controller('NowController', ['media', 'api', 'settings', '$scope', function 
             $scope.empty = $scope.teams.length == 0;
         });
 
-    $scope.toLocalTime = function(t) {
-        var d = new Date(t + " UTC");
-        return d.toLocaleDateString() + " " + d.toLocaleTimeString();
-    }
+    $scope.toLocalTime = api.toLocalTime;
 
     $scope.formatRatingChange = function (n) {
         return (n < 0) ? n.toString() : "+" + n.toString();
