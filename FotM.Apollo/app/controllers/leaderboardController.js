@@ -29,7 +29,7 @@ app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'setti
             console.log("received data from webapi:", response.data);
             $scope.teams = response.data.Item1;
             $scope.setups = response.data.Item2;
-            $scope.shared.lastSnapshotLocation = response.data.Item3;
+            console.log("Last snapshot location:", response.data.Item3);
     });
 
     $scope.getSpecsFor = function (idx) {
