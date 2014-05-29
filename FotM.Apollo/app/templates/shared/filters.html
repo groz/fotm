@@ -87,14 +87,15 @@
 <!-- FOTM SETUPS TABLE -->
 <table class="table table-striped table-condensed table-responsive table-hover">
     <tbody>
-        <tr ng-repeat="setup in setups" class="notext">
+        <tr ng-repeat="setup in setups" class="notext" ng-click="redirectToSetupFilter(setup)">
 
-            <td class="hidden-md">{{setup.rank}}</td>
-            <td ng-repeat="spec in setup.specs">
+            <td class="centered">{{setup.percent}}</td>
+
+            <td ng-repeat="spec in setup.specs" class="centered">
                 <img ng-src="{{media.classImageForSpec(spec)}}" alt="{{media.classText(spec)}}" />
                 <img ng-src="{{media.specImage(spec)}}" alt="{{media.specText(spec)}}" />
             </td>
-            <td>{{setup.percent}}</td>
+
         </tr>
     </tbody>
 </table>

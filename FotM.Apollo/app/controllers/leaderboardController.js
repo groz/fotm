@@ -69,4 +69,12 @@ app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'setti
             $location.search("");
     };
 
+    $scope.redirectToSetupFilter = function (setup) {
+        for (var i = 0; i < setup.specs.length; ++i) {
+            $scope.fotmFilters[i].className = media.classText(setup.specs[i]);
+            $scope.fotmFilters[i].specId = media.getSpecId(setup.specs[i]);
+        }
+        $scope.redirectToFilter();
+    };
+
 }]);

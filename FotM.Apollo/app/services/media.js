@@ -83,12 +83,7 @@ app.factory('media', function() {
         "tw": "http://tw.battle.net",
         "cn": "http://www.battlenet.com.cn"
     };
-
-    function getSpecId(classSpec) {
-
-        return classSpec.Fields[0].Fields[0];
-    }
-
+    
     var mediaService = {
         raceText: function(race) {
             return races[race];
@@ -111,16 +106,21 @@ app.factory('media', function() {
             return classSpec.Case;
         },
 
-        specText: function (classSpec) {
-            if (classSpec.Fields[0] == null) return "None";
-            var specId = getSpecId(classSpec);
+        getSpecId: function (classSpec) {
+            if (classSpec.Fields[0] == null) return -1;
+            return classSpec.Fields[0].Fields[0];
+        },
+
+        specText: function (classSpec) {            
+            var specId = this.getSpecId(classSpec);
+            if (specId == -1) return "None";
             return specs[specId].text;
         },
 
         specImage: function (classSpec) {
             if (classSpec.Fields[0] == null)
                 return "http://icons.iconarchive.com/icons/aha-soft/software/16/cancel-icon.png";
-            var specId = getSpecId(classSpec);
+            var specId = this.getSpecId(classSpec);
             return specs[specId].url;
         },
 
