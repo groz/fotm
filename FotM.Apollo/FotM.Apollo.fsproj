@@ -124,6 +124,7 @@
     <Content Include="app\controllers\nowController.js" />
     <Content Include="app\controllers\mainController.js" />
     <Content Include="app\controllers\debugController.js" />
+    <Content Include="app\templates\shared\filters.html" />
     <Content Include="app\templates\2v2.html" />
     <Content Include="app\templates\3v3.html" />
     <Content Include="app\templates\5v5.html" />

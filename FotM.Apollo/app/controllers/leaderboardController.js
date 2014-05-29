@@ -30,10 +30,14 @@ app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'setti
             $scope.teams = response.data.Item1;
             $scope.setups = response.data.Item2;
             console.log("Last snapshot location:", response.data.Item3);
-    });
+     });
 
-    $scope.getSpecsFor = function (idx) {
-        var className = $scope.fotmFilters[idx].className;
+    $scope.getSpecForFilter = function (fotmFilter) {
+        return media.getSpecInfo(fotmFilter.specId);
+    };
+
+    $scope.getAllSpecsFor = function (fotmFilter) {
+        var className = fotmFilter.className;
         var specIds = media.getSpecsFor(className);
 
         return specIds.reduce(function (obj, id) {
@@ -63,11 +67,6 @@ app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'setti
             $location.search( { filter: filterStrings } );
         else
             $location.search("");
-    };
-
-    $scope.getSpecForFilter = function (filterIndex) {
-        var filter = $scope.fotmFilters[filterIndex];
-        return media.getSpecInfo(filter.specId);
     };
 
 }]);

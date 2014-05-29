@@ -1,0 +1,100 @@
+<div class="btn-group btn-group-justified">
+    <div class="btn-group btn-group-vertical">
+        <div class="btn-group btn-group-sm"><span class="btn btn-block label">Class</span></div>
+        <div class="btn-group btn-group-sm"><span class="btn btn-block label">Spec</span></div>
+    </div>
+
+    <div class="btn-group btn-group-vertical" ng-repeat="fotmFilter in fotmFilters">
+
+        <!-- FILTER CLASS -->
+        <div class="dropdown btn-group btn-group-sm">
+
+            <!-- Dropdown button -->
+            <button type="button"
+                    class="dropdown-toggle btn btn-default"
+                    data-toggle="dropdown">
+
+                <img ng-if="fotmFilter.className"
+                     ng-src="{{media.classImage(fotmFilter.className)}}"
+                     alt="{{fotmFilter.className}}" />
+
+                <span ng-if="!fotmFilter.className">
+                    All
+                </span>
+
+            </button>
+
+            <!-- Dropdown menu -->
+            <ul class="dropdown-menu" role="menu">
+
+                <li ng-repeat="(className, classId) in media.classes">
+
+                    <a ng-click="fotmFilter.className = className; fotmFilter.specId = null; redirectToFilter();">
+                        <img ng-src="{{media.classImage(className)}}" alt="{{className}}" />
+                    </a>
+
+                </li>
+
+                <li class="notext">
+                    <a ng-click="fotmFilter.className = null; fotmFilter.specId = null; redirectToFilter();">
+                        All
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+
+        <!-- FILTER SPEC -->
+        <div class="dropdown btn-group btn-group-sm">
+
+            <!-- Dropdown button -->
+            <button type="button"
+                    class="dropdown-toggle btn btn-default"
+                    data-toggle="dropdown">
+
+                <img ng-if="fotmFilter.specId"
+                     ng-src="{{getSpecForFilter(fotmFilter).url}}"
+                     alt="{{getSpecForFilter(fotmFilter).text}}" />
+
+                <span ng-if="!fotmFilter.specId">
+                    All
+                </span>
+
+            </button>
+
+            <!-- Dropdown menu -->
+            <ul class="dropdown-menu" role="menu">
+
+                <li ng-if="fotmFilter.className"
+                    ng-repeat="(specId, spec) in getAllSpecsFor(fotmFilter)">
+
+                    <a ng-click="fotmFilter.specId = specId; redirectToFilter();">
+                        <img ng-src="{{spec.url}}" alt="{{spec.text}}" />
+                    </a>
+
+                </li>
+
+                <li class="notext">
+                    <a ng-click="fotmFilter.specId = null; redirectToFilter();">All</a>
+                </li>
+
+            </ul>
+
+        </div>
+    </div> <!-- /fotmFilters -->
+</div>
+
+<!-- FOTM SETUPS TABLE -->
+<table class="table table-striped table-condensed table-responsive table-hover">
+    <tbody>
+        <tr ng-repeat="setup in setups" class="notext">
+
+            <td class="hidden-md">{{setup.rank}}</td>
+            <td ng-repeat="spec in setup.specs">
+                <img ng-src="{{media.classImageForSpec(spec)}}" alt="{{media.classText(spec)}}" />
+                <img ng-src="{{media.specImage(spec)}}" alt="{{media.specText(spec)}}" />
+            </td>
+            <td>{{setup.percent}}</td>
+        </tr>
+    </tbody>
+</table>
