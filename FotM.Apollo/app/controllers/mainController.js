@@ -28,4 +28,9 @@ app.controller('MainController', ['$scope', '$location', '$window', '$rootScope'
         }
     });
 
+    $scope.logRedirect = function (target) {
+        // logging clicks on social buttons in /about
+        $window.ga('send', 'pageview', target);
+    }
+
 }]);
