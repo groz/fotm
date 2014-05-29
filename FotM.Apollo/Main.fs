@@ -40,9 +40,10 @@ type Repository() =
     let mutable armoryData = [] |> Map.ofSeq
 
     member this.update(newData) = armoryData <- newData
+
     member this.getArmory(region: string, bracket: string) =
         let data = armoryData
-        data.[region.ToUpper(), bracket]
+        data.TryFind(region.ToUpper(), bracket)
 
 module Main =
 

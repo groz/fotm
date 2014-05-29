@@ -92,45 +92,52 @@ type ValuesController() =
     member this.Get(region: string, bracket: string, [<FromUri>]filters: string seq) =
         let fotmFilters = parseFilters filters
 
-        let armoryInfo = Main.repository.getArmory(region, bracket)
+        let bracketInfo = Main.repository.getArmory(region, bracket)
 
-        let filteredTeams =
-            armoryInfo.teams
-            |> Seq.filter (fun (i, t) -> t |> Teams.teamMatchesFilter fotmFilters)
+        match bracketInfo with
+        | Some(armoryInfo) ->
+            let filteredTeams =
+                armoryInfo.teams
+                |> Seq.filter (fun (i, t) -> t |> Teams.teamMatchesFilter fotmFilters)
+                |> Seq.toArray
 
-        let filteredSetups = 
-            armoryInfo.setups
-            |> Seq.mapi(fun i setup -> i+1, setup)
-            |> Seq.filter(fun (rank, setup) -> fst setup |> Teams.matchesFilter fotmFilters)
+            let filteredSetups = 
+                armoryInfo.setups
+                |> Seq.mapi(fun i setup -> i+1, setup)
+                |> Seq.filter(fun (rank, setup) -> fst setup |> Teams.matchesFilter fotmFilters)
             
-        let teamsToShow = 
-            filteredTeams 
-            |> Seq.map(fun (rank, team) -> TeamViewModel(rank, team, false))
-            |> Seq.truncate maxLeaderboardTeams
+            let teamsToShow = 
+                filteredTeams 
+                |> Seq.map(fun (rank, team) -> TeamViewModel(rank, team, false))
+                |> Seq.truncate maxLeaderboardTeams
 
-        let setupsToShow = 
-            filteredSetups 
-            |> Seq.map(fun (rank, s) -> SetupViewModel(rank, fst s, snd s ./. armoryInfo.totalGames))
-            |> Seq.truncate maxSpecs
+            let setupsToShow = 
+                filteredSetups 
+                |> Seq.map(fun (rank, s) -> SetupViewModel(rank, fst s, snd s ./. armoryInfo.totalGames))
+                |> Seq.truncate maxSpecs
 
-        let snapshotTime = filteredTeams |> Seq.maxBy(fun t -> seen (snd t))
-
-        teamsToShow, setupsToShow, armoryInfo.snapshotUrl
+            teamsToShow, setupsToShow, armoryInfo.snapshotUrl.ToString()
+        | None ->
+            seq [], seq [], ""
 
     [<Route("{region}/{bracket}/now")>]
     member this.Get(region: string, bracket: string) =
         let now = NodaTime.SystemClock.Instance.Now
 
-        let armoryInfo = Main.repository.getArmory(region, bracket)
+        let bracketInfo = Main.repository.getArmory(region, bracket)
 
-        let filteredTeams =
-            armoryInfo.teams
-            |> Seq.filter(fun (rank, team) -> now - seen team < playingNowPeriod)
-            |> Seq.map(fun (rank, team) -> rank, team, now - seen team < justPlayedPeriod)
+        match bracketInfo with
+        | Some(armoryInfo) ->
+            let filteredTeams =
+                armoryInfo.teams
+                |> Seq.filter(fun (rank, team) -> now - seen team < playingNowPeriod)
+                |> Seq.map(fun (rank, team) -> rank, team, now - seen team < justPlayedPeriod)
         
-        filteredTeams 
-        |> Seq.map(fun t -> TeamViewModel t)
-        |> Seq.truncate maxPlayingNow
+            filteredTeams 
+            |> Seq.map(fun t -> TeamViewModel t)
+            |> Seq.truncate maxPlayingNow
+        | None ->
+            seq []
             
     [<Route("listBlobs")>]
     member this.GetListBlobs([<FromUri>]container: string, [<FromUri>]prefix: string) =
