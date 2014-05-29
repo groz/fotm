@@ -7,7 +7,7 @@ open FotM.Hephaestus.TraceLogging
 open Microsoft.ServiceBus.Messaging
 
 module Argus =
-    let armoryPollTimeout = Duration.FromSeconds(10L)
+    let armoryPollTimeout = Duration.FromSeconds(20L)
     let armoryPollTimeoutInMilliseconds = int (armoryPollTimeout.ToTimeSpan().TotalMilliseconds)
     let duplicateCheckPeriod = Duration.FromHours(1L)
 
