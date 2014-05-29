@@ -6,11 +6,13 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Fix 5v5 layout for asian regions (minor)
+- Redirect to setup filter when fotm setup is selected
+- Add buttons to clear setup filter
 
 Infrastructure:
 - Add redirects from old domains (i.e. fotm.eu -> fotm.info/#/eu/3v3)
 - Add metrics infrastructure
+- Make 'Playing Now' update in real time without page reload.
 
 Machine learning:
 - Model realm as binary (feature1: is user from Spirestone or not, feature 2: is user from Al'Akir or not?)
