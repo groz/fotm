@@ -6,13 +6,13 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Add realtime updates to 'playing now' with SignalR
+- Move links to brackets from submenus to page itself
 - Add buttons to clear setup filter
 
 Infrastructure:
+- ASAP: Add realtime updates to 'playing now' with SignalR
 - Add redirects from old domains (i.e. fotm.eu -> fotm.info/#/eu/3v3)
 - Add metrics infrastructure
-- Make 'Playing Now' update in real time without page reload.
 - Add staging website in Azure.
 
 Machine learning:
