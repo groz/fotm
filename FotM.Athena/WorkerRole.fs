@@ -31,10 +31,9 @@ type WorkerRole() =
                 Dns.GetHostName() + Guid.NewGuid().ToString().Substring(0, 4)
 
         let updateListener = serviceBus.subscribe GlobalSettings.playerUpdatesTopic subscriptionName
+        let createUpdatePublisher() = serviceBus.topic GlobalSettings.teamUpdatesTopic
 
-        let updatePublisher = serviceBus.topic GlobalSettings.teamUpdatesTopic
-
-        AthenaProcessor.watch updateListener updatePublisher waitHandle
+        AthenaProcessor.watch updateListener createUpdatePublisher waitHandle
 
     override wr.OnStart() = 
         ServicePointManager.DefaultConnectionLimit <- 30

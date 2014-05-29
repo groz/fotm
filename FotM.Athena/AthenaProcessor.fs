@@ -52,7 +52,7 @@ module AthenaProcessor =
         let prefix = sprintf "%s/%s" region.code bracket.url
         Storage(GlobalSettings.athenaHistoryContainer, pathPrefix = prefix)
 
-    let watch (updateListener: SubscriptionClient) (updatePublisher) (waitHandle: WaitHandle) =
+    let watch (updateListener: SubscriptionClient) (createPublisher) (waitHandle: WaitHandle) =
         logInfo "FotM.Athena entry point called, starting listening to armory updates..."
 
         let getProcessorId region bracket = sprintf "[%s, %s]" region.code bracket.url
@@ -90,6 +90,8 @@ module AthenaProcessor =
                         []
 
                 let storage = getStorage region bracket
+                let updatePublisher = createPublisher()
+
                 (region.code, bracket), updateProcessor processorId storage updatePublisher historyStorage backfillData
             )            
             |> Map.ofList

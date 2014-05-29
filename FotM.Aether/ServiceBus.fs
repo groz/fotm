@@ -40,6 +40,6 @@ type ServiceBus(?connectionString) =
             logInfo "Subscription %s not found. Creating new one..." subscriptionName
             let description = SubscriptionDescription(topicName, subscriptionName)
             description.DefaultMessageTimeToLive <- messageTimeToLive
-            namespaceManager.CreateSubscription(topicName, subscriptionName) |> ignore
+            namespaceManager.CreateSubscription(description) |> ignore
 
         SubscriptionClient.CreateFromConnectionString(serviceBusConnectionString, topicName, subscriptionName)
