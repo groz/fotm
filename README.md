@@ -6,7 +6,7 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Redirect to setup filter when fotm setup is selected
+- Add realtime updates to 'playing now' with SignalR
 - Add buttons to clear setup filter
 
 Infrastructure:
