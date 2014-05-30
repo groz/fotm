@@ -23,7 +23,7 @@
 </head>
 <body>
     <div class="container body-content">
-        <!-- Navigation menu on top -->
+        <!-- Region navigation menu -->
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="container">
                 <div class="navbar-header">
@@ -40,21 +40,11 @@
 
                         <li ng-repeat="region in shared.regions" class="dropdown"
                             ng-class="{active: region == shared.currentRegion}">
-
-                            <!-- Dropdown button -->
-                            <a class="dropdown-toggle notext"
-                               data-toggle="dropdown">
+                            
+                            <a class="notext" ng-href="{{shared.regionLink(region)}}">
                                 {{region | uppercase}}
                             </a>
 
-                            <!-- Dropdown menu -->
-                            <ul class="dropdown-menu" role="menu">
-                                <li ng-repeat="(bracket, size) in shared.brackets">
-                                    <a class="notext" ng-href="{{'/'+region+'/'+bracket}}">
-                                        {{bracket}}
-                                    </a>
-                                </li>
-                            </ul>
                         </li>
 
                         <li ng-class="{active: shared.currentRegion == 'about'}">
@@ -64,22 +54,38 @@
                 </div>
             </div>
         </div>
-        <!-- /Navigation menu on top -->
-        <!-- Leaderboard-Now Selector -->
-        <div class="row pager"
-             ng-if="shared.currentRegion != 'about'">
-            <a role="button" class="btn btn-lg btn-default"
-               ng-class="{active: !shared.now}"
-               ng-href="{{'#/'+shared.currentRegion+'/'+shared.currentBracket.text}}">
-                Leaderboard
-            </a>
-            <a role="button" class="btn btn-lg btn-default"
-               ng-class="{active: shared.now}"
-               ng-href="{{'#/'+shared.currentRegion+'/'+shared.currentBracket.text+'/now'}}">
-                Playing now
-            </a>
+        <!-- /Region navigation menu -->
+        
+        <div ng-if="shared.currentRegion != 'about'">
+            
+            <ul class="pager col-lg-3 col-md-4 brackets">
+                <li ng-repeat="(bracket, size) in shared.brackets">
+                    <a role="button" class="btn btn-default"
+                       ng-href="{{shared.bracketLink(bracket)}}"
+                       ng-class="{active:bracket == shared.currentBracket.text}">
+                        {{bracket}}
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Leaderboard-Now Selector -->
+            <div class="pager col-lg-9 col-md-8">
+
+                <a role="button" class="btn btn-lg btn-default"
+                   ng-class="{active: !shared.now}"
+                   ng-href="{{'#/'+shared.currentRegion+'/'+shared.currentBracket.text}}">
+                    Leaderboard
+                </a>
+
+                <a role="button" class="btn btn-lg btn-default"
+                   ng-class="{active: shared.now}"
+                   ng-href="{{'#/'+shared.currentRegion+'/'+shared.currentBracket.text+'/now'}}">
+                    Playing now
+                </a>
+
+            </div>
+            <!-- /Leaderboard-Now Selector -->
         </div>
-        <!-- /Leaderboard-Now Selector -->
 
         <div ng-view>
         </div>
@@ -99,8 +105,8 @@
     @Scripts.Render("~/bundles/bootstrap")
     <script src="~/Scripts/jquery.signalR-2.0.3.min.js"></script>
     <script src="~/signalr/hubs"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.10/angular.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.10/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.10/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.10/angular-route.js"></script>
     @Scripts.Render("~/bundles/app")
 </body>
 </html>

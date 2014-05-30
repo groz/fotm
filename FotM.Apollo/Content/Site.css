@@ -50,6 +50,11 @@ input[type="checkbox"].input-validation-error {
     vertical-align: middle !important;
 }
 
+.brackets {
+    vertical-align: middle !important;
+    margin-top: 35px;
+}
+
 .nopadding {
     padding: 0 !important;
     margin: 0 !important;

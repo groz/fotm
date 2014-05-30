@@ -2,7 +2,7 @@ app.provider("shared", function () {
     var sharedProperties = {
         currentRegion: "US",
 
-        currentBracket: "3v3",
+        currentBracket: {},
 
         regions: ["us", "eu", "kr", "tw", "cn"],
 
@@ -11,7 +11,21 @@ app.provider("shared", function () {
             "3v3": 3,
             "5v5": 5,
             "rbg": 10
-        }
+        },
+
+        regionLink: function (region) {
+            var url = '/' + region + '/' + this.currentBracket.text;
+            if (this.now)
+                url = url + "/now";
+            return url;
+        },
+
+        bracketLink: function (bracket) {
+            var url = '/' + this.currentRegion + '/' + bracket;
+            if (this.now)
+                url = url + "/now";
+            return url;
+        },
     };
 
     this.$get = function () { return sharedProperties; }
