@@ -8,12 +8,11 @@ TODO
 Frontend:
 - Move links to brackets from submenus to page itself
 - Add buttons to clear setup filter
+- Add notification of new website to old domains
 
 Infrastructure:
-- ASAP: Add realtime updates to 'playing now' with SignalR
 - Add redirects from old domains (i.e. fotm.eu -> fotm.info/#/eu/3v3)
 - Add metrics infrastructure
-- Add staging website in Azure.
 
 Machine learning:
 - Model realm as binary (feature1: is user from Spirestone or not, feature 2: is user from Al'Akir or not?)
