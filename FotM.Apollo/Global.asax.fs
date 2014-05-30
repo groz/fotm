@@ -85,9 +85,17 @@ type Global() =
 
     member x.Application_Start() =
         AreaRegistration.RegisterAllAreas()
+
         GlobalConfiguration.Configure(Action<_> Global.RegisterWebApi)
         Global.RegisterFilters(GlobalFilters.Filters)
         Global.RegisterRoutes(RouteTable.Routes)
         BundleConfig.RegisterBundles BundleTable.Bundles
-
+        
         Main.OnStart()
+
+open global.Owin
+
+type Startup() =
+    member this.Configuration(app: IAppBuilder): unit =        
+        app.MapSignalR() |> ignore
+

@@ -45,6 +45,20 @@ type Repository() =
         let data = armoryData
         data.TryFind(region.ToUpper(), bracket)
 
+open EkonBenefits.FSharp.Dynamic
+open Microsoft.AspNet.SignalR
+open Microsoft.AspNet.SignalR.Hubs
+
+[<HubName("playingNowHub")>]
+type PlayingNowHub() =
+    inherit Hub()
+
+module PlayingNowUpdateManager =
+    let clients = lazy GlobalHost.ConnectionManager.GetHubContext<PlayingNowHub>().Clients
+
+    let notifyUpdateReady(region: string, bracket: string): unit =
+        clients.Value.All ? updateReady(region, bracket)
+
 module Main =
 
     let createArmoryAgent (initialData: Map<string*string, ArmoryInfo>) (repository: Repository) = Agent<ArmoryAgentMessage>.Start(fun agent ->
@@ -67,7 +81,10 @@ module Main =
                     let! snapshot = fetch<TeamInfo list> storageLocation
                     let armoryInfo = ArmoryInfo(snapshot, storageLocation)
                     let updatedArmories = armories |> Map.add(region, bracket) armoryInfo
+
                     repository.update updatedArmories
+                    PlayingNowUpdateManager.notifyUpdateReady(region, bracket)
+                    
                     return! loop updatedArmories
                 with
                 | ex -> 
@@ -144,3 +161,4 @@ module Main =
 
             brokeredMessage.Complete()
         )
+

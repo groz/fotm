@@ -11,17 +11,44 @@ app.controller('NowController', ['media', 'api', 'settings', '$scope', function 
     $scope.shared.currentBracket = $scope.bracket;
     $scope.shared.now = true;
 
-    api.loadPlayingNowAsync($scope.region, $scope.bracket.text, [])
-        .then(function(response) {
-            console.log("received data from now webapi:", response.data);
-            $scope.teams = response.data;
-            $scope.empty = $scope.teams.length == 0;
-        });
+    function fetchData() {
+        api.loadPlayingNowAsync($scope.region, $scope.bracket.text)
+            .then(function(response) {
+                console.log("received data from now webapi:", response.data);
+                $scope.teams = response.data;
+                $scope.empty = $scope.teams.length == 0;
+            });
+    }
+
+    fetchData();
 
     $scope.toLocalTime = api.toLocalTime;
 
     $scope.formatRatingChange = function (n) {
         return (n < 0) ? n.toString() : "+" + n.toString();
     }
+
+    // subscribe to realtime updates notification
+    var notifier = $.connection.playingNowHub;
+
+    notifier.client.updateReady = function(region, bracket) {
+        console.log("NOTIFICATION RECEIVED: update ready for", region, bracket);
+        if ((region.toUpperCase() === $scope.region.toUpperCase())
+            &&
+            (bracket.toUpperCase() === $scope.bracket.text.toUpperCase())) {
+
+            console.log("This is our update, fetching data...");
+            fetchData();
+        }
+    }
+
+    $.connection.hub.start().done(function() {
+        console.log("SUBSCRIBED TO REALTIME NOTIFICATIONS");
+    });
+
+    $scope.$on("$destroy", function () {
+        console.log("Exiting NowController. Unsubscribing from notifications.");
+        $.connection.hub.stop();
+    });
 
 }]);
