@@ -37,8 +37,9 @@ type Storage (containerName, ?storageConnectionString, ?pathPrefix) =
         let blob = container.GetBlockBlobReference (Path.Combine (prefix, relativePath))
 
         try
+            // the part below is not threadsafe either because of JSON.NET or blob.UploadText
             lock RepoSync.lockobj (fun () ->
-                let json = JsonConvert.SerializeObject data // serialization is not threadsafe here
+                let json = JsonConvert.SerializeObject data
                 let compressed = CompressionUtils.ZipToBase64 json
                 blob.UploadText compressed 
             )
