@@ -19,7 +19,7 @@
     <Name>FotM.Apollo</Name>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
-    <NameOfLastUsedPublishProfile>fotm-info</NameOfLastUsedPublishProfile>
+    <NameOfLastUsedPublishProfile>fotm-info__staging</NameOfLastUsedPublishProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -193,6 +193,7 @@
     <None Include="fonts\glyphicons-halflings-regular.svg" />
     <None Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="fotm-info.pubxml" />
+    <None Include="fotm-info__staging.pubxml" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
