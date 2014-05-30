@@ -6,7 +6,6 @@ World of Warcraft arena FotM monitor.
 TODO
 
 Frontend:
-- Move links to brackets from submenus to page itself
 - Add buttons to clear setup filter
 - Add notification of new website to old domains
 
