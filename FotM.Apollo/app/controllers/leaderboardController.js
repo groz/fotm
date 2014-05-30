@@ -30,7 +30,9 @@ app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'setti
             $scope.teams = response.data.Item1;
             $scope.setups = response.data.Item2;
             console.log("Last snapshot location:", response.data.Item3);
-     });
+        });
+
+    console.log("loadLeaderBoard request queued.");
 
     $scope.getSpecForFilter = function (fotmFilter) {
         return media.getSpecInfo(fotmFilter.specId);

@@ -24,7 +24,7 @@
 <body>
     <div class="container body-content">
         <!-- Region navigation menu -->
-        <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar navbar-inverse navbar-fixed-top" data-ng-cloak>
             <div class="container">
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -40,7 +40,7 @@
 
                         <li ng-repeat="region in shared.regions" class="dropdown"
                             ng-class="{active: region == shared.currentRegion}">
-                            
+
                             <a class="notext" ng-href="{{shared.regionLink(region)}}">
                                 {{region | uppercase}}
                             </a>
@@ -55,10 +55,10 @@
             </div>
         </div>
         <!-- /Region navigation menu -->
-        
-        <div ng-if="shared.currentRegion != 'about'">
-            
-            <ul class="pager col-lg-3 col-md-4 brackets">
+
+        <div ng-if="shared.currentRegion != 'about'" data-ng-cloak>
+
+            <ul class="pager col-lg-3 col-md-4 brackets" data-ng-cloak>
                 <li ng-repeat="(bracket, size) in shared.brackets">
                     <a role="button" class="btn btn-default"
                        ng-href="{{shared.bracketLink(bracket)}}"
@@ -91,7 +91,7 @@
         </div>
 
     </div>
-    
+
     <hr />
 
     @Html.Partial("InitVK")
