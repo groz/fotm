@@ -1,6 +1,6 @@
-FotM - F# and AngularJS realtime World of Warcraft arena setups and rankings monitor.
+FotM
 ====
-
+F# and AngularJS realtime World of Warcraft arena setups and rankings monitor.
 
 TODO
 
