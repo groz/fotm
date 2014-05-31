@@ -1,7 +1,6 @@
-fotm
+FotM - F# and AngularJS realtime World of Warcraft arena setups and rankings monitor.
 ====
 
-World of Warcraft arena FotM monitor.
 
 TODO
 
