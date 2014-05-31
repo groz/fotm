@@ -7,7 +7,6 @@ TODO
 
 Frontend:
 - Add buttons to clear setup filter
-- Add notification of new website to old domains
 - Submit sitemap to Google webmaster tools
 
 Infrastructure:
