@@ -26,17 +26,27 @@
 
 <div class="hidden" data-bind="css: {hidden: false}">
 
+    <br />
+
+    <div class="alert alert-success centered">
+        <strong>
+            <a href="http://fotm.info">New version</a> available!
+        </strong>
+        All brackets, all regions, win stats for each team and much more at
+        <a href="http://fotm.info">http://fotm.info</a>
+    </div>
+
     <div class="row pager">
-            <a role="button" class="btn btn-lg btn-default"
-               data-bind="css: { active: leaderboardSelected }, click: leaderboardClicked"
-               id="leaderboardBtn">
-                Leaderboard
-            </a>
-            <a role="button" class="btn btn-lg btn-default"
-               data-bind="css: { active: playingNowSelected }, click: playingNowClicked"
-               id="playingNowBtn">
-                Playing now
-            </a>
+        <a role="button" class="btn btn-lg btn-default"
+           data-bind="css: { active: leaderboardSelected }, click: leaderboardClicked"
+           id="leaderboardBtn">
+            Leaderboard
+        </a>
+        <a role="button" class="btn btn-lg btn-default"
+           data-bind="css: { active: playingNowSelected }, click: playingNowClicked"
+           id="playingNowBtn">
+            Playing now
+        </a>
     </div>
 
     <div class="row" data-bind="visible: playingNowSelected">
@@ -156,7 +166,7 @@
             </table>
 
             <br />
-            
+
         </div>
 
         <!-- FOTM SELECTED SETUP -->
