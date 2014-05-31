@@ -25,14 +25,14 @@ type TopicWrapper(ctor: unit -> TopicClient) =
             | Message(data) ->
                 try
                     retry {
-                        let brokeredMessage = new BrokeredMessage(data) 
+                        use brokeredMessage = new BrokeredMessage(data) 
                         clientImpl.Send brokeredMessage
                     }
 
                     return! loop clientImpl
                 with
                 | ex -> 
-                    logError "%A" ex
+                    logError "Error during TopicWrapper.post: %A. Client recreated. Update ignored." ex
                     let newClient = ctor()
                     return! loop newClient
             | Stop -> ()
