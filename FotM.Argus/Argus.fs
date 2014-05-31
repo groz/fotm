@@ -46,13 +46,14 @@ module Argus =
                 | None -> logInfo "%s duplicate or outdated update" armoryInfo
                 | Some(snapshot) ->
                     let uri = repository.upload (snapshot)
-                    use msg = new BrokeredMessage {
-                            storageLocation = uri
-                            region = region.code
-                            bracket = bracket
-                        }
-                    logInfo "%s publishing update message %A" armoryInfo msg
-                    publisher.Send msg
+                    logInfo "%s publishing update message" armoryInfo
+
+                    publisher.post {
+                        storageLocation = uri
+                        region = region.code
+                        bracket = bracket
+                    }
+
                     logInfo "%s message published" armoryInfo
 
                 logInfo "%s processArmory waiting for %A" armoryInfo armoryPollTimeout

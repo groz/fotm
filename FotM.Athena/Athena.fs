@@ -148,8 +148,6 @@ module Athena =
     let isValid (t: TeamEntry) =
         (not (isNull t.players)) && t.players.Length <> 0
 
-    let syncObj = obj()
-
     let processUpdate snapshot snapshotHistory teamHistory (storage: Storage) (updatePublisher: TopicWrapper) (historyStorage: Storage) =
         let currentSnapshotHistory = snapshotHistory |> List.filter isCurrent
 
@@ -178,20 +176,16 @@ module Athena =
                     
                         let ladderUrl = storage.upload (teamLadder)
 
-                        use msg = new BrokeredMessage {
+                        let savedUri = historyStorage.upload(newTeamHistory)
+                        logInfo "Current history uploaded to %A" savedUri
+
+                        logInfo "[%s, %s] publishing update message" snapshot.region snapshot.bracket.url
+
+                        updatePublisher.post {
                             storageLocation = ladderUrl
                             region = snapshot.region
                             bracket = snapshot.bracket
                         }
-
-                        let savedUri = historyStorage.upload(newTeamHistory)
-                        logInfo "Current history uploaded to %A" savedUri
-
-                        logInfo "[%s, %s] publishing update message %A" snapshot.region snapshot.bracket.url msg
-
-                        lock syncObj (fun () -> 
-                            updatePublisher.Send msg
-                        )
                     else
                         logInfo "[%s, %s] No new teams found." snapshot.region snapshot.bracket.url
                     

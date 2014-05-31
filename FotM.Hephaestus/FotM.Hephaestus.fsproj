@@ -42,8 +42,8 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TraceLogging.fs" />
     <Compile Include="CollectionExtensions.fs" />
+    <Compile Include="TraceLogging.fs" />
     <Compile Include="Async.fs" />
     <Compile Include="Math.fs" />
   </ItemGroup>

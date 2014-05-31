@@ -26,3 +26,6 @@ module CollectionExtensions =
     let inline isNull< ^a when ^a : not struct> (x:^a) =
         obj.ReferenceEquals (x, Unchecked.defaultof<_>)
 
+    let inline asOption< ^a when ^a : not struct> (x:^a) =
+        if not (isNull x) then Some x
+        else None

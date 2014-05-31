@@ -9,12 +9,12 @@ open FotM.Hephaestus.TraceLogging
 open FotM.Hephaestus.Async
 
 type TopicPublisherMessage =
-| Message of BrokeredMessage
+| Message of obj
 | Stop
 
 type TopicWrapper(ctor: unit -> TopicClient) =
 
-    let retry = RetryBuilder(3)
+    let retry = RetryBuilder(3, logException "TopicWrapper operation failed with %A")
     
     let updateAgent = Agent<TopicPublisherMessage>.Start(fun agent ->
 
@@ -24,7 +24,11 @@ type TopicWrapper(ctor: unit -> TopicClient) =
             match msg with
             | Message(data) ->
                 try
-                    retry { clientImpl.Send data }
+                    retry {
+                        let brokeredMessage = new BrokeredMessage(data) 
+                        clientImpl.Send brokeredMessage
+                    }
+
                     return! loop clientImpl
                 with
                 | ex -> 
@@ -38,7 +42,7 @@ type TopicWrapper(ctor: unit -> TopicClient) =
         loop client
     )
 
-    member this.Send brokeredMessage =
+    member this.post brokeredMessage =
         updateAgent.Post (Message brokeredMessage)
 
     interface IDisposable with
@@ -68,7 +72,7 @@ type ServiceBus(?connectionString) =
     member this.topic topicName =
         logInfo "Creating publisher for topic %s" topicName
         createTopic topicName
-        TopicWrapper(fun _ -> TopicClient.CreateFromConnectionString(serviceBusConnectionString, topicName))
+        new TopicWrapper(fun _ -> TopicClient.CreateFromConnectionString(serviceBusConnectionString, topicName))
 
     member this.subscribe topicName subscriptionName =
         logInfo "Creating subscription %s to topic %s" subscriptionName topicName
