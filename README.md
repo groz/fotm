@@ -8,6 +8,7 @@ TODO
 Frontend:
 - Add buttons to clear setup filter
 - Submit sitemap to Google webmaster tools
+- Add Discourse discussion forum
 
 Infrastructure:
 - Add redirects from old domains (i.e. fotm.eu -> fotm.info/#/eu/3v3)
