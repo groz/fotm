@@ -31,7 +31,7 @@ module Argus =
                 Some(None, history)
         ) [] // initial state is empty history
 
-    let processArmory (region: RegionalSettings) (bracket: Bracket) (publisher: TopicClient) = async {
+    let processArmory (region: RegionalSettings) (bracket: Bracket) (publisher: TopicWrapper) = async {
         let armoryInfo = sprintf "[%A, %A]" region.code bracket.url
 
         logInfo "%s started processing armory..." armoryInfo

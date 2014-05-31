@@ -30,7 +30,8 @@ module AthenaProcessor =
                 try
                     logInfo "[%s, %i] Processing update %A..." processorId (teamHistory |> List.length) storageLocation
                     let! snapshot = fetch<LadderSnapshot<PlayerEntry>> storageLocation
-                    let newSnapshotHistory, newTeamHistory = Athena.processUpdate snapshot snapshotHistory teamHistory storage topic historyStorage
+                    let newSnapshotHistory, newTeamHistory = 
+                        Athena.processUpdate snapshot snapshotHistory teamHistory storage topic historyStorage
                     logInfo "[%s, %i] Update %A processed." processorId (newTeamHistory |> List.length) storageLocation
                     return! loop (newSnapshotHistory, newTeamHistory)
                 with
@@ -52,7 +53,7 @@ module AthenaProcessor =
         let prefix = sprintf "%s/%s" region.code bracket.url
         Storage(GlobalSettings.athenaHistoryContainer, pathPrefix = prefix)
 
-    let watch (updateListener: SubscriptionClient) (updatePublisher) (waitHandle: WaitHandle) =
+    let watch (updateListener: SubscriptionClient) (updatePublisher: TopicWrapper) (waitHandle: WaitHandle) =
         logInfo "FotM.Athena entry point called, starting listening to armory updates..."
 
         let getProcessorId region bracket = sprintf "[%s, %s]" region.code bracket.url

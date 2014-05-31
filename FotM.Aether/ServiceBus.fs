@@ -6,6 +6,44 @@ open Microsoft.WindowsAzure
 open Microsoft.ServiceBus
 open Microsoft.ServiceBus.Messaging
 open FotM.Hephaestus.TraceLogging
+open FotM.Hephaestus.Async
+
+type TopicPublisherMessage =
+| Message of BrokeredMessage
+| Stop
+
+type TopicWrapper(ctor: unit -> TopicClient) =
+
+    let retry = RetryBuilder(3)
+    
+    let updateAgent = Agent<TopicPublisherMessage>.Start(fun agent ->
+
+        let rec loop (clientImpl: TopicClient) = async {
+            let! msg = agent.Receive()
+
+            match msg with
+            | Message(data) ->
+                try
+                    retry { clientImpl.Send data }
+                    return! loop clientImpl
+                with
+                | ex -> 
+                    logError "%A" ex
+                    let newClient = ctor()
+                    return! loop newClient
+            | Stop -> ()
+        }
+
+        let client = ctor()
+        loop client
+    )
+
+    member this.Send brokeredMessage =
+        updateAgent.Post (Message brokeredMessage)
+
+    interface IDisposable with
+        member this.Dispose() =
+            updateAgent.Post Stop
 
 type ServiceBus(?connectionString) =
 
@@ -30,7 +68,7 @@ type ServiceBus(?connectionString) =
     member this.topic topicName =
         logInfo "Creating publisher for topic %s" topicName
         createTopic topicName
-        TopicClient.CreateFromConnectionString(serviceBusConnectionString, topicName)
+        TopicWrapper(fun _ -> TopicClient.CreateFromConnectionString(serviceBusConnectionString, topicName))
 
     member this.subscribe topicName subscriptionName =
         logInfo "Creating subscription %s to topic %s" subscriptionName topicName

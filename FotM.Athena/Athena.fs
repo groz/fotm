@@ -150,7 +150,7 @@ module Athena =
 
     let syncObj = obj()
 
-    let processUpdate snapshot snapshotHistory teamHistory (storage: Storage) (updatePublisher: TopicClient) (historyStorage: Storage) =
+    let processUpdate snapshot snapshotHistory teamHistory (storage: Storage) (updatePublisher: TopicWrapper) (historyStorage: Storage) =
         let currentSnapshotHistory = snapshotHistory |> List.filter isCurrent
 
         if currentSnapshotHistory |> List.exists (fun entry -> entry.ladder = snapshot.ladder) then
