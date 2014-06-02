@@ -357,7 +357,6 @@ namespace FotM.Cassandra.Tests
         }
 
         [Test]
-        [TestMethod]
         public void CalculateDerivationAccuracy()
         {
             foreach (var clusterer in _clusterers)

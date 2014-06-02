@@ -111,13 +111,13 @@ type ValuesController() =
                 |> Seq.map(fun (rank, team) -> TeamViewModel(rank, team, false))
                 |> Seq.truncate maxLeaderboardTeams
 
-            let minGamesToRegisterSetup = 5
+            let minGamesThreshold = 0
 
             let filteredSetups = 
                 armoryInfo.setups
                 |> Seq.filter(fun (specs, totalGames, winRatio) ->
                     let matchesFilter = specs |> Teams.matchesFilter fotmFilters
-                    matchesFilter && totalGames > minGamesToRegisterSetup)
+                    matchesFilter && totalGames > minGamesThreshold)
                 |> Seq.sortBy (fun (specs, totalGames, winRatio) -> 
                     match ordering with
                     | Popularity -> - float totalGames
