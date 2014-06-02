@@ -8,10 +8,8 @@ Frontend:
 - Add buttons to clear setup filter
 - Submit sitemap to Google webmaster tools
 - Add Discourse discussion forum
-- Add option to view setup chart by win%, not just popularity
 
 Infrastructure:
-ASAP: fix bug with filtering with duplicate specs
 - Add redirects from old domains (i.e. fotm.eu -> fotm.info/#/eu/3v3)
 - Add metrics infrastructure
 
