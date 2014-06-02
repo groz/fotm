@@ -22,9 +22,19 @@ app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'setti
     $scope.teams = {}
     $scope.setups = {}
 
-    $scope.fotmFilters = filterFactory.createFilters($scope.bracket.size, inputFilters);
+    $scope.ordering = $routeParams.ordering;
 
-    api.loadLeaderboardAsync($scope.region, $scope.bracket.text, $scope.fotmFilters)
+    $scope.setupNumber = function(setup) {
+        if ($scope.ordering == "winRatio") {
+            return api.toPercent(setup.winRatio);
+        }
+        return api.toPercent(setup.popularity);
+    };
+
+    $scope.fotmFilters = filterFactory.createFilters($scope.bracket.size, inputFilters);
+    
+
+    api.loadLeaderboardAsync($scope.region, $scope.bracket.text, $scope.fotmFilters, $scope.ordering)
         .then(function(response) {
             console.log("received data from webapi:", response.data);
             $scope.teams = response.data.Item1;

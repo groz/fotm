@@ -9,6 +9,7 @@ open System.Net
 open System.Text
 open Newtonsoft.Json
 open FotM.Hephaestus.TraceLogging
+open FotM.Hephaestus.CollectionExtensions
 open FotM.Hephaestus.Math
 open FotM.Data
 open FotM.Apollo
@@ -34,10 +35,11 @@ type TeamViewModel (rank: int, teamInfo: TeamInfo, justPlayed: bool)=
     member this.wins = teamInfo.totalWins
     member this.losses = teamInfo.totalLosses
 
-type SetupViewModel (rank: int, specs: Class list, ratio: float) =
+type SetupViewModel (rank: int, specs: Class list, popularity: float, winRatio: float) =
     member this.rank = rank
     member this.specs = specs
-    member this.percent = sprintf "%.1f%%" (ratio * 100.0)
+    member this.popularity = popularity
+    member this.winRatio = winRatio
 
 type BlobViewModel (blob: CloudBlockBlob) =
     member this.uri = blob.Uri
@@ -66,6 +68,10 @@ type BlobListViewModel (blobs: CloudBlockBlob array) =
        let avgInMinutes = intervals |> Seq.averageBy(fun x -> x.TotalMinutes)
        TimeSpan.FromMinutes avgInMinutes
 
+type Ordering =
+| WinRatio
+| Popularity
+
 /// Retrieves values.
 [<RoutePrefix("api")>]
 type ValuesController() =
@@ -88,8 +94,7 @@ type ValuesController() =
 
     let seen teamInfo = teamInfo.lastEntry.snapshotTime
 
-    [<Route("{region}/{bracket}")>]
-    member this.Get(region: string, bracket: string, [<FromUri>]filters: string seq) =
+    let retrieveLeaderboard(region: string, bracket: string, ordering: Ordering, filters: string seq) =
         let fotmFilters = parseFilters filters
 
         let bracketInfo = Main.repository.getArmory(region, bracket)
@@ -101,24 +106,45 @@ type ValuesController() =
                 |> Seq.filter (fun (i, t) -> t |> Teams.teamMatchesFilter fotmFilters)
                 |> Seq.toArray
 
-            let filteredSetups = 
-                armoryInfo.setups
-                |> Seq.mapi(fun i setup -> i+1, setup)
-                |> Seq.filter(fun (rank, setup) -> fst setup |> Teams.matchesFilter fotmFilters)
-            
             let teamsToShow = 
                 filteredTeams 
                 |> Seq.map(fun (rank, team) -> TeamViewModel(rank, team, false))
                 |> Seq.truncate maxLeaderboardTeams
 
+            let minGamesToRegisterSetup = 5
+
+            let filteredSetups = 
+                armoryInfo.setups
+                |> Seq.filter(fun (specs, totalGames, winRatio) ->
+                    let matchesFilter = specs |> Teams.matchesFilter fotmFilters
+                    matchesFilter && totalGames > minGamesToRegisterSetup)
+                |> Seq.sortBy (fun (specs, totalGames, winRatio) -> 
+                    match ordering with
+                    | Popularity -> - float totalGames
+                    | WinRatio -> -winRatio)
+                |> Seq.mapi(fun i setup -> i+1, setup)
+            
             let setupsToShow = 
                 filteredSetups 
-                |> Seq.map(fun (rank, s) -> SetupViewModel(rank, fst s, snd s ./. armoryInfo.totalGames))
+                |> Seq.map(fun (rank, (specs, totalGames, winRatio)) -> 
+                    let popularity = totalGames ./. armoryInfo.totalGames
+                    SetupViewModel(rank, specs, popularity, winRatio)
+                )
                 |> Seq.truncate maxSpecs
 
             teamsToShow, setupsToShow, armoryInfo.snapshotUrl.ToString()
         | None ->
             seq [], seq [], ""
+
+
+    [<Route("{region}/{bracket}")>]
+    member this.Get(region: string, bracket: string, [<FromUri>]filters: string seq) =
+        retrieveLeaderboard(region, bracket, Popularity, filters)
+
+    [<Route("{region}/{bracket}")>]
+    member this.Get(region: string, bracket: string, [<FromUri>]ordering, [<FromUri>]filters: string seq) =
+        let ordering = if (ordering = "winRatio") then WinRatio else Popularity
+        retrieveLeaderboard(region, bracket, ordering, filters)
 
     [<Route("{region}/{bracket}/now")>]
     member this.Get(region: string, bracket: string) =

@@ -89,7 +89,7 @@
     <tbody>
         <tr ng-repeat="setup in setups" class="notext" ng-click="redirectToSetupFilter(setup)">
 
-            <td class="centered">{{setup.percent}}</td>
+            <td class="centered">{{setupNumber(setup)}}</td>
 
             <td ng-repeat="spec in setup.specs" class="centered">
                 <img ng-src="{{media.classImageForSpec(spec)}}" alt="{{media.classText(spec)}}" />

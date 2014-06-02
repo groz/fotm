@@ -8,6 +8,7 @@ open FotM.Aether
 open FotM.Data
 open FotM.Hephaestus.Async
 open FotM.Hephaestus.TraceLogging
+open FotM.Hephaestus.Math
 open FotM.Hephaestus.CollectionExtensions
 open Newtonsoft.Json
 open FotM.Aether.StorageIO
@@ -33,8 +34,10 @@ type ArmoryInfo(ladder : TeamInfo list, storageLocation: Uri) =
     member this.setups =
         this.teams
         |> Seq.groupBy (fun (rank, teamInfo) -> teamInfo.lastEntry.getClasses())
-        |> Seq.map (fun (specs, group) -> specs, group |> Seq.sumBy(fun (rank, teamInfo) -> teamInfo.totalGames))
-        |> Seq.sortBy (fun (specs, count) -> -count)
+        |> Seq.map (fun (specs, group) -> 
+            let totalGames = group |> Seq.sumBy(fun (rank, teamInfo) -> teamInfo.totalGames)
+            let totalWins = group |> Seq.sumBy(fun (rank, teamInfo) -> teamInfo.totalWins)
+            specs, totalGames, totalWins ./. totalGames)
 
 type Repository() =
     let mutable armoryData = [] |> Map.ofSeq

@@ -3,12 +3,12 @@ function apiFactory($http, $cacheFactory) {
     var lruCache = $cacheFactory('lruCache', { capacity: 50 });
 
     return {
-        loadLeaderboardAsync: function(region, bracket, fotmFilters) {
+        loadLeaderboardAsync: function(region, bracket, fotmFilters, ordering) {
 
             var promise = $http({
                 method: 'GET',
                 url: '/api/' + region + '/' + bracket,
-                params: { filters: fotmFilters },
+                params: { filters: fotmFilters, ordering: ordering },
                 cache: lruCache
             });
 
@@ -47,6 +47,10 @@ function apiFactory($http, $cacheFactory) {
         toLocalTime: function(t) {
             var d = new Date(t + " UTC");
             return d.toLocaleDateString() + " " + d.toLocaleTimeString();
+        },
+
+        toPercent: function(v) {
+            return (v * 100).toFixed(1) + "%";
         },
     }
 
