@@ -139,22 +139,39 @@ module Teams =
             totalLosses = lost.Length
         }
 
-    let matchesFilter (classFilters: Class array) (teamClasses: Class seq) =
-        let countMatchingPlayers (classFilter: Class) =
-            teamClasses
-            |> Seq.filter (fun c -> c.matchesFilter classFilter)
-            |> Seq.length
-        
-        let passingFilters =
-            classFilters
-            |> Seq.countBy (fun classFilter -> classFilter)
-            |> Seq.filter (fun (classFilter, count) -> (countMatchingPlayers classFilter) >= count)
+    let matchesFilter (filters: Class array) (setup: Class seq) =
+        let setupClasses = setup |> Seq.countBy(fun p -> Specs.getClassId p) |> Seq.toList
+        let setupSpecs = setup |> Seq.countBy(fun p -> p) |> Seq.toList
 
-        Seq.length(passingFilters) = Array.length(classFilters)
+        let filterClasses = filters |> Seq.countBy(fun p -> Specs.getClassId p) |> Seq.toList
+        let filterSpecs = 
+            filters
+            |> Seq.filter(fun s -> s.defined)
+            |> Seq.countBy(fun p -> p) |> Seq.toList
+
+        let allClasses = (setupClasses @ filterClasses) |> Seq.distinct
+        let allSpecs = (setupSpecs @ filterSpecs) |> Seq.distinct
+
+        let getCount id (classes: (_*int) list) =
+            let c = classes |> Seq.tryFind(fun (cid, _) -> id = cid)
+            match c with
+            | None -> 0
+            | Some(cid, count) -> count
+
+        let ok all setup filter =
+            all
+            |> Seq.forall(fun (id, count) -> 
+                let setupCount = setup |> getCount id
+                let filterCount = filter |> getCount id
+                setupCount >= filterCount)
+
+        let classesOk = ok allClasses setupClasses filterClasses
+        let specsOk = ok allSpecs setupSpecs filterSpecs
+
+        classesOk && specsOk
 
     let teamMatchesFilter (classFilters: Class array) teamInfo =
         teamInfo.lastEntry.getClasses() |> matchesFilter classFilters
-
 
 [<StructuralEquality;NoComparison>]
 type LadderSnapshot<'a> = {

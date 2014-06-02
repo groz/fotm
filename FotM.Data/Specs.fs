@@ -69,20 +69,20 @@ type Class =
 | Monk of MonkSpec option
 | Druid of DruidSpec option
 
-    member c.matchesFilter (classFilter: Class)  = 
-        match classFilter with
-        | Warrior(None) -> (match c with | Warrior(_) -> true | _ -> false)
-        | Paladin(None) -> (match c with | Paladin(_) -> true | _ -> false)
-        | Hunter(None) -> (match c with | Hunter(_) -> true | _ -> false)
-        | Rogue(None) -> (match c with | Rogue(_) -> true | _ -> false)
-        | Priest(None) -> (match c with | Priest(_) -> true | _ -> false)
-        | ``Death Knight``(None) -> (match c with | ``Death Knight``(_) -> true | _ -> false)
-        | Shaman(None) -> (match c with | Shaman(_) -> true | _ -> false)
-        | Mage(None) -> (match c with | Mage(_) -> true | _ -> false)
-        | Warlock(None) -> (match c with | Warlock(_) -> true | _ -> false)
-        | Monk(None) -> (match c with | Monk(_) -> true | _ -> false)
-        | Druid(None) -> (match c with | Druid(_) -> true | _ -> false)
-        | _  -> c = classFilter
+    member c.defined = 
+        match c with
+        | Warrior None
+        | Paladin None
+        | Hunter None
+        | Rogue None
+        | Priest None
+        | ``Death Knight`` None
+        | Shaman None
+        | Mage None
+        | Warlock None
+        | Monk None
+        | Druid None -> false
+        | _  -> true
 
     member c.isHealer =
         let healers = [
