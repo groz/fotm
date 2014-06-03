@@ -14,7 +14,6 @@ Frontend:
 - Log the main page in analytics as '/', not '/us/3v3'
 
 Infrastructure:
-- ASAP: fix memory leak in Athena
 - Add unit tests for Athena
 - Remove V1(C#) code.
 
@@ -25,6 +24,7 @@ Machine learning:
   - 3v3
   - 5v5
   - rbg
+- Try choosing clustering by total setup popularity score
 
 Backlog:
 - Discussion forum per team setup?
