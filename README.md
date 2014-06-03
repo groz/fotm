@@ -14,7 +14,6 @@ Frontend:
 - Log the main page in analytics as '/', not '/us/3v3'
 
 Infrastructure:
-- ASAP: fix memory leak in Athena
 - Add unit tests for Athena
 - Remove V1(C#) code.
 
