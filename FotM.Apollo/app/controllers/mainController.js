@@ -1,6 +1,9 @@
-app.controller('MainController', ['$scope', '$location', '$window', '$rootScope', function ($scope, $location, $window, $rootScope) {
+app.controller('MainController', ['$scope', '$location', '$window', '$rootScope', '$cookies',
+    function ($scope, $location, $window, $rootScope, $cookies) {
 
     console.log("MainController activated");
+
+    console.log("cookies:", $cookies, "shared:", $scope.shared);
 
     $scope.getCurrentLocation = function () { return $location.absUrl(); }
 
@@ -21,6 +24,7 @@ app.controller('MainController', ['$scope', '$location', '$window', '$rootScope'
         console.log("moved from", previousPage, "to", virtualPage);
 
         history.push(virtualPage);
+        $cookies.lastPage = virtualPage;
         
         if (virtualPage != previousPage) {
             console.log("logging pageview to analytics:", virtualPage);

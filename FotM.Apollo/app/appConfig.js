@@ -66,7 +66,12 @@ function ($routeProvider, sharedProvider, $locationProvider) {
             controller: "AboutController",
             templateUrl: "app/templates/about.html"
         })
-        .otherwise({ redirectTo: '/us/3v3' });
+        .otherwise(
+        {
+            redirectTo: function() {
+                return sharedProperties.redirectPage();
+            }
+        });
 
     // use HTML5 style links without #
     // it will fallback automatically to # routes on older browsers

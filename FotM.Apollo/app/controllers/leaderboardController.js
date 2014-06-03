@@ -33,10 +33,9 @@ app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'setti
 
     $scope.fotmFilters = filterFactory.createFilters($scope.bracket.size, inputFilters);
     
-
     api.loadLeaderboardAsync($scope.region, $scope.bracket.text, $scope.fotmFilters, $scope.ordering)
         .then(function(response) {
-            console.log("received data from webapi:", response.data);
+            console.log("received data from webapi, teams:", response.data.Item1.length);
             $scope.teams = response.data.Item1;
             $scope.setups = response.data.Item2;
             console.log("Last snapshot location:", response.data.Item3);

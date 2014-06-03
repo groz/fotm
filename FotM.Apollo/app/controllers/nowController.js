@@ -14,7 +14,7 @@ app.controller('NowController', ['media', 'api', 'settings', '$scope', function 
     function fetchData() {
         api.loadPlayingNowAsync($scope.region, $scope.bracket.text)
             .then(function(response) {
-                console.log("received data from now webapi:", response.data);
+                console.log("received data from now webapi, length:", response.data.length);
                 $scope.teams = response.data;
                 $scope.empty = $scope.teams.length == 0;
             });

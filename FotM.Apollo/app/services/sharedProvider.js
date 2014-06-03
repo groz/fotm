@@ -1,7 +1,7 @@
 app.provider("shared", function () {
     var sharedProperties = {
+        lastPage: "",
         currentRegion: "US",
-
         currentBracket: {},
 
         regions: ["us", "eu", "kr", "tw", "cn"],
@@ -13,20 +13,33 @@ app.provider("shared", function () {
             "rbg": 10
         },
 
-        regionLink: function (region) {
+        regionLink: function(region) {
             var url = '/' + region + '/' + this.currentBracket.text;
             if (this.now)
                 url = url + "/now";
             return url;
         },
 
-        bracketLink: function (bracket) {
+        bracketLink: function(bracket) {
             var url = '/' + this.currentRegion + '/' + bracket;
             if (this.now)
                 url = url + "/now";
             return url;
         },
+
+        redirectPage: function () {
+            console.log("REDIRECTING TO LAST PAGE:", this.lastPage);
+            if (this.lastPage) return this.lastPage;
+            else return "/us/3v3";
+        }
     };
 
-    this.$get = function () { return sharedProperties; }
+    this.$get = function ($cookies) {
+        if ($cookies)
+            sharedProperties.lastPage = $cookies.lastPage;
+
+        return sharedProperties;
+    };
+
+    this.$get.$inject = ['$cookies']; // minification protection
 });
