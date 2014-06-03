@@ -1,8 +1,10 @@
 app.factory('media', function() {
 
+    var imagesRoot = "Content/images/18/";
+
     var factions = {
-        0: { text: 'Alliance', url: "http://media.blizzard.com/wow/icons/18/faction_0.jpg" },
-        1: { text: 'Horde', url: "http://media.blizzard.com/wow/icons/18/faction_1.jpg" },
+        0: { text: 'Alliance', url: imagesRoot+"faction_0.png" },
+        1: { text: 'Horde', url: imagesRoot + "faction_1.png" },
     };
 
     var races = {
@@ -37,43 +39,41 @@ app.factory('media', function() {
         'Druid': { id: 11, specs: [102, 103, 104, 105] }
     };
 
-    var imagesRoot = "http://media.blizzard.com/wow/icons/18/";
-
     var specs = {
-        '62': { text: 'Arcane Mage', url: imagesRoot+"spell_holy_magicalsentry.jpg" },
-        '63': { text: 'Fire Mage', url: imagesRoot+"spell_fire_firebolt02.jpg" },
-        '64': { text: 'Frost Mage', url: imagesRoot+"spell_frost_frostbolt02.jpg" },
-        '65': { text: 'Holy Paladin', url: imagesRoot+"spell_holy_holybolt.jpg" },
-        '66': { text: 'Protection Paladin', url: imagesRoot+"ability_paladin_shieldofthetemplar.jpg" },
-        '70': { text: 'Retribution Paladin', url: imagesRoot+"spell_holy_auraoflight.jpg" },
-        '71': { text: 'Arms Warrior', url: imagesRoot+"ability_warrior_savageblow.jpg" },
-        '72': { text: 'Fury Warrior', url: imagesRoot+"ability_warrior_innerrage.jpg" },
-        '73': { text: 'Protection Warrior', url: imagesRoot+"ability_warrior_defensivestance.jpg" },
-        '102': { text: 'Balance Druid', url: imagesRoot+"spell_nature_starfall.jpg" },
-        '103': { text: 'Feral Druid', url: imagesRoot+"ability_druid_catform.jpg" },
-        '104': { text: 'Guardian Druid', url: imagesRoot+"ability_racial_bearform.jpg" },
-        '105': { text: 'Restoration Druid', url: imagesRoot+"spell_nature_healingtouch.jpg" },
-        '250': { text: 'Blood Death Knight', url: imagesRoot+"spell_deathknight_bloodpresence.jpg" },
-        '251': { text: 'Frost Death Knight', url: imagesRoot+"spell_deathknight_frostpresence.jpg" },
-        '252': { text: 'Unholy Death Knight', url: imagesRoot+"spell_deathknight_unholypresence.jpg" },
-        '253': { text: 'Beast Mastery Hunter', url: imagesRoot+"ability_hunter_bestialdiscipline.jpg" },
-        '254': { text: 'Marksmanship Hunter', url: imagesRoot+"ability_hunter_focusedaim.jpg" },
-        '255': { text: 'Survival Hunter', url: imagesRoot+"ability_hunter_camouflage.jpg" },
-        '256': { text: 'Discipline Priest', url: imagesRoot+"spell_holy_powerwordshield.jpg" },
-        '257': { text: 'Holy Priest', url: imagesRoot+"spell_holy_guardianspirit.jpg" },
-        '258': { text: 'Shadow Priest', url: imagesRoot+"spell_shadow_shadowwordpain.jpg" },
-        '259': { text: 'Assasination Rogue', url: imagesRoot+"ability_rogue_eviscerate.jpg" },
-        '260': { text: 'Combat Rogue', url: imagesRoot+"ability_backstab.jpg" },
-        '261': { text: 'Subtlety Rogue', url: imagesRoot+"ability_stealth.jpg" },
-        '262': { text: 'Elemental Shaman', url: imagesRoot+"spell_nature_lightning.jpg" },
-        '263': { text: 'Enhancement Shaman', url: imagesRoot+"spell_shaman_improvedstormstrike.jpg" },
-        '264': { text: 'Restoration Shaman', url: imagesRoot+"spell_nature_magicimmunity.jpg" },
-        '265': { text: 'Affliction Warlock', url: imagesRoot+"spell_shadow_deathcoil.jpg" },
-        '266': { text: 'Demonology Warlock', url: imagesRoot+"spell_shadow_metamorphosis.jpg" },
-        '267': { text: 'Destruction Warlock', url: imagesRoot+"spell_shadow_rainoffire.jpg" },
-        '268': { text: 'Brewmaster Monk', url: imagesRoot+"spell_monk_brewmaster_spec.jpg" },
-        '269': { text: 'Windwalker Monk', url: imagesRoot+"spell_monk_windwalker_spec.jpg" },
-        '270': { text: 'Mistweaver Monk', url: imagesRoot+"spell_monk_mistweaver_spec.jpg" }
+        '62': { text: 'Arcane Mage', url: imagesRoot+"spell_holy_magicalsentry.png" },
+        '63': { text: 'Fire Mage', url: imagesRoot+"spell_fire_firebolt02.png" },
+        '64': { text: 'Frost Mage', url: imagesRoot+"spell_frost_frostbolt02.png" },
+        '65': { text: 'Holy Paladin', url: imagesRoot+"spell_holy_holybolt.png" },
+        '66': { text: 'Protection Paladin', url: imagesRoot+"ability_paladin_shieldofthetemplar.png" },
+        '70': { text: 'Retribution Paladin', url: imagesRoot+"spell_holy_auraoflight.png" },
+        '71': { text: 'Arms Warrior', url: imagesRoot+"ability_warrior_savageblow.png" },
+        '72': { text: 'Fury Warrior', url: imagesRoot+"ability_warrior_innerrage.png" },
+        '73': { text: 'Protection Warrior', url: imagesRoot+"ability_warrior_defensivestance.png" },
+        '102': { text: 'Balance Druid', url: imagesRoot+"spell_nature_starfall.png" },
+        '103': { text: 'Feral Druid', url: imagesRoot+"ability_druid_catform.png" },
+        '104': { text: 'Guardian Druid', url: imagesRoot+"ability_racial_bearform.png" },
+        '105': { text: 'Restoration Druid', url: imagesRoot+"spell_nature_healingtouch.png" },
+        '250': { text: 'Blood Death Knight', url: imagesRoot+"spell_deathknight_bloodpresence.png" },
+        '251': { text: 'Frost Death Knight', url: imagesRoot+"spell_deathknight_frostpresence.png" },
+        '252': { text: 'Unholy Death Knight', url: imagesRoot+"spell_deathknight_unholypresence.png" },
+        '253': { text: 'Beast Mastery Hunter', url: imagesRoot+"ability_hunter_bestialdiscipline.png" },
+        '254': { text: 'Marksmanship Hunter', url: imagesRoot+"ability_hunter_focusedaim.png" },
+        '255': { text: 'Survival Hunter', url: imagesRoot+"ability_hunter_camouflage.png" },
+        '256': { text: 'Discipline Priest', url: imagesRoot+"spell_holy_powerwordshield.png" },
+        '257': { text: 'Holy Priest', url: imagesRoot+"spell_holy_guardianspirit.png" },
+        '258': { text: 'Shadow Priest', url: imagesRoot+"spell_shadow_shadowwordpain.png" },
+        '259': { text: 'Assasination Rogue', url: imagesRoot+"ability_rogue_eviscerate.png" },
+        '260': { text: 'Combat Rogue', url: imagesRoot+"ability_backstab.png" },
+        '261': { text: 'Subtlety Rogue', url: imagesRoot+"ability_stealth.png" },
+        '262': { text: 'Elemental Shaman', url: imagesRoot+"spell_nature_lightning.png" },
+        '263': { text: 'Enhancement Shaman', url: imagesRoot+"spell_shaman_improvedstormstrike.png" },
+        '264': { text: 'Restoration Shaman', url: imagesRoot+"spell_nature_magicimmunity.png" },
+        '265': { text: 'Affliction Warlock', url: imagesRoot+"spell_shadow_deathcoil.png" },
+        '266': { text: 'Demonology Warlock', url: imagesRoot+"spell_shadow_metamorphosis.png" },
+        '267': { text: 'Destruction Warlock', url: imagesRoot+"spell_shadow_rainoffire.png" },
+        '268': { text: 'Brewmaster Monk', url: imagesRoot+"spell_monk_brewmaster_spec.png" },
+        '269': { text: 'Windwalker Monk', url: imagesRoot+"spell_monk_windwalker_spec.png" },
+        '270': { text: 'Mistweaver Monk', url: imagesRoot+"spell_monk_mistweaver_spec.png" }
     }
 
     var armoryEndPoints = {
@@ -90,7 +90,7 @@ app.factory('media', function() {
         },
 
         raceImage: function(race, gender) {
-            return imagesRoot+'race_' + race + '_' + gender + '.jpg';
+            return imagesRoot+'race_' + race + '_' + gender + '.png';
         },
 
         classImageForSpec: function(classSpec) {
@@ -99,7 +99,7 @@ app.factory('media', function() {
 
         classImage: function (className) {
             var classId = classes[className].id;
-            return imagesRoot+'class_' + classId + '.jpg';
+            return imagesRoot+'class_' + classId + '.png';
         },
 
         classText: function(classSpec) {
@@ -119,7 +119,7 @@ app.factory('media', function() {
 
         specImage: function (classSpec) {
             if (classSpec.Fields[0] == null)
-                return "http://icons.iconarchive.com/icons/aha-soft/software/16/cancel-icon.png";
+                return imagesRoot+"cancel-icon.png";
             var specId = this.getSpecId(classSpec);
             return specs[specId].url;
         },
