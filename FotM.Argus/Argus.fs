@@ -48,7 +48,7 @@ module Argus =
                     let uri = repository.upload (snapshot)
                     logInfo "%s publishing update message" armoryInfo
 
-                    publisher.post {
+                    publisher.send {
                         storageLocation = uri
                         region = region.code
                         bracket = bracket

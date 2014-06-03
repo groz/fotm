@@ -47,7 +47,6 @@ module AthenaProcessor =
         }
 
         loop ([], initialHistory)
-
     )
 
     let getStorage region bracket =

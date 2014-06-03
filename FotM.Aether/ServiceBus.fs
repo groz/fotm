@@ -8,46 +8,21 @@ open Microsoft.ServiceBus.Messaging
 open FotM.Hephaestus.TraceLogging
 open FotM.Hephaestus.Async
 
-type TopicPublisherMessage =
-| Message of obj
-| Stop
-
-type TopicWrapper(ctor: unit -> TopicClient) =
-
+type TopicWrapper(client: TopicClient) =
     let retry = RetryBuilder(3, logException "TopicWrapper operation failed with %A")
     
-    let updateAgent = Agent<TopicPublisherMessage>.Start(fun agent ->
-
-        let rec loop (clientImpl: TopicClient) = async {
-            let! msg = agent.Receive()
-
-            match msg with
-            | Message(data) ->
-                try
-                    retry {
-                        use brokeredMessage = new BrokeredMessage(data) 
-                        clientImpl.Send brokeredMessage
-                    }
-
-                    return! loop clientImpl
-                with
-                | ex -> 
-                    logError "Error during TopicWrapper.post: %A. Client recreated. Update ignored." ex
-                    let newClient = ctor()
-                    return! loop newClient
-            | Stop -> ()
-        }
-
-        let client = ctor()
-        loop client
-    )
-
-    member this.post brokeredMessage =
-        updateAgent.Post (Message brokeredMessage)
+    member this.send (data: obj) =
+        try
+            retry {
+                use brokeredMessage = new BrokeredMessage(data) 
+                client.Send brokeredMessage
+            }
+        with
+        | ex -> logError "Error during TopicWrapper.post: %A. Update ignored." ex
 
     interface IDisposable with
         member this.Dispose() =
-            updateAgent.Post Stop
+            client.Close()
 
 type ServiceBus(?connectionString) =
 
@@ -72,7 +47,7 @@ type ServiceBus(?connectionString) =
     member this.topic topicName =
         logInfo "Creating publisher for topic %s" topicName
         createTopic topicName
-        new TopicWrapper(fun _ -> TopicClient.CreateFromConnectionString(serviceBusConnectionString, topicName))
+        new TopicWrapper (TopicClient.CreateFromConnectionString(serviceBusConnectionString, topicName))
 
     member this.subscribe topicName subscriptionName =
         logInfo "Creating subscription %s to topic %s" subscriptionName topicName

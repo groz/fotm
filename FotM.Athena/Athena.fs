@@ -182,7 +182,7 @@ module Athena =
 
                         logInfo "[%s, %s] publishing update message" snapshot.region snapshot.bracket.url
 
-                        updatePublisher.post {
+                        updatePublisher.send {
                             storageLocation = ladderUrl
                             region = snapshot.region
                             bracket = snapshot.bracket
