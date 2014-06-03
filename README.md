@@ -10,8 +10,6 @@ Frontend:
 - Add Discourse discussion forum
 - Add redirects from old domains (i.e. fotm.eu -> fotm.info/#/eu/3v3)
 - Make region buttons visible in mobile UI
-- Remember last region and redirect to it on enter
-- Log the main page in analytics as '/', not '/us/3v3'
 
 Infrastructure:
 - Add unit tests for Athena
