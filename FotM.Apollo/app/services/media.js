@@ -150,7 +150,8 @@ app.factory('media', function() {
         },
 
         classes: classes,
-        specs: specs
+        specs: specs,
+        races: races
     }
 
     return mediaService;

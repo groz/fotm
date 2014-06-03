@@ -1,9 +1,38 @@
-app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'settings', '$scope', '$routeParams', '$location',
-    function (filterFactory, media, api, settings, $scope, $routeParams, $location) {
+app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'settings', '$scope', '$routeParams', '$location', function (filterFactory, media, api, settings, $scope, $routeParams, $location) {
     var inputFilters = $routeParams.filter;
 
     if (typeof (inputFilters) == "string")
         inputFilters = [inputFilters];
+
+    ///////////////////////////
+    var images = [];
+
+    // factions
+    images.push(media.factionImage(0));
+    images.push(media.factionImage(1));
+
+    // races/genders
+    for (var r in media.races) {
+        images.push(media.raceImage(r, 0));
+        images.push(media.raceImage(r, 1));
+    }
+
+    // classes
+    for (var className in media.classes) {
+        images.push(media.classImage(className));
+    }
+
+    // specs
+    for (var specId in media.specs) {
+        var spec = media.specs[specId];
+        images.push(spec.url);
+    }
+
+    // cancel
+    images.push("http://icons.iconarchive.com/icons/aha-soft/software/16/cancel-icon.png");
+    ///////////////////////////
+
+    console.log(images);
 
     console.log("leaderboardController called for", settings);
 
