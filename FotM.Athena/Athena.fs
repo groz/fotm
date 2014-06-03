@@ -24,7 +24,7 @@ module Athena =
         5. post update
     *)
 
-    let duplicateCheckPeriod = Duration.FromHours(1L)
+    let duplicateCheckPeriod = Duration.FromMinutes(10L)
 
     let calcUpdates currentSnapshot previousSnapshot =
         let previousMap = previousSnapshot.ladder |> Array.map (fun e -> e.player, e) |> Map.ofArray
@@ -93,7 +93,8 @@ module Athena =
         |> List.fold (fun acc g -> acc @ findTeamsInGroup snapshot.bracket.teamSize snapshot.timeTaken g) []
 
     let isCurrent snapshot =
-        (SystemClock.Instance.Now - snapshot.timeTaken) < duplicateCheckPeriod
+        let elapsed = SystemClock.Instance.Now - snapshot.timeTaken
+        elapsed < duplicateCheckPeriod
 
     let seenOften (teamEntries: TeamEntry seq) =
         let firstEntry = teamEntries |> Seq.minBy(fun t -> t.snapshotTime)

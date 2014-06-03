@@ -19,7 +19,9 @@ type UpdateProcessorMessage =
 
 module AthenaProcessor =
 
-    let updateProcessor processorId storage topic (historyStorage: Storage) (initialHistory: TeamEntry list) = Agent<UpdateProcessorMessage>.Start(fun agent ->
+    let updateProcessor processorId storage topic (historyStorage: Storage) (initialHistory: TeamEntry list) = 
+        Agent<UpdateProcessorMessage>.Start(fun agent ->
+
         logInfo "UpdateProcessor for %s started with backfill data of %i entries" processorId initialHistory.Length
 
         let rec loop (snapshotHistory, teamHistory) = async {
@@ -43,6 +45,7 @@ module AthenaProcessor =
         }
 
         loop ([], initialHistory)
+
     )
 
     let getStorage region bracket =
