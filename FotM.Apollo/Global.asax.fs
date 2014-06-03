@@ -14,6 +14,15 @@ type BundleConfig() =
     static member RegisterBundles (bundles:BundleCollection) =
         bundles.Add(ScriptBundle("~/bundles/jquery").Include([|"~/Scripts/jquery-{version}.js"|]))
 
+        bundles.Add(ScriptBundle("~/bundles/angularjs")
+            .Include(
+                    [|
+                        "~/Scripts/angular-1.2.16.js"
+                        "~/Scripts/angular-route-1.2.16.js"
+                        "~/Scripts/angular-cookies-1.2.16.js"
+                    |]))
+
+
         // Use the development version of Modernizr to develop with and learn from. Then, when you're
         // ready for production, use the build tool at http://modernizr.com to pick only the tests you need.
         bundles.Add(ScriptBundle("~/bundles/modernizr").Include([|"~/Scripts/modernizr-*"|]))
