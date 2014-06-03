@@ -24,6 +24,7 @@ Machine learning:
   - 3v3
   - 5v5
   - rbg
+- Try choosing clustering by total setup popularity score
 
 Backlog:
 - Discussion forum per team setup?
