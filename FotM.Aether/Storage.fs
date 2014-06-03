@@ -100,7 +100,11 @@ module StorageIO =
         return result
     }
 
-    let fetch<'a> storageLocation = async {
-        let snapshotJson = download storageLocation
+    let fetchAsync<'a> storageLocation = async {
+        let! snapshotJson = downloadAsync storageLocation
         return JsonConvert.DeserializeObject<'a> snapshotJson
     }
+
+    let fetch<'a> storageLocation =
+        let snapshotJson = download storageLocation
+        JsonConvert.DeserializeObject<'a> snapshotJson

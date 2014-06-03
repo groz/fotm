@@ -80,19 +80,20 @@ module Main =
 
             match msg with
             | UpdateArmory(region, bracket, storageLocation) ->
-                try
-                    let! snapshot = fetch<TeamInfo list> storageLocation
-                    let armoryInfo = ArmoryInfo(snapshot, storageLocation)
-                    let updatedArmories = armories |> Map.add(region, bracket) armoryInfo
+                let updatedArmories =
+                    try
+                        let snapshot = fetch<TeamInfo list> storageLocation
+                        let armoryInfo = ArmoryInfo(snapshot, storageLocation)
+                        let updatedArmories = armories |> Map.add(region, bracket) armoryInfo
 
-                    repository.update updatedArmories
-                    PlayingNowUpdateManager.notifyUpdateReady(region, bracket)
-                    
-                    return! loop updatedArmories
-                with
-                | ex -> 
-                    logError "Exception while handling message for %s, %s: %A" region bracket ex
-                    return! loop armories
+                        repository.update updatedArmories
+                        PlayingNowUpdateManager.notifyUpdateReady(region, bracket)
+                        updatedArmories
+                    with
+                    | ex -> 
+                        logError "Exception while handling message for %s, %s: %A" region bracket ex
+                        armories
+                return! loop updatedArmories
             | StopAgent -> 
                 logInfo "ArmoryAgent stopped."
         }
@@ -121,7 +122,7 @@ module Main =
                 |> Array.rev 
                 |> Seq.map(fun blob -> 
                     try
-                        fetch<TeamInfo list> blob.Uri |> Async.RunSynchronously, blob.Uri
+                        fetch<TeamInfo list> blob.Uri, blob.Uri
                     with
                     | ex -> 
                         blob.Delete()

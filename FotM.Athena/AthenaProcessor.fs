@@ -29,17 +29,19 @@ module AthenaProcessor =
 
             match updateMsg with
             | UpdateMessage(storageLocation) ->
-                try
-                    logInfo "[%s, %i] Processing update %A..." processorId (teamHistory |> List.length) storageLocation
-                    let! snapshot = fetch<LadderSnapshot<PlayerEntry>> storageLocation
-                    let newSnapshotHistory, newTeamHistory = 
-                        Athena.processUpdate snapshot snapshotHistory teamHistory storage topic historyStorage
-                    logInfo "[%s, %i] Update %A processed." processorId (newTeamHistory |> List.length) storageLocation
-                    return! loop (newSnapshotHistory, newTeamHistory)
-                with
-                | ex -> 
-                    logError "Exception while handling message for %s: %A" processorId ex
-                    return! loop (snapshotHistory, teamHistory)
+                let newSnapshotHistory, newTeamHistory = 
+                    try
+                        logInfo "[%s, %i] Processing update %A..." processorId (teamHistory |> List.length) storageLocation
+                        let snapshot = fetch<LadderSnapshot<PlayerEntry>> storageLocation
+                        let newSnapshotHistory, newTeamHistory = 
+                            Athena.processUpdate snapshot snapshotHistory teamHistory storage topic historyStorage
+                        logInfo "[%s, %i] Update %A processed." processorId (newTeamHistory |> List.length) storageLocation
+                        newSnapshotHistory, newTeamHistory
+                    with
+                    | ex -> 
+                        logError "Exception while handling message for %s: %A" processorId ex
+                        snapshotHistory, teamHistory
+                return! loop (newSnapshotHistory, newTeamHistory)
             | StopMessage ->
                 logInfo "UpdateProcessor for %s stopped." processorId
         }
@@ -86,7 +88,7 @@ module AthenaProcessor =
                     match last with
                     | Some blobUri -> 
                         logInfo "History data for %s found at %A, loading..." processorId blobUri
-                        let data: TeamEntry list = fetch<TeamEntry list> blobUri |> Async.RunSynchronously
+                        let data: TeamEntry list = fetch<TeamEntry list> blobUri
                         logInfo "%s total history entries: %i" processorId data.Length
                         data
                     | None -> 

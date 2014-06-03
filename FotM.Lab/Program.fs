@@ -4,10 +4,36 @@
 open FotM.Data
 open FotM.Athena
 
-[<EntryPoint>]
-let main argv = 
-    
-    let updates = 
+let agent = MailboxProcessor<string>.Start(fun agent ->
+
+    let maxLength = 1000
+
+    let rec loop (state: string list) i = async {
+        let! msg = agent.Receive()
+
+        let newState = 
+            try        
+                printfn "received message: %s, iteration: %i, length: %i" msg i state.Length
+                let truncatedState = state |> Seq.truncate maxLength |> Seq.toList
+                msg::truncatedState
+            with
+            | ex -> 
+                printfn "%A" ex
+                state
+
+        return! loop newState (i+1)
+    }
+
+    loop [] 0
+)
+
+let greeting = "hello"
+
+while true do
+    agent.Post greeting
+    System.Threading.Thread.Sleep(1)
+
+(*    let updates = 
         [
             {
                 player = 
@@ -169,3 +195,4 @@ let main argv =
         printfn "Team found: %A" t
 
     0 // return an integer exit code
+*)
