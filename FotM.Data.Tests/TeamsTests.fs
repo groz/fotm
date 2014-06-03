@@ -4,11 +4,9 @@ open System
 open Microsoft.VisualStudio.TestTools.UnitTesting
 open FotM.Data
 
+//  let matchesFilter (classFilters: Class array) (teamClasses: Class seq) =
 [<TestClass>]
 type ``matchesFilter tests``() =
-// module Teams =
-//  let matchesFilter (classFilters: Class array) (teamClasses: Class seq) =
-
     let warrior = Warrior(None)
     let armsWarrior = Warrior(Some WarriorSpec.Arms)
     let furyWarrior = Warrior(Some WarriorSpec.Fury)
