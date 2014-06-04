@@ -1,9 +1,10 @@
 ﻿namespace FotM.Athena
 
 open FotM.Hephaestus.Math
+open FotM.Hephaestus.TraceLogging
 open FotM.Hephaestus.CollectionExtensions
 
-type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool, applyMetric: bool) =
+type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool, applyMetric: bool, groupSize: int) =
 
     let distance = squaredEuclideanDistance
 
@@ -20,13 +21,16 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
 
                 let border = rng.NextDouble() * Array.sum(distances)
 
-                let rec nextCentroid runningSum i =
-                    if runningSum < border then nextCentroid (runningSum + distances.[i]) (i+1)
-                    else matrix.[i-1]
+                if border = 0.0 then
+                    buildCentroids (matrix.[0] :: centroids) (n + 1)
+                else
+                    let rec nextCentroid runningSum i =
+                        if runningSum < border then nextCentroid (runningSum + distances.[i]) (i+1)
+                        else matrix.[i-1]
                 
-                let next = nextCentroid 0.0 0
+                    let next = nextCentroid 0.0 0
 
-                buildCentroids (next::centroids) (n + 1)
+                    buildCentroids (next :: centroids) (n + 1)
             else
                 centroids
 
@@ -53,7 +57,8 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
             let newClustering = matrix |> Array.map (fun input -> fst( centroids |> Seq.miniBy(distance input) ) )
 
             if newClustering <> currentClustering then
-                let newCentroids = centroids |> List.mapi (fun i c -> matrix |> getPointsForCluster newClustering i |> getClusterMean c)
+                let newCentroids = centroids |> List.mapi (fun i c -> 
+                    matrix |> getPointsForCluster newClustering i |> getClusterMean c)
                 iterate newCentroids newClustering
             else
                 centroids |> List.toArray, currentClustering
@@ -84,8 +89,6 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
 
         let rng = System.Random(111)
 
-        let groupSize = int (ceil (matrix.Length ./. nGroups))
-            
         if applyMetric then
             let nClusteringIterations = 100
 

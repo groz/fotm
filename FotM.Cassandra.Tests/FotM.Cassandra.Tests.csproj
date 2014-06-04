@@ -93,6 +93,10 @@
       <Project>{94158125-21fd-4260-995b-6cadad88a39b}</Project>
       <Name>FotM.Cassandra</Name>
     </ProjectReference>
+    <ProjectReference Include="..\FotM.Data\FotM.Data.fsproj">
+      <Project>{3d02c2f7-31e5-49b1-a77d-ce689c9c9b0b}</Project>
+      <Name>FotM.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FotM.Domain\FotM.Domain.csproj">
       <Project>{A9F666C5-47C6-45F7-9DC1-61126140A7E0}</Project>
       <Name>FotM.Domain</Name>

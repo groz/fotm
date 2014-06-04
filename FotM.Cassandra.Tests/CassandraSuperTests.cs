@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Accord.Math;
 using FotM.Athena;
+using FotM.Data;
 using FotM.Domain;
 using FotM.TestingUtilities;
 using FotM.Utilities;
@@ -14,6 +15,12 @@ using Microsoft.FSharp.Core;
 using MoreLinq;
 using NUnit.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Bracket = FotM.Domain.Bracket;
+using Faction = FotM.Data.Faction;
+using Gender = FotM.Data.Gender;
+using Player = FotM.Domain.Player;
+using Race = FotM.Data.Race;
+using Realm = FotM.Domain.Realm;
 
 namespace FotM.Cassandra.Tests
 {
@@ -28,23 +35,34 @@ namespace FotM.Cassandra.Tests
         const int BracketTeamSize = 3;
         private static readonly Random Rng = new Random(55369);
 
-        private static readonly Realm[] Realms = new Realm[]
-        {
-            new Realm() { RealmId = 0, RealmSlug = "0", RealmName = "Zero"},
-            new Realm() { RealmId = 1, RealmSlug = "1", RealmName = "Two"},
-            new Realm() { RealmId = 2, RealmSlug = "2", RealmName = "Three"},
-            new Realm() { RealmId = 3, RealmSlug = "3", RealmName = "Four"},
-            new Realm() { RealmId = 4, RealmSlug = "4", RealmName = "Five"},
-        };
+        private static readonly Realm[] Realms =
+            Enumerable.Range(0, 100)
+                .Select(i => new Realm() {RealmId = i, RealmSlug = i.ToString(), RealmName = i.ToString()})
+                .ToArray();
 
         private readonly Dictionary<string, IKMeans<PlayerChange>> _clusterers;
         private Dictionary<Leaderboard, HashSet<Team>> _history;
 
-        private readonly static FeatureAttributeDescriptor<PlayerChange> Descriptor = new FeatureAttributeDescriptor<PlayerChange>();
-
         private static double[] FeatureExtractor(PlayerChange change)
         {
-            return Descriptor.GetFeatureVector(change);
+            var realm = new Data.Realm(change.RealmId, change.RealmSlug, change.RealmSlug);
+            var faction = (Faction) change.Player.FactionId;
+            Class classSpec = null;
+            var race = (Race) change.Player.RaceId;
+            var gender = (Gender) change.Player.GenderId;
+
+            FotM.Data.PlayerUpdate pu = new PlayerUpdate(
+                player: new Data.Player(change.Player.Name, realm, faction, classSpec, race, gender), 
+                ranking: change.Ranking,
+                rating: change.Rating,
+                weeklyWins: change.WeeklyWins,
+                weeklyLosses: change.WeeklyLosses,
+                seasonWins: change.SeasonWins,
+                seasonLosses: change.SeasonLosses,
+                ratingDiff: change.RatingDiff
+                );
+
+            return Athena.Athena.featureExtractor(pu);
         }
 
         public CassandraSuperTests() : base(Bracket.Threes)
@@ -54,7 +72,7 @@ namespace FotM.Cassandra.Tests
                 //{"Athena plain", new Athena.AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), false, false)},
                 //{"Athena plain distortion", new AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), false, true)},
                 //{"Athena normalized", new AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, false)},
-                {"Athena normalized distortion", new AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, true)},
+                {"Athena normalized distortion", new AthenaKMeans<PlayerChange>(new FSharpFuncWrapper<PlayerChange, double[]>(FeatureExtractor), true, true, 3)},
                 {"My kmeans with normalization custom metric", new HealerAndSizeAwareKMeans(true, 3)},
                 //{"My kmeans custom metric", new HealerAndSizeAwareKMeans(false, 3)},
                 //{"My kmeans with normalization", new MyKMeans<PlayerChange>(normalize: true)},
@@ -84,7 +102,7 @@ namespace FotM.Cassandra.Tests
             return Enumerable.Range(0, nPlayers)
                 .Select(i =>
                 {
-                    int nRealm = Rng.Next(5);
+                    int nRealm = Rng.Next(Realms.Length);
 
                     var guid = new byte[16];
                     Rng.NextBytes(guid);
@@ -255,7 +273,7 @@ namespace FotM.Cassandra.Tests
                 bool win = Rng.Next(2) == 0;
                 int opponentRating = 2300 + Rng.Next(-100, 100);
 
-                bool skipOne = false;
+                bool skipOne = true;
 
                 // For each of them generate rating change, update players and create new leaderboard
                 var newLeaderboard = Play(leaderboard, playingTeams,
@@ -317,8 +335,12 @@ namespace FotM.Cassandra.Tests
 
             var previousLeaderboard = _history.First().Key;
 
+            int currentStep = 0;
+
             foreach (var step in _history.Skip(1).Take(historyLength))
             {
+                Trace.WriteLine(string.Format("{2} RunCassandra current step: {0}/{1}", ++currentStep, historyLength, clustererName));
+
                 var leaderboard = step.Key;
                 var relevantTeams = step.Value;
 
