@@ -148,12 +148,13 @@ module Main =
         let storage = Storage(GlobalSettings.teamLaddersContainer, storageConnectionString.ConnectionString)
 
         let backfillData = backfillFrom storage
-
+        
         let armoryAgent = createArmoryAgent backfillData repository
 
         let serviceBus = ServiceBus(serviceBusConnectionString.ConnectionString)
 
-        let subscriptionName = Dns.GetHostName()
+        // TODO: fix for local
+        let subscriptionName = Dns.GetHostName() + Guid.NewGuid().ToString().Substring(0, 4)
 
         let updateTopic = serviceBus.subscribe GlobalSettings.teamUpdatesTopic subscriptionName
 
