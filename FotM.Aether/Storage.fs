@@ -32,14 +32,16 @@ type Storage (containerName, ?storageConnectionString, ?pathPrefix) =
         logInfo "initializing blob container at %A" container.Uri
         container.CreateIfNotExists(BlobContainerPublicAccessType.Blob) |> ignore
 
-    member this.uploadFile (filePath: string) =
+    member this.uploadFile (filePath: string, ?cacheTime: TimeSpan) =
         let relativePath = System.IO.Path.GetFileName filePath
         let targetPath = Path.Combine (prefix, relativePath)
         let blob = container.GetBlockBlobReference targetPath
         
         try
             blob.UploadFromFile(filePath, FileMode.Open)
-            blob.Properties.CacheControl <- "max-age=3600"
+            if cacheTime.IsSome then
+                let cacheControlHeader = sprintf "max-age=%i" (int cacheTime.Value.TotalSeconds)
+                blob.Properties.CacheControl <- cacheControlHeader
             blob.SetProperties()
         with
             | ex ->
