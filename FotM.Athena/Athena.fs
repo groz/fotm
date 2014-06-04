@@ -61,7 +61,6 @@ module Athena =
             float pu.weeklyLosses
             float pu.seasonWins
             float pu.seasonLosses
-            float pu.player.realm.realmId
         |]  
 
     let findTeamsInGroup (teamSize) (snapshotTime: NodaTime.Instant) (updateGroup: PlayerUpdate list) =
