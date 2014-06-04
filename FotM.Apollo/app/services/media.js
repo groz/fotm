@@ -1,6 +1,6 @@
 app.factory('media', function() {
 
-    var imagesRoot = "Content/images/18/";
+    var imagesRoot = "http://fotmstorage.blob.core.windows.net/images/";
 
     var factions = {
         0: { text: 'Alliance', url: imagesRoot+"faction_0.png" },

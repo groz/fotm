@@ -32,9 +32,26 @@ type Storage (containerName, ?storageConnectionString, ?pathPrefix) =
         logInfo "initializing blob container at %A" container.Uri
         container.CreateIfNotExists(BlobContainerPublicAccessType.Blob) |> ignore
 
+    member this.uploadFile (filePath: string) =
+        let relativePath = System.IO.Path.GetFileName filePath
+        let targetPath = Path.Combine (prefix, relativePath)
+        let blob = container.GetBlockBlobReference targetPath
+        
+        try
+            blob.UploadFromFile(filePath, FileMode.Open)
+            blob.Properties.CacheControl <- "max-age=3600"
+            blob.SetProperties()
+        with
+            | ex ->
+                logException "%A" ex
+                reraise()
+
+        blob.Uri
+
     member this.upload (data, ?path) =
         let relativePath = defaultArg path (sprintf "%A" (Guid.NewGuid()))
-        let blob = container.GetBlockBlobReference (Path.Combine (prefix, relativePath))
+        let targetPath = Path.Combine (prefix, relativePath)
+        let blob = container.GetBlockBlobReference targetPath
 
         try
             // the part below is not threadsafe either because of JSON.NET or blob.UploadText
@@ -45,7 +62,7 @@ type Storage (containerName, ?storageConnectionString, ?pathPrefix) =
             )
         with
             | ex -> 
-                logError "%A" ex
+                logException "%A" ex
                 reraise()
 
         logInfo "uploaded update to %A" blob.Uri
