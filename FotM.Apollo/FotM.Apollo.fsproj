@@ -206,6 +206,7 @@
     <None Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="fotm-info.pubxml" />
     <None Include="fotm-info__staging.pubxml" />
+    <Content Include="sitemap.txt" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime">
