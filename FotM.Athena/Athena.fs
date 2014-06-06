@@ -24,7 +24,7 @@ module Athena =
         5. post update
     *)
 
-    let duplicateCheckPeriod = Duration.FromMinutes(10L)
+    let duplicateCheckPeriod = Duration.FromMinutes(20L)
 
     let calcUpdates currentSnapshot previousSnapshot =
         let previousMap = previousSnapshot.ladder |> Array.map (fun e -> e.player, e) |> Map.ofArray
@@ -146,6 +146,20 @@ module Athena =
     let isValid (t: TeamEntry) =
         (not (isNull t.players)) && t.players.Length <> 0
 
+    let sendUpdate newTeamHistory region bracket (storage: Storage) (historyStorage: Storage) (updatePublisher: TopicWrapper) =
+        let teamLadder = calculateLadder newTeamHistory
+                    
+        let ladderUrl = storage.upload (teamLadder)
+
+        let savedUri = historyStorage.upload(newTeamHistory)
+        logInfo "Current history uploaded to %A" savedUri
+
+        updatePublisher.send {
+            storageLocation = ladderUrl
+            region = region
+            bracket = bracket
+        }
+
     let processUpdate snapshot snapshotHistory teamHistory (storage: Storage) (updatePublisher: TopicWrapper) (historyStorage: Storage) =
         let currentSnapshotHistory = snapshotHistory |> List.filter isCurrent
 
@@ -169,21 +183,7 @@ module Athena =
 
                     if teams.Length <> 0 then
                         logInfo "[%s, %s] Posting ladder update..." snapshot.region snapshot.bracket.url
-
-                        let teamLadder = calculateLadder newTeamHistory
-                    
-                        let ladderUrl = storage.upload (teamLadder)
-
-                        let savedUri = historyStorage.upload(newTeamHistory)
-                        logInfo "Current history uploaded to %A" savedUri
-
-                        logInfo "[%s, %s] publishing update message" snapshot.region snapshot.bracket.url
-
-                        updatePublisher.send {
-                            storageLocation = ladderUrl
-                            region = snapshot.region
-                            bracket = snapshot.bracket
-                        }
+                        sendUpdate newTeamHistory snapshot.region snapshot.bracket storage historyStorage updatePublisher
                     else
                         logInfo "[%s, %s] No new teams found." snapshot.region snapshot.bracket.url
                     

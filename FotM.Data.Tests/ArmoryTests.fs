@@ -110,4 +110,4 @@ type ``createEntry tests``() =
             totalLosses = 0
         }
 
-        Assert.AreEqual(expected, Teams.createTeamInfo [t1Entry; t2Entry])
+        Assert.AreEqual(expected, Teams.createTeamInfo [|t1Entry; t2Entry|])

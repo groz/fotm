@@ -19,12 +19,15 @@ type UpdateProcessorMessage =
 
 module AthenaProcessor =
 
-    let updateProcessor processorId storage topic (historyStorage: Storage) (initialHistory: TeamEntry list) = 
+    let updateProcessor region bracket storage topic (historyStorage: Storage) (initialHistory: TeamEntry list) = 
         Agent<UpdateProcessorMessage>.Start(fun agent ->
 
+        let processorId = sprintf "[%s, %s]" region bracket.url
         logInfo "UpdateProcessor for %s started with backfill data of %i entries" processorId initialHistory.Length
 
-        let rec loop (snapshotHistory, teamHistory) = async {
+        Athena.sendUpdate initialHistory region bracket storage historyStorage topic
+
+        let rec loop snapshotHistory teamHistory isFirstUpdate = async {
             let! updateMsg = agent.Receive()
 
             match updateMsg with
@@ -33,20 +36,24 @@ module AthenaProcessor =
                     try
                         logInfo "[%s, %i] Processing update %A..." processorId (teamHistory |> List.length) storageLocation
                         let snapshot = fetch<LadderSnapshot<PlayerEntry>> storageLocation
+
                         let newSnapshotHistory, newTeamHistory = 
                             Athena.processUpdate snapshot snapshotHistory teamHistory storage topic historyStorage
+
                         logInfo "[%s, %i] Update %A processed." processorId (newTeamHistory |> List.length) storageLocation
                         newSnapshotHistory, newTeamHistory
                     with
                     | ex -> 
                         logError "Exception while handling message for %s: %A" processorId ex
                         snapshotHistory, teamHistory
-                return! loop (newSnapshotHistory, newTeamHistory)
+
+                return! loop newSnapshotHistory newTeamHistory false
+
             | StopMessage ->
                 logInfo "UpdateProcessor for %s stopped." processorId
         }
 
-        loop ([], initialHistory)
+        loop [] initialHistory true
     )
 
     let getStorage region bracket =
@@ -59,8 +66,6 @@ module AthenaProcessor =
 
     let watch (updateListener: SubscriptionClient) (updatePublisher: TopicWrapper) (waitHandle: WaitHandle) =
         logInfo "FotM.Athena entry point called, starting listening to armory updates..."
-
-        let getProcessorId region bracket = sprintf "[%s, %s]" region.code bracket.url
 
         let historyStorage = Storage GlobalSettings.athenaHistoryContainer
 
@@ -76,7 +81,8 @@ module AthenaProcessor =
         let processors = 
             allRoots
             |> List.map(fun (region, bracket) -> 
-                let processorId = getProcessorId region bracket
+                let processorId = sprintf "[%s, %s]" region.code bracket.url
+
                 let historyStorage = getHistoryStorage region bracket
 
                 let allBlobs = historyStorage.allFiles (region.code + "/" + bracket.url)
@@ -96,7 +102,7 @@ module AthenaProcessor =
 
                 let storage = getStorage region bracket
 
-                (region.code, bracket), updateProcessor processorId storage updatePublisher historyStorage backfillData
+                (region.code, bracket), updateProcessor region.code bracket storage updatePublisher historyStorage backfillData
             )            
             |> Map.ofList
 
