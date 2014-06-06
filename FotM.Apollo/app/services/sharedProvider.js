@@ -2,7 +2,7 @@ app.provider("shared", function () {
     var sharedProperties = {
         lastPage: "",
         currentRegion: "US",
-        currentBracket: {},
+        currentBracket: { text: "3v3"},
 
         regions: ["us", "eu", "kr", "tw", "cn"],
 
