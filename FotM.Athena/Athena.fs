@@ -95,23 +95,21 @@ module Athena =
         let elapsed = SystemClock.Instance.Now - snapshot.timeTaken
         elapsed < duplicateCheckPeriod
 
-    let seenOften (teamEntries: TeamEntry seq) =
-        let firstEntry = teamEntries |> Seq.minBy(fun t -> t.snapshotTime)
-        let lastEntry = teamEntries |> Seq.maxBy(fun t -> t.snapshotTime)
-        let totalTimesSeen = teamEntries |> Seq.length
-        let firstTime = firstEntry.snapshotTime.ToDateTimeUtc()
-        let lastTime = lastEntry.snapshotTime.ToDateTimeUtc()
-        let totalDays = (lastTime.Date - firstTime.Date).TotalDays |> int
+    /// <summary>Days passed since last seen < total number of times seen.</summary>
+    let seenOften (teamEntries: TeamEntry array) =
+        let lastEntry = teamEntries |> Array.maxBy(fun t -> t.snapshotTime)
+        let lastSeen = lastEntry.snapshotTime.ToDateTimeUtc()
 
-        if (totalDays > 0) then
-            totalTimesSeen ./. totalDays > 1.0
-        else
-            totalTimesSeen > 1
+        let totalTimesSeen = teamEntries.Length
+        let totalDays = (DateTime.UtcNow - lastSeen).TotalDays
+
+        totalTimesSeen ./ totalDays > 1.0
 
     let calculateLadder (teamHistory: TeamEntry list) =
         teamHistory
         |> Seq.groupBy (fun teamEntry -> teamEntry.players)
-        |> Seq.filter (fun (players, teamEntries) -> teamEntries |> seenOften) // confidence check
+        |> Seq.map (fun (players, teamEntries) -> players, teamEntries |> Array.ofSeq)
+        |> Seq.filter (fun (players, teamEntries) -> teamEntries |> seenOften)
         |> Seq.map (fun (players, teamEntries) -> teamEntries |> Teams.createTeamInfo)
         |> List.ofSeq
 

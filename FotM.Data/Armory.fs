@@ -128,13 +128,12 @@ module Teams =
         snapshotTime = snapshotTime
     }
 
-    let createTeamInfo (teamEntries: TeamEntry seq) = 
-        let teamEntries = teamEntries |> Seq.sortBy(fun te -> -te.snapshotTime.Ticks)
-
-        let won, lost = teamEntries |> Array.ofSeq |> Array.partition (fun e -> e.ratingChange > 0)
+    let createTeamInfo (teamEntries: TeamEntry array) = 
+        let teamEntries = teamEntries |> Array.sortBy(fun te -> -te.snapshotTime.Ticks)
+        let won, lost = teamEntries |> Array.partition (fun e -> e.ratingChange > 0)
 
         {
-            lastEntry = teamEntries |> Seq.head
+            lastEntry = teamEntries.[0]
             totalWins = won.Length
             totalLosses = lost.Length
         }
