@@ -227,18 +227,6 @@
     <Content Include="Scripts\jquery-2.1.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FotM.Config\FotM.Config.csproj">
-      <Project>{d8399bb4-4e53-472b-af8d-cfc8b07c6219}</Project>
-      <Name>FotM.Config</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FotM.Domain\FotM.Domain.csproj">
-      <Project>{a9f666c5-47c6-45f7-9dc1-61126140a7e0}</Project>
-      <Name>FotM.Domain</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FotM.Messaging\FotM.Messaging.csproj">
-      <Project>{56EE32B7-8222-4C10-8D38-2D0BC633294C}</Project>
-      <Name>FotM.Messaging</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FotM.Utilities\FotM.Utilities.csproj">
       <Project>{90d8a7e8-fbac-4b87-9ec2-a4e6f02b75c8}</Project>
       <Name>FotM.Utilities</Name>

@@ -13,7 +13,7 @@ open FotM.Data
 open FotM.Hephaestus.Async
 open FotM.Hephaestus.TraceLogging
 open FotM.Hephaestus.CollectionExtensions
-open FotM.Utilities
+open FotM.Hephaestus.Compression
 
 module RepoSync =
     let lockobj = new System.Object()
@@ -59,7 +59,7 @@ type Storage (containerName, ?storageConnectionString, ?pathPrefix) =
             // the part below is not threadsafe either because of JSON.NET or blob.UploadText
             lock RepoSync.lockobj (fun () ->
                 let json = JsonConvert.SerializeObject data
-                let compressed = CompressionUtils.ZipToBase64 json
+                let compressed = zipToBase64 json
                 blob.UploadText compressed 
             )
         with
@@ -110,7 +110,7 @@ module StorageIO =
             use webClient = new WebClientWithTimeout (TimeSpan.FromMinutes 2.0)
             let! compressed = webClient.AsyncDownloadString storageLocation
 
-            let json = CompressionUtils.UnzipFromBase64 compressed
+            let json = unzipFromBase64 compressed
             return json
     }
 

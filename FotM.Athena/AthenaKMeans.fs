@@ -102,6 +102,3 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
             orderedClusterings |> Seq.head |> snd
         else
             snd (matrix |> cluster 0 nGroups rng)
-
-    interface FotM.Utilities.IKMeans<'a> with
-        member this.ComputeGroups(dataSet, nGroups) = this.computeGroups dataSet nGroups          

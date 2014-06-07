@@ -68,14 +68,6 @@
     <Compile Include="Messages\StatsUpdateMessage.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FotM.Config\FotM.Config.csproj">
-      <Project>{D8399BB4-4E53-472B-AF8D-CFC8B07C6219}</Project>
-      <Name>FotM.Config</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\FotM.Domain\FotM.Domain.csproj">
-      <Project>{A9F666C5-47C6-45F7-9DC1-61126140A7E0}</Project>
-      <Name>FotM.Domain</Name>
-    </ProjectReference>
     <ProjectReference Include="..\FotM.Utilities\FotM.Utilities.csproj">
       <Project>{90D8A7E8-FBAC-4B87-9EC2-A4E6F02B75C8}</Project>
       <Name>FotM.Utilities</Name>
