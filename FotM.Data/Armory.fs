@@ -1,6 +1,5 @@
 ﻿namespace FotM.Data
 
-(* DOMAIN TYPES *)
 type Realm = {
     realmId: int;
     realmName: string;
@@ -191,5 +190,3 @@ module Brackets =
     let rbg = { url = "rbg"; teamSize = 10 }
 
     let all = [twos; threes; fives; rbg]
-
-(* /DOMAIN TYPES *)

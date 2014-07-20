@@ -85,34 +85,31 @@ type Class =
         | _  -> true
 
     member c.isHealer =
-        let healers = [
-            Druid(Some DruidSpec.Restoration)
-            Shaman(Some ShamanSpec.Restoration)
-            Paladin(Some PaladinSpec.Holy)
-            Priest(Some PriestSpec.Holy)
-            Priest(Some PriestSpec.Discipline)
-            Monk(Some MonkSpec.Mistweaver)
-        ]
-        healers |> Seq.exists ((=) c)
+        match c with 
+        | Druid(Some DruidSpec.Restoration)
+        | Shaman(Some ShamanSpec.Restoration)
+        | Paladin(Some PaladinSpec.Holy)
+        | Priest(Some PriestSpec.Holy)
+        | Priest(Some PriestSpec.Discipline)
+        | Monk(Some MonkSpec.Mistweaver) -> true
+        | _ -> false
 
     member c.isRanged =
-        let ranged = [
-            Mage(Some MageSpec.Arcane)
-            Mage(Some MageSpec.Fire)
-            Mage(Some MageSpec.Frost)
-            Druid(Some DruidSpec.Balance)
-            Druid(Some DruidSpec.Guardian)
-            Hunter(Some HunterSpec.``Beast Mastery``)
-            Hunter(Some HunterSpec.Marksmanship)
-            Hunter(Some HunterSpec.Survival)
-            Priest(Some PriestSpec.Shadow)
-            Shaman(Some ShamanSpec.Elemental)
-            Warlock(Some WarlockSpec.Affliction)
-            Warlock(Some WarlockSpec.Demonology)
-            Warlock(Some WarlockSpec.Destruction)
-        ]
-        ranged |> Seq.exists ((=) c)
-
+        match c with 
+        | Mage(Some MageSpec.Arcane)
+        | Mage(Some MageSpec.Fire)
+        | Mage(Some MageSpec.Frost)
+        | Druid(Some DruidSpec.Balance)
+        | Druid(Some DruidSpec.Guardian)
+        | Hunter(Some HunterSpec.``Beast Mastery``)
+        | Hunter(Some HunterSpec.Marksmanship)
+        | Hunter(Some HunterSpec.Survival)
+        | Priest(Some PriestSpec.Shadow)
+        | Shaman(Some ShamanSpec.Elemental)
+        | Warlock(Some WarlockSpec.Affliction)
+        | Warlock(Some WarlockSpec.Demonology)
+        | Warlock(Some WarlockSpec.Destruction) -> true
+        | _ -> false
 
 module Specs = 
 
@@ -120,32 +117,27 @@ module Specs =
         if not (System.Enum.IsDefined(typeof<'a>, value)) then
             None
         else
-            Some(LanguagePrimitives.EnumOfValue<int, 'a> value)
+            Some(LanguagePrimitives.EnumOfValue value)
 
     let toClassOption classId specId = 
-
-        if (classId < 1 || classId > 11) then 
-            None
-        else
-            Some ( 
-                match classId with
-                | 1 -> Warrior( toSpecEnum specId )
-                | 2 -> Paladin( toSpecEnum specId )
-                | 3 -> Hunter( toSpecEnum specId )
-                | 4 -> Rogue( toSpecEnum specId )
-                | 5 -> Priest( toSpecEnum specId )
-                | 6 -> ``Death Knight``( toSpecEnum specId )
-                | 7 -> Shaman( toSpecEnum specId )
-                | 8 -> Mage( toSpecEnum specId )
-                | 9 -> Warlock( toSpecEnum specId )
-                | 10 -> Monk( toSpecEnum specId )
-                | 11 -> Druid( toSpecEnum specId )
-            )
+        match classId with
+        |  1 -> Some( Warrior( toSpecEnum specId )          )
+        |  2 -> Some( Paladin( toSpecEnum specId )          )
+        |  3 -> Some( Hunter( toSpecEnum specId )           )
+        |  4 -> Some( Rogue( toSpecEnum specId )            )
+        |  5 -> Some( Priest( toSpecEnum specId )           )
+        |  6 -> Some( ``Death Knight``( toSpecEnum specId ) )
+        |  7 -> Some( Shaman( toSpecEnum specId )           )
+        |  8 -> Some( Mage( toSpecEnum specId )             )
+        |  9 -> Some( Warlock( toSpecEnum specId )          )
+        | 10 -> Some( Monk( toSpecEnum specId )             )
+        | 11 -> Some( Druid( toSpecEnum specId )            )
+        | _ -> None
 
     let toClass classId specId = 
         match toClassOption classId specId with
         | None -> invalidArg "classId" (classId.ToString())
-        | Some(c) -> c
+        | Some c -> c
 
     let fromString className (specIdStr: string) =
 

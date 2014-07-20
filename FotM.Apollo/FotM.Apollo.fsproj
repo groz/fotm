@@ -114,6 +114,9 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Helpers.fs" />
+    <Compile Include="ChatHub.fs" />
+    <Compile Include="PlayingNowHub.fs" />
+    <Compile Include="LocalRepository.fs" />
     <Compile Include="Main.fs" />
     <Content Include="app\services\apiService.js" />
     <Content Include="app\services\media.js" />
