@@ -126,6 +126,7 @@
     <Content Include="app\controllers\leaderboardController.js" />
     <Content Include="app\controllers\nowController.js" />
     <Content Include="app\controllers\mainController.js" />
+    <Content Include="app\controllers\chatController.js" />
     <Content Include="app\controllers\debugController.js" />
     <Content Include="app\templates\shared\filters.html" />
     <Content Include="app\templates\2v2.html" />
@@ -140,6 +141,10 @@
     <Content Include="app\app.js" />
     <Content Include="app\appConfig.js" />
     <Content Include="app\appDebug.js" />
+    <None Include="fonts\glyphicons-halflings-regular.woff" />
+    <None Include="fonts\glyphicons-halflings-regular.ttf" />
+    <None Include="fonts\glyphicons-halflings-regular.svg" />
+    <None Include="fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Content\Site.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap-theme.css.map" />
@@ -203,10 +208,6 @@
     <Content Include="preview.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="fonts\glyphicons-halflings-regular.woff" />
-    <None Include="fonts\glyphicons-halflings-regular.ttf" />
-    <None Include="fonts\glyphicons-halflings-regular.svg" />
-    <None Include="fonts\glyphicons-halflings-regular.eot" />
     <None Include="fotm-info.pubxml" />
     <None Include="fotm-info__staging.pubxml" />
     <Content Include="sitemap.txt" />

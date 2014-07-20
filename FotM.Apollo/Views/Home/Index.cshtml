@@ -55,51 +55,100 @@
             </div>
         </div>
         <!-- /Region navigation menu -->
+        
+        <div class="row">
+            <div ng-if="shared.currentRegion != 'about'" data-ng-cloak>
 
-        <div ng-if="shared.currentRegion != 'about'" data-ng-cloak>
+                <ul class="pager col-lg-3 col-md-4 brackets" data-ng-cloak>
+                    <li ng-repeat="(bracket, size) in shared.brackets">
+                        <a role="button" class="btn btn-default"
+                           ng-href="{{shared.bracketLink(bracket)}}"
+                           ng-class="{active:bracket == shared.currentBracket.text}">
+                            {{bracket}}
+                        </a>
+                    </li>
+                </ul>
 
-            <ul class="pager col-lg-3 col-md-4 brackets" data-ng-cloak>
-                <li ng-repeat="(bracket, size) in shared.brackets">
-                    <a role="button" class="btn btn-default"
-                       ng-href="{{shared.bracketLink(bracket)}}"
-                       ng-class="{active:bracket == shared.currentBracket.text}">
-                        {{bracket}}
+                <!-- Leaderboard-Now Selector -->
+                <div class="pager col-lg-9 col-md-8">
+
+                    <a role="button" class="btn btn-lg btn-default"
+                       ng-class="{active: !shared.now}"
+                       ng-href="{{'#/'+shared.currentRegion+'/'+shared.currentBracket.text}}">
+                        Leaderboard
                     </a>
-                </li>
-            </ul>
 
-            <!-- Leaderboard-Now Selector -->
-            <div class="pager col-lg-9 col-md-8">
+                    <a role="button" class="btn btn-lg btn-default"
+                       ng-class="{active: shared.now}"
+                       ng-href="{{'#/'+shared.currentRegion+'/'+shared.currentBracket.text+'/now'}}">
+                        Playing now
+                    </a>
 
-                <a role="button" class="btn btn-lg btn-default"
-                   ng-class="{active: !shared.now}"
-                   ng-href="{{'#/'+shared.currentRegion+'/'+shared.currentBracket.text}}">
-                    Leaderboard
-                </a>
-
-                <a role="button" class="btn btn-lg btn-default"
-                   ng-class="{active: shared.now}"
-                   ng-href="{{'#/'+shared.currentRegion+'/'+shared.currentBracket.text+'/now'}}">
-                    Playing now
-                </a>
-
+                </div>
+                <!-- /Leaderboard-Now Selector -->
             </div>
-            <!-- /Leaderboard-Now Selector -->
         </div>
-
+        
         <div ng-view>
+        </div>
+        
+        <div ng-controller="ChatController" class="row">
+            <div ng-if="chatLoaded" ng-cloak>
+                <div class="well chatTable" id="chatDiv">
+                    @*<table class="table table-condensed">
+                        <tbody>
+                            <tr ng-repeat="msg in messages track by $index">
+                                <td class="chatAvatarField">
+                                    <img ng-src="{{media.raceImage(msg.race, msg.gender)}}"
+                                         alt="{{media.raceText(msg.race)}}" />
+
+                                    <img ng-src="{{media.classImageForSpec(msg.classSpec)}}"
+                                         alt="{{media.classText(msg.classSpec)}}" />
+                                </td>
+                                <td class="chatMessageField"><span>{{msg.text}}</span></td>
+                            </tr>
+                        </tbody>
+                    </table>*@
+                    
+                    <div ng-repeat="msg in messages track by $index">
+                        <span class="chatAvatarField">
+                            <img ng-src="{{media.raceImage(msg.race, msg.gender)}}"
+                                 alt="{{media.raceText(msg.race)}}" />
+
+                            <img ng-src="{{media.classImageForSpec(msg.classSpec)}}"
+                                 alt="{{media.classText(msg.classSpec)}}" />
+                        </span>
+                        <span class="chatMessageField">{{msg.text}}</span>
+                    </div>
+                </div>
+
+                <form class="form-inline">
+                    <img ng-src="{{media.raceImage(userAvatar.race, userAvatar.gender)}}"
+                         alt="{{media.raceText(userAvatar.race)}}" />
+
+                    <img ng-src="{{media.classImageForSpec(userAvatar.classSpec)}}"
+                         alt="{{media.classText(userAvatar.classSpec)}}" />
+
+                    <input class="form-control" type="text" placeholder="Type message here..." ng-model="data.currentMessage" />
+                    <input class="btn btn-default" type="submit" value="Send" ng-click="sendMessage(data.currentMessage)" />
+                    <small>{{maxMessageLength - data.currentMessage.length}}</small>
+                </form>
+            </div>
         </div>
 
     </div>
 
     <hr />
+    
+    <div class="col-lg-12">
 
-    @Html.Partial("InitVK")
-    @Html.Partial("InitFB")
-    @Html.Partial("InitGPlus")
-    @Html.Partial("InitTwitter")
+        @Html.Partial("InitVK")
+        @Html.Partial("InitFB")
+        @Html.Partial("InitGPlus")
+        @Html.Partial("InitTwitter")
 
-    @Html.Partial("Social")
+        @Html.Partial("Social")
+    </div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")

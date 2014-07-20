@@ -36,5 +36,4 @@ app.controller('MainController', ['$scope', '$location', '$window', '$rootScope'
         // logging clicks on social buttons in /about
         $window.ga('send', 'pageview', target);
     }
-
 }]);

@@ -107,3 +107,18 @@ li.donate_button {
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
+
+
+.chatAvatarField {
+    width: 60px;
+}
+
+.chatMessageField {
+}
+
+
+.chatTable {
+    max-height: 200px;
+    height: 200px;
+    overflow: auto
+}

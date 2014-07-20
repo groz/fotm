@@ -190,3 +190,28 @@ module Brackets =
     let rbg = { url = "rbg"; teamSize = 10 }
 
     let all = [twos; threes; fives; rbg]
+
+module Races =
+    let all =
+        [ 
+            Race.Human 
+            Race.Orc 
+            Race.Dwarf 
+            Race.``Night Elf`` 
+            Race.Undead 
+            Race.Tauren 
+            Race.Gnome 
+            Race.Troll 
+            Race.Goblin 
+            Race.``Blood Elf`` 
+            Race.Draenei
+            Race.Worgen 
+            Race.``Pandaren Neutral``
+        ]
+
+module Genders =
+    let all = [ Gender.Male; Gender.Female ]
+
+module Classes = 
+    let ids = [1..11]
+    let all = ids |> List.map(fun id -> Specs.toClass id 0)
