@@ -18,7 +18,7 @@ let allAvatars =
     ] |> Set.ofList
 
 let maxMessageLength = 140
-let maxMessages = 5
+let maxMessages = 100
 
 type Room = Room of string
 type ChatMessage = ChatMessage of string
