@@ -117,7 +117,7 @@ and ChatRoom(room, ctx: IHubContext) =
                 match currentAvatars |> getAvatar userId with
                 | Some userAvatar ->
                     if not isDisconnected then
-                        ctx.Groups.Remove(strId, roomName).Wait() |> ignore
+                        ctx.Groups.Remove(strId, roomName) |> ignore
                     roomGroup ? userLeft(strId)
                     currentAvatars |> Set.remove userAvatar, messages
                 | None ->

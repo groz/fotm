@@ -28,8 +28,10 @@ type JsonNetFormatter() =
         use reader = new System.IO.StreamReader(stream)
         use jreader = new JsonTextReader(reader)
         let ser = JsonSerializer()
-        let result = ser.Deserialize(jreader, t)
-        result
+        try
+            ser.Deserialize(jreader, t)
+        with
+        | ex -> null
 
     override this.CanWriteType t =
         true
