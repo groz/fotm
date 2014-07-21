@@ -17,9 +17,9 @@ type BundleConfig() =
         bundles.Add(ScriptBundle("~/bundles/angularjs")
             .Include(
                     [|
-                        "~/Scripts/angular-1.2.16.js"
-                        "~/Scripts/angular-route-1.2.16.js"
-                        "~/Scripts/angular-cookies-1.2.16.js"
+                        "~/Scripts/angular.js"
+                        "~/Scripts/angular-route.js"
+                        "~/Scripts/angular-cookies.js"
                     |]))
 
 
@@ -42,6 +42,7 @@ type BundleConfig() =
                     "~/app/appDebug.js"
                     "~/app/services/*.js"
                     "~/app/controllers/*.js"
+                    "~/app/directives/*.js"
                     "~/app/appConfig.js"
                     |])
             )

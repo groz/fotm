@@ -20,24 +20,35 @@ let allAvatars =
 let maxMessageLength = 140
 let maxMessages = 100
 
+let adminKeyConfig = System.Web.Configuration.WebConfigurationManager.AppSettings.["AdminKey"]
+
 type Room = Room of string
 type ChatMessage = ChatMessage of string
-type User = User of string
-type UserAvatar = UserAvatar of User * ChatAvatar
+type UserId = UserId of string
+
+type User = {
+    id: UserId
+    isAdmin: bool
+}
+
+type UserAvatar = {
+    user: User
+    chatAvatar: ChatAvatar
+}
 
 let getRoomName(Room name) = name
 
 type ChatEvent =
 | UserJoined of Room*User
-| UserLeft of Room*User
-| UserDisconnected of User
-| MessageAdded of Room*User*ChatMessage
+| UserLeft of Room*UserId
+| UserDisconnected of UserId
+| MessageAdded of Room*UserId*ChatMessage
 
 type ChatRoomEvent =
 | UserJoinedRoom of User
-| UserLeftRoom of User
-| MessageAddedToRoom of User*ChatMessage
-| UserDisconnectedFromRoom of User
+| UserLeftRoom of UserId
+| MessageAddedToRoom of UserId*ChatMessage
+| UserDisconnectedFromRoom of UserId
 
 let startAgent<'Message> processMessage = Agent<'Message>.Start(fun mailbox ->
     let rec loop() = async {
@@ -63,21 +74,21 @@ type ChatAgent() =
 
     static member Instance = startAgent (function
         | UserJoined(room, user) -> (getAgent room).Post(UserJoinedRoom user)
-        | UserLeft(room, user) -> (getAgent room).Post(UserLeftRoom user)
-        | MessageAdded(room, user, text)  -> (getAgent room).Post(MessageAddedToRoom(user, text))
-        | UserDisconnected(user) ->
-            rooms |> Map.iter(fun room chatRoom -> (getAgent room).Post(UserDisconnectedFromRoom user))
+        | UserLeft(room, userId) -> (getAgent room).Post(UserLeftRoom userId)
+        | MessageAdded(room, userId, text)  -> (getAgent room).Post(MessageAddedToRoom(userId, text))
+        | UserDisconnected(userId) ->
+            rooms |> Map.iter(fun room chatRoom -> (getAgent room).Post(UserDisconnectedFromRoom userId))
     )
 
 and ChatRoom(room, ctx: IHubContext) = 
     let roomName = getRoomName room
     let roomGroup = ctx.Clients.Group roomName
 
-    let connectionId (User id) = id
-    let client (User id) = ctx.Clients.Client id
+    let stringId(UserId id) = id
+    let client(UserId id) = ctx.Clients.Client id
 
     let selectAvatar currentUserAvatars =
-        let takenAvatars = currentUserAvatars |> Set.map(function UserAvatar(u,a) -> a)
+        let takenAvatars = currentUserAvatars |> Set.map(fun ua -> ua.chatAvatar)
         let availableAvatars = Set.difference allAvatars takenAvatars
 
         // TODO: recolor avatars when nothing's available?
@@ -89,69 +100,66 @@ and ChatRoom(room, ctx: IHubContext) =
             let randomNumber = System.Random().Next(allAvatars.Count)
             allAvatars |> Seq.nth randomNumber
 
-    let getAvatar (User id) currentUserAvatars =
-        currentUserAvatars |> Seq.tryFind(function UserAvatar (User userId, avatar) -> userId = id)
+    let getAvatar userId currentUserAvatars =
+        currentUserAvatars |> Seq.tryFind(fun ua -> ua.user.id = userId)
 
     let messageProcessor = Agent.Start(fun mailbox ->
         logInfo "********* CREATED AGENT FOR %A ***************" room
 
-        let rec loop userAvatars messages = async {
-            logInfo "%A waiting for message, state: %A, %A" room userAvatars messages
+        let rec loop currentAvatars messages = async {
+            logInfo "%A waiting for message, state: %A, %A" room currentAvatars messages
             let! msg = mailbox.Receive()
-            logInfo "%A started processing message %A, current state: %A, %A" room msg userAvatars messages
+            logInfo "%A started processing message %A, current state: %A, %A" room msg currentAvatars messages
 
-            let userLeft user isDisconnected =
-                let userId = connectionId user
-                        
-                match userAvatars |> getAvatar user with
+            let userLeft userId isDisconnected =
+                let strId = userId |> stringId
+
+                match currentAvatars |> getAvatar userId with
                 | Some userAvatar ->
                     if not isDisconnected then
-                        ctx.Groups.Remove(userId, roomName).Wait() |> ignore
-                    roomGroup ? userLeft(userId)
-                    userAvatars |> Set.remove userAvatar, messages
+                        ctx.Groups.Remove(strId, roomName).Wait() |> ignore
+                    roomGroup ? userLeft(strId)
+                    currentAvatars |> Set.remove userAvatar, messages
                 | None ->
-                    userAvatars, messages
+                    currentAvatars, messages
 
             let newUsers, newMessages = 
                 try
                     match msg with
-                    | UserJoinedRoom(user) ->
-                        let userId = connectionId user
+                    | UserJoinedRoom user ->
+                        let chatAvatar = selectAvatar currentAvatars
+                        let userAvatar = { user = user; chatAvatar = chatAvatar }
+                        let strId = user.id |> stringId
 
-                        let chatAvatar = selectAvatar userAvatars
-                        let userAvatar = UserAvatar(user, chatAvatar)
+                        let nextAvatars = currentAvatars |> Set.add userAvatar
+                        (client user.id) ? setChatInfo(userAvatar, messages |> List.rev, nextAvatars)
 
-                        let nextAvatars = userAvatars |> Set.add userAvatar
-                        (client user) ? setChatInfo(chatAvatar, messages |> List.rev, nextAvatars)
-
-                        // TODO: refactor names from avatars to just users
-                                                
-                        roomGroup ? userJoined(userId, chatAvatar)
-                        ctx.Groups.Add(userId, roomName).Wait()
+                        roomGroup ? userJoined(userAvatar)
+                        ctx.Groups.Add(strId, roomName).Wait()
 
                         nextAvatars, messages
 
-                    | UserLeftRoom(user) -> 
-                        userLeft user false
+                    | UserLeftRoom userId -> 
+                        userLeft userId false
 
-                    | UserDisconnectedFromRoom user ->
-                        userLeft user true
+                    | UserDisconnectedFromRoom userId ->
+                        userLeft userId true
 
-                    | MessageAddedToRoom(user, text) -> 
-                        let userId = connectionId user
-
-                        match userAvatars |> getAvatar user with
+                    | MessageAddedToRoom(userId, text) -> 
+                        match currentAvatars |> getAvatar userId with
                         | Some userAvatar ->
-                            let roomWithoutSender = ctx.Clients.Group(roomName, userId)
-                            roomWithoutSender ? messageAdded(userId, userAvatar, text)
-                            userAvatars, (userAvatar, text) :: messages |> Seq.truncate maxMessages |> List.ofSeq
+                            let roomWithoutSender = ctx.Clients.Group(roomName, userId |> stringId)
+
+                            roomWithoutSender ? messageAdded(userAvatar, text)
+
+                            currentAvatars, (userAvatar, text) :: messages |> Seq.truncate maxMessages |> List.ofSeq
                         | None ->
-                            userAvatars, messages
+                            currentAvatars, messages
 
                 with
                 | ex -> 
                     logError "Error occured in %A room processor: %A" room ex
-                    userAvatars, messages
+                    currentAvatars, messages
 
             logInfo "%A finished processing message, result: %A, %A" room newUsers newMessages
             return! loop newUsers newMessages
@@ -165,21 +173,23 @@ and ChatRoom(room, ctx: IHubContext) =
 and [<HubName("chatHub")>] ChatHub() =
     inherit Hub()
 
-    member this.joinRoom(roomName: string) =
+    member this.joinRoom(roomName: string, adminKey: string) =
         let callerId = this.Context.ConnectionId
         let roomName = roomName.ToUpper()
-        let chatEvent = UserJoined(Room roomName, User callerId)
+        let isAdmin = (adminKey = adminKeyConfig)
+        let user = { User.id = UserId callerId; User.isAdmin = isAdmin }
+        let chatEvent = UserJoined(Room roomName, user)
         ChatAgent.Instance.Post chatEvent
 
     member this.leaveRoom(roomName: string)=
         let callerId = this.Context.ConnectionId
         let roomName = roomName.ToUpper()
-        let chatEvent = UserLeft(Room roomName, User callerId)
+        let chatEvent = UserLeft(Room roomName, UserId callerId)
         ChatAgent.Instance.Post chatEvent
 
     override this.OnDisconnected() =
         let callerId = this.Context.ConnectionId
-        let chatEvent = UserDisconnected(User callerId)
+        let chatEvent = UserDisconnected(UserId callerId)
         ChatAgent.Instance.Post chatEvent
         base.OnDisconnected()
 
@@ -188,5 +198,5 @@ and [<HubName("chatHub")>] ChatHub() =
             let callerId = this.Context.ConnectionId
             let roomName = roomName.ToUpper()
             let text = text.Substring(0, System.Math.Min(text.Length, maxMessageLength))
-            let chatEvent = MessageAdded(Room roomName, User callerId, ChatMessage(text))
+            let chatEvent = MessageAdded(Room roomName, UserId callerId, ChatMessage(text))
             ChatAgent.Instance.Post chatEvent

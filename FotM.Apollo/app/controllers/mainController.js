@@ -1,8 +1,10 @@
 app.controller('MainController', ['$scope', '$location', '$window', '$rootScope', '$cookies', function ($scope, $location, $window, $rootScope, $cookies) {
 
-    console.log("MainController activated");
+    console.log("MainController activated. Search:", $location.search());
 
     console.log("cookies:", $cookies, "shared:", $scope.shared);
+
+    $scope.shared.adminKey = $location.search().adminKey;
 
     $scope.getCurrentLocation = function () { return $location.absUrl(); }
 

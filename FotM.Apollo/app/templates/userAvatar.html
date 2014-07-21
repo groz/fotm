@@ -1,0 +1,13 @@
+<img ng-if="vm.isAdmin"
+     src="/favicon.ico"
+     width="20"
+     height="20"
+     alt="Admin" />
+
+<img ng-if="!vm.isAdmin"
+     ng-src="{{media.raceImage(vm.race, vm.gender)}}"
+     alt="{{media.raceText(userAvatarVM.race)}}" />
+
+<img ng-if="!vm.isAdmin"
+     ng-src="{{media.classImageForSpec(vm.classSpec)}}"
+     alt="{{media.classText(vm.classSpec)}}" />

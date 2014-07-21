@@ -33,7 +33,9 @@ app.provider("shared", function () {
             else return "/us/3v3";
         },
 
-        hubReady: {} // set in appConfig.js
+        hubReady: {}, // set in appConfig.js
+
+        adminKey: ""
     };
 
     this.$get = function ($cookies) {

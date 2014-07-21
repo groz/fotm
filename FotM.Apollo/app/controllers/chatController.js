@@ -8,7 +8,7 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
 
             console.log("Switching chat rooms from", oldRegion, "to", newRegion, "...");
             chat.server.leaveRoom(oldRegion);
-            chat.server.joinRoom(newRegion);
+            chat.server.joinRoom(newRegion, shared.adminKey);
         }
     });
 
@@ -22,17 +22,18 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
     $scope.messages = [];
     $scope.usersOnline = [];
 
-    function createAvatar(rawAvatar, userId) {
+    function createAvatar(userAvatar) {
         return {
-            race: rawAvatar.Fields[0],
-            gender: rawAvatar.Fields[1],
-            classSpec: rawAvatar.Fields[2],
-            userId: userId
+            race: userAvatar.chatAvatar.Fields[0],
+            gender: userAvatar.chatAvatar.Fields[1],
+            classSpec: userAvatar.chatAvatar.Fields[2],
+            userId: userAvatar.user.id.Fields[0],
+            isAdmin : userAvatar.user.isAdmin
         };
     }
 
-    function addMessage(rawAvatar, text) {
-        var chatEntry = createAvatar(rawAvatar);
+    function addMessage(userAvatar, text) {
+        var chatEntry = createAvatar(userAvatar);
         chatEntry.text = text;
         $scope.messages.push(chatEntry);
 
@@ -58,17 +59,17 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
         chat.server.message(shared.currentRegion, text);
 
         $scope.data.currentMessage = "";
-        addMessage($scope.userRawAvatar, text);
+        addMessage($scope.userAvatar, text);
         scrollDown();
     }
     
     // subscribe to chat
     var chat = $.connection.chatHub;
 
-    chat.client.userJoined = function(userId, chatAvatar) {
-        console.log(userId, "with avatar", chatAvatar, "joined...");
+    chat.client.userJoined = function(userAvatar) {
+        console.log(userAvatar, "joined...");
 
-        $scope.usersOnline.push(createAvatar(chatAvatar, userId));
+        $scope.usersOnline.push(createAvatar(userAvatar));
         $scope.$digest();
     }
 
@@ -82,21 +83,22 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
         $scope.$digest();
     }
 
-    chat.client.setChatInfo = function(rawAvatar, currentMessages, users) {
-        console.log("Avatar assigned:", rawAvatar, "messages:", currentMessages, "users online:", users);
+    chat.client.setChatInfo = function(userAvatar, currentMessages, users) {
+        console.log("Avatar assigned:", userAvatar, "messages:", currentMessages, "users online:", users);
 
-        $scope.usersOnline = $.map(users, function(userAvatar) {
-            return createAvatar(userAvatar.Fields[1], userAvatar.Fields[0].Fields[0]);
-        });
-
-        $scope.userRawAvatar = rawAvatar;
-        $scope.userAvatar = createAvatar(rawAvatar);
+        $scope.usersOnline = $.map(users, createAvatar);
+        $scope.userAvatar = userAvatar;
+        $scope.userAvatarVM = createAvatar(userAvatar);
         $scope.chatLoaded = true;
+
+        console.log("predigest", $scope.userAvatar);
         $scope.$digest();
+        console.log("postdigest");
 
         for (var iMsg in currentMessages) {
             var msg = currentMessages[iMsg];
-            addMessage(msg.Item1.Fields[1], msg.Item2.Fields[0]);
+            console.log(msg);
+            addMessage(msg.Item1, msg.Item2.Fields[0]);
         }
 
         $scope.$digest();
@@ -106,16 +108,16 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
         $('#chatInputBox').focus();
     }
 
-    chat.client.messageAdded = function (sender, senderAvatar, message) {
-        console.log(sender, "with avatar", senderAvatar, "sent message", message);
-        addMessage(senderAvatar.Fields[1], message.Fields[0]);
+    chat.client.messageAdded = function (userAvatar, text) {
+        console.log(userAvatar, "sent message", text);
+        addMessage(userAvatar, text.Fields[0]);
         $scope.$digest();
         scrollDown();
     }
 
     shared.hubReady.done(function () {
         console.log("Subscribed to chat updates. Joining room", shared.currentRegion);
-        chat.server.joinRoom(shared.currentRegion);
+        chat.server.joinRoom(shared.currentRegion, shared.adminKey);
     });
 
 }]);
