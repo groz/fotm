@@ -1,5 +1,4 @@
-app.controller('MainController', ['$scope', '$location', '$window', '$rootScope', '$cookies',
-    function ($scope, $location, $window, $rootScope, $cookies) {
+app.controller('MainController', ['$scope', '$location', '$window', '$rootScope', '$cookies', function ($scope, $location, $window, $rootScope, $cookies) {
 
     console.log("MainController activated");
 
@@ -36,4 +35,5 @@ app.controller('MainController', ['$scope', '$location', '$window', '$rootScope'
         // logging clicks on social buttons in /about
         $window.ga('send', 'pageview', target);
     }
+
 }]);

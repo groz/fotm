@@ -6,7 +6,7 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
         if ($scope.chatLoaded) {
             $scope.messages = [];
 
-            console.log("Switching rooms from", oldRegion, "to", newRegion, "...");
+            console.log("Switching chat rooms from", oldRegion, "to", newRegion, "...");
             chat.server.leaveRoom(oldRegion);
             chat.server.joinRoom(newRegion);
         }
@@ -37,7 +37,9 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
         while ($scope.messages.length > $scope.maxNumberOfMessages) {
             $scope.messages.shift();
         }
+    }
 
+    function scrollDown() {
         var chatDiv = $("#chatDiv");
         chatDiv.animate({ scrollTop: chatDiv[0].scrollHeight }, 100);
     }
@@ -55,12 +57,11 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
 
         $scope.data.currentMessage = "";
         addMessage($scope.userRawAvatar, text);
+        scrollDown();
     }
     
     // subscribe to chat
     var chat = $.connection.chatHub;
-    var user = chat.id;
-    console.log("User:", user);
 
     chat.client.userJoined = function(newUser, newUserAvatar) {
         console.log(newUser, "with avatar", newUserAvatar, "joined...");
@@ -79,23 +80,24 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
         $scope.$digest();
 
         for (var iMsg in currentMessages) {
-            console.log(iMsg);
             var msg = currentMessages[iMsg];
-            console.log(msg);
             addMessage(msg.Item1.Fields[1], msg.Item2.Fields[0]);
         }
 
         $scope.$digest();
+
+        scrollDown();
     }
 
     chat.client.messageAdded = function (sender, senderAvatar, message) {
         console.log(sender, "with avatar", senderAvatar, "sent message", message);
         addMessage(senderAvatar.Fields[1], message.Fields[0]);
         $scope.$digest();
+        scrollDown();
     }
 
-    $.connection.hub.start().done(function () {
-        console.log("SUBSCRIBED TO CHAT", shared.currentRegion);
+    shared.hubReady.done(function () {
+        console.log("Subscribed to chat updates. Joining room", shared.currentRegion);
         chat.server.joinRoom(shared.currentRegion);
     });
 

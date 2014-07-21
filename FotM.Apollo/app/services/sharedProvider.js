@@ -31,7 +31,9 @@ app.provider("shared", function () {
             console.log("REDIRECTING TO LAST PAGE:", this.lastPage);
             if (this.lastPage) return this.lastPage;
             else return "/us/3v3";
-        }
+        },
+
+        hubReady: {} // set in appConfig.js
     };
 
     this.$get = function ($cookies) {

@@ -42,13 +42,4 @@ app.controller('NowController', ['media', 'api', 'settings', '$scope', function 
         }
     }
 
-    $.connection.hub.start().done(function() {
-        console.log("SUBSCRIBED TO REALTIME NOTIFICATIONS");
-    });
-
-    $scope.$on("$destroy", function () {
-        console.log("Exiting NowController. Unsubscribing from notifications.");
-        $.connection.hub.stop();
-    });
-
 }]);
