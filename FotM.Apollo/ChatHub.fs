@@ -148,11 +148,17 @@ and ChatRoom(room, ctx: IHubContext) =
                     | MessageAddedToRoom(userId, text) -> 
                         match currentAvatars |> getAvatar userId with
                         | Some userAvatar ->
-                            let roomWithoutSender = ctx.Clients.Group(roomName, userId |> stringId)
+                            // if this user recently posted same message then discard it (anti-spam)
+                            let chatMessage = userAvatar, text
+                            let alreadyAdded = messages |> List.tryFind (fun m -> m = chatMessage)
 
-                            roomWithoutSender ? messageAdded(userAvatar, text)
+                            match alreadyAdded with
+                            | None ->
+                                let roomWithoutSender = ctx.Clients.Group(roomName, userId |> stringId)
+                                roomWithoutSender ? messageAdded(userAvatar, text)
+                                currentAvatars, chatMessage :: messages |> Seq.truncate maxMessages |> List.ofSeq
+                            | Some _ -> currentAvatars, messages
 
-                            currentAvatars, (userAvatar, text) :: messages |> Seq.truncate maxMessages |> List.ofSeq
                         | None ->
                             currentAvatars, messages
 

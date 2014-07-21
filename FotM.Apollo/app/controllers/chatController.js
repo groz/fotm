@@ -91,9 +91,7 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
         $scope.userAvatarVM = createAvatar(userAvatar);
         $scope.chatLoaded = true;
 
-        console.log("predigest", $scope.userAvatar);
         $scope.$digest();
-        console.log("postdigest");
 
         for (var iMsg in currentMessages) {
             var msg = currentMessages[iMsg];
