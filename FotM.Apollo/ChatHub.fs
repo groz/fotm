@@ -121,17 +121,22 @@ and ChatRoom(room, ctx: IHubContext) =
                         let chatAvatar = selectAvatar userAvatars
                         let userAvatar = UserAvatar(user, chatAvatar)
 
-                        ctx.Groups.Add(userId, roomName) |> ignore
-
-                        (client user) ? setChatInfo(chatAvatar, messages |> List.rev)
-                        roomGroup ? userJoined(userId, chatAvatar)
-
                         let nextAvatars = userAvatars |> Set.add userAvatar
+                        (client user) ? setChatInfo(chatAvatar, messages |> List.rev, nextAvatars)
+
+                        // TODO: refactor names from avatars to just users
+                                                
+                        roomGroup ? userJoined(userId, chatAvatar)
+                        ctx.Groups.Add(userId, roomName).Wait()
+
                         nextAvatars, messages
+
                     | UserLeftRoom(user) -> 
                         userLeft user false
+
                     | UserDisconnectedFromRoom user ->
                         userLeft user true
+
                     | MessageAddedToRoom(user, text) -> 
                         let userId = connectionId user
 
@@ -142,6 +147,7 @@ and ChatRoom(room, ctx: IHubContext) =
                             userAvatars, (userAvatar, text) :: messages |> Seq.truncate maxMessages |> List.ofSeq
                         | None ->
                             userAvatars, messages
+
                 with
                 | ex -> 
                     logError "Error occured in %A room processor: %A" room ex

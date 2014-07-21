@@ -20,12 +20,14 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
     $scope.media = media;
 
     $scope.messages = [];
+    $scope.usersOnline = [];
 
-    function createAvatar(rawAvatar) {
+    function createAvatar(rawAvatar, userId) {
         return {
             race: rawAvatar.Fields[0],
             gender: rawAvatar.Fields[1],
             classSpec: rawAvatar.Fields[2],
+            userId: userId
         };
     }
 
@@ -63,16 +65,29 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
     // subscribe to chat
     var chat = $.connection.chatHub;
 
-    chat.client.userJoined = function(newUser, newUserAvatar) {
-        console.log(newUser, "with avatar", newUserAvatar, "joined...");
+    chat.client.userJoined = function(userId, chatAvatar) {
+        console.log(userId, "with avatar", chatAvatar, "joined...");
+
+        $scope.usersOnline.push(createAvatar(chatAvatar, userId));
+        $scope.$digest();
     }
 
-    chat.client.userLeft = function (newUser) {
-        console.log(newUser, "left.");
+    chat.client.userLeft = function (userId) {
+        console.log(userId, "left.");
+
+        $scope.usersOnline = $.grep($scope.usersOnline, function(user) {
+            return user.userId != userId;
+        });
+
+        $scope.$digest();
     }
 
-    chat.client.setChatInfo = function(rawAvatar, currentMessages) {
-        console.log("Avatar assigned:", rawAvatar, "messages:", currentMessages);
+    chat.client.setChatInfo = function(rawAvatar, currentMessages, users) {
+        console.log("Avatar assigned:", rawAvatar, "messages:", currentMessages, "users online:", users);
+
+        $scope.usersOnline = $.map(users, function(userAvatar) {
+            return createAvatar(userAvatar.Fields[1], userAvatar.Fields[0].Fields[0]);
+        });
 
         $scope.userRawAvatar = rawAvatar;
         $scope.userAvatar = createAvatar(rawAvatar);
@@ -87,6 +102,8 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
         $scope.$digest();
 
         scrollDown();
+
+        $('#chatInputBox').focus();
     }
 
     chat.client.messageAdded = function (sender, senderAvatar, message) {

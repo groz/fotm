@@ -94,45 +94,70 @@
         
         <div ng-controller="ChatController" class="row">
             <div ng-if="chatLoaded" ng-cloak>
-                <div class="well chatTable" id="chatDiv">
-                    @*<table class="table table-condensed">
-                        <tbody>
-                            <tr ng-repeat="msg in messages track by $index">
-                                <td class="chatAvatarField">
+                
+                <table class="table well">
+                    
+                    <!-- Users -->
+                    <td class="well col-xs-2">
+                        <span>Online</span>
+                        
+                        <div ng-repeat="userAvatar in usersOnline track by $index">
+                            <img ng-src="{{media.raceImage(userAvatar.race, userAvatar.gender)}}"
+                                 alt="{{media.raceText(userAvatar.race)}}" />
+
+                            <img ng-src="{{media.classImageForSpec(userAvatar.classSpec)}}"
+                                 alt="{{media.classText(userAvatar.classSpec)}}" />
+                        </div>
+                    </td>
+                    
+                    <td class="col-xs-10">
+                        <!-- Chat -->
+                        <div class="chatTable" id="chatDiv">
+                            <div ng-repeat="msg in messages track by $index">
+                                <span class="chatAvatarField">
                                     <img ng-src="{{media.raceImage(msg.race, msg.gender)}}"
                                          alt="{{media.raceText(msg.race)}}" />
 
                                     <img ng-src="{{media.classImageForSpec(msg.classSpec)}}"
                                          alt="{{media.classText(msg.classSpec)}}" />
-                                </td>
-                                <td class="chatMessageField"><span>{{msg.text}}</span></td>
-                            </tr>
-                        </tbody>
-                    </table>*@
-                    
-                    <div ng-repeat="msg in messages track by $index">
-                        <span class="chatAvatarField">
-                            <img ng-src="{{media.raceImage(msg.race, msg.gender)}}"
-                                 alt="{{media.raceText(msg.race)}}" />
+                                </span>
+                                <span class="chatMessageField">{{msg.text}}</span>
+                            </div>
+                        </div>
+                    </td>
+                </table>
+                
+                <!-- Send message form -->
+                <form class="form-inline" role="form">
 
-                            <img ng-src="{{media.classImageForSpec(msg.classSpec)}}"
-                                 alt="{{media.classText(msg.classSpec)}}" />
+                    <div class="input-group">
+
+                        <span class="input-group-addon">
+                            <img ng-src="{{media.raceImage(userAvatar.race, userAvatar.gender)}}"
+                                 alt="{{media.raceText(userAvatar.race)}}" />
+
+                            <img ng-src="{{media.classImageForSpec(userAvatar.classSpec)}}"
+                                 alt="{{media.classText(userAvatar.classSpec)}}" />
                         </span>
-                        <span class="chatMessageField">{{msg.text}}</span>
+
+                        <input class="form-control"
+                               id="chatInputBox"
+                               type="text"
+                               placeholder="Message..."
+                               ng-model="data.currentMessage" />
+
+                        <span class="input-group-btn pull-left">
+                            <button class="btn btn-default" 
+                                    type="submit" 
+                                    ng-click="sendMessage(data.currentMessage)">
+                                <span>Send</span>
+                            </button>
+                            
+                        </span>
+
                     </div>
-                </div>
-
-                <form class="form-inline">
-                    <img ng-src="{{media.raceImage(userAvatar.race, userAvatar.gender)}}"
-                         alt="{{media.raceText(userAvatar.race)}}" />
-
-                    <img ng-src="{{media.classImageForSpec(userAvatar.classSpec)}}"
-                         alt="{{media.classText(userAvatar.classSpec)}}" />
-
-                    <input class="form-control" type="text" placeholder="Type message here..." ng-model="data.currentMessage" />
-                    <input class="btn btn-default" type="submit" value="Send" ng-click="sendMessage(data.currentMessage)" />
-                    <small>{{maxMessageLength - data.currentMessage.length}}</small>
                 </form>
+
             </div>
         </div>
 
