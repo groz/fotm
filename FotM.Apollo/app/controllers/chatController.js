@@ -61,6 +61,8 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
         $scope.data.currentMessage = "";
         addMessage($scope.userAvatar, text);
         scrollDown();
+
+        $('#chatInputBox').focus();
     }
     
     // subscribe to chat

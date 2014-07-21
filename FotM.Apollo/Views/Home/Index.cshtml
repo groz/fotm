@@ -99,10 +99,12 @@
                     
                     <!-- Users -->
                     <td class="well col-xs-2">
-                        <span>Online</span>
-                        
-                        <div ng-repeat="userAvatar in usersOnline track by $index">
-                            <user-avatar vm="userAvatar"/>
+                        <div class="chatTable">
+                            <span>Online</span>
+
+                            <div ng-repeat="userAvatar in usersOnline track by $index">
+                                <user-avatar vm="userAvatar" />
+                            </div>
                         </div>
                     </td>
                     
