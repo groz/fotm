@@ -5,10 +5,7 @@ F# and AngularJS realtime World of Warcraft arena setups and rankings monitor.
 TODO
 
 Chat:
-- Show list of users in chat
-- Add admin differentiation
 - Filter spammers
-  - Do not allow duplicate messages
   - Do not allow too quick successive messages
 
 Frontend:
