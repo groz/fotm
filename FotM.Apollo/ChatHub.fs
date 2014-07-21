@@ -135,7 +135,7 @@ and ChatRoom(room, ctx: IHubContext) =
                         (client user.id) ? setChatInfo(userAvatar, messages |> List.rev, nextAvatars)
 
                         roomGroup ? userJoined(userAvatar)
-                        ctx.Groups.Add(strId, roomName).Wait()
+                        ctx.Groups.Add(strId, roomName) |> ignore
 
                         nextAvatars, messages
 
