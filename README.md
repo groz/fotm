@@ -12,7 +12,6 @@ Chat:
   - Do not allow too quick successive messages
 
 Frontend:
-- Make single login to SignalR
 - Add buttons to clear setup filter
 - Add Discourse discussion forum
 - Make region buttons visible in mobile UI
