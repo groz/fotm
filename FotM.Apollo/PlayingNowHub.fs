@@ -10,5 +10,6 @@ type PlayingNowHub() =
 
 let clients = lazy GlobalHost.ConnectionManager.GetHubContext<PlayingNowHub>().Clients
 
-let notifyUpdateReady(region: string, bracket: string): unit =
-    clients.Value.All ? updateReady(region, bracket)
+let notifyUpdateReady(region: string, bracket: string, time: NodaTime.Instant): unit =
+    let t = time.ToDateTimeUtc().ToString()
+    clients.Value.All ? updateReady(region, bracket, t)

@@ -37,8 +37,10 @@ module Main =
                         let armoryInfo = ArmoryInfo(snapshot, storageLocation)
                         let updatedArmories = armories |> Map.add(region, bracket) armoryInfo
 
+                        let lastTime = snapshot |> List.map (fun e -> e.lastEntry.snapshotTime) |> List.max
+
                         repository.update updatedArmories
-                        PlayingNowUpdateManager.notifyUpdateReady(region, bracket)
+                        PlayingNowUpdateManager.notifyUpdateReady(region, bracket, lastTime)
                         updatedArmories
                     with
                     | ex -> 

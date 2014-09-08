@@ -31,8 +31,8 @@ app.controller('NowController', ['media', 'api', 'settings', '$scope', function 
     // subscribe to realtime updates notification
     var notifier = $.connection.playingNowHub;
 
-    notifier.client.updateReady = function(region, bracket) {
-        console.log("NOTIFICATION RECEIVED: update ready for", region, bracket);
+    notifier.client.updateReady = function(region, bracket, updateTime) {
+        console.log("NOTIFICATION RECEIVED: update ready for", region, bracket, api.toLocalTime(updateTime));
         if ((region.toUpperCase() === $scope.region.toUpperCase())
             &&
             (bracket.toUpperCase() === $scope.bracket.text.toUpperCase())) {

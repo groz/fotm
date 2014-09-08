@@ -97,7 +97,6 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
 
         for (var iMsg in currentMessages) {
             var msg = currentMessages[iMsg];
-            console.log(msg);
             addMessage(msg.Item1, msg.Item2.Fields[0]);
         }
 

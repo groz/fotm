@@ -121,19 +121,19 @@ module Athena =
             |> Seq.map (fun current -> 
                 match previousMap.TryFind(current.player) with
                 | Some(previous) when current.seasonTotal <> previous.seasonTotal -> 
-                    Some(current.seasonTotal - previous.seasonTotal)
+                    Some(current, previous) //Some(current.seasonTotal - previous.seasonTotal)
                 | _ -> None
             )
             |> Seq.choose id
             |> Seq.toList
 
-        let outdated, ok = updatedPairs |> List.partition ((>) 0)
+        let ok, outdated = updatedPairs |> List.partition (fun (c, p) -> c.seasonTotal - p.seasonTotal > 0)
 
         if outdated.Length > 0 then 
             logInfo "[%s, %s] outdated update: %A" currentSnapshot.region currentSnapshot.bracket.url outdated 
             OutdatedUpdate
         else 
-            let normal, excessive = ok |> List.partition ((=) 1)
+            let normal, excessive = ok |> List.partition (fun (c, p) -> c.seasonTotal - p.seasonTotal = 1)
 
             if excessive.Length > 0 then 
                 logInfo "[%s, %s] excessive update: %A" currentSnapshot.region currentSnapshot.bracket.url excessive
@@ -161,6 +161,9 @@ module Athena =
         }
 
     let processUpdate snapshot snapshotHistory teamHistory (storage: Storage) (updatePublisher: TopicWrapper) (historyStorage: Storage) =
+        let filteredLadder = snapshot.ladder |> Seq.distinctBy (fun p -> p.player) |> Seq.toArray // discards later entries
+        let snapshot = { snapshot with ladder = filteredLadder }
+        
         let currentSnapshotHistory = snapshotHistory |> List.filter isCurrent
 
         if currentSnapshotHistory |> List.exists (fun entry -> entry.ladder = snapshot.ladder) then
