@@ -12,6 +12,32 @@ app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'setti
     $scope.bracket = settings.bracket;
     $scope.media = media;
 
+    $scope.nPages = 1;
+    $scope.currentPage = 0;
+    var nTeamsOnPage = 10;
+
+    $scope.teamsOnPage = function () {
+        var result = [];
+
+        var first = $scope.currentPage * nTeamsOnPage;
+        var last = Math.min(first + nTeamsOnPage, $scope.teams.length);
+
+        for (var i = first; i < last; ++i)
+            result.push($scope.teams[i]);
+
+        return result;
+    }
+
+    $scope.nextPage = function () {
+        if ($scope.currentPage < $scope.nPages - 1)
+            $scope.currentPage++;
+    }
+
+    $scope.previousPage = function () {
+        if ($scope.currentPage > 0)
+            $scope.currentPage--;
+    }
+
     // notify parent frame of selected region
     $scope.shared.currentRegion = $scope.region;
     $scope.shared.currentBracket = $scope.bracket;
@@ -38,6 +64,9 @@ app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'setti
             $scope.teams = response.data.Item1;
             $scope.setups = response.data.Item2;
             console.log("Last snapshot location:", response.data.Item3);
+
+            var nTotalTeams = $scope.teams.length;
+            $scope.nPages = Math.ceil(nTotalTeams / nTeamsOnPage);
         });
 
     console.log("loadLeaderBoard request queued.");

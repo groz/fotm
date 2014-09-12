@@ -9,7 +9,7 @@
         <table class="table table-striped table-condensed table-responsive">
             <tbody>
                 <!-- Teams -->
-                <tr ng-repeat="team in teams">
+                <tr ng-repeat="team in teamsOnPage()">
                     <td class="centered">{{team.rank}}</td>
 
                     <td class="hidden-xs centered">
@@ -52,5 +52,15 @@
                 <!-- /Teams -->
             </tbody>
         </table>
+
+        <ul class="pager">
+            <li class="previous">
+                <a role="button" class="btn btn-default" ng-click="previousPage()">&larr; Previous</a>
+            </li>
+            <li class="next">
+                <a role="button" class="btn btn-default" ng-click="nextPage()">Next &rarr;</a>
+            </li>
+        </ul>
+
     </div>
 </div>

@@ -77,7 +77,7 @@ type Ordering =
 type ValuesController() =
     inherit ApiController()
 
-    let maxLeaderboardTeams = 10
+    let maxLeaderboardTeams = 50
     let maxSpecs = 10
     let maxPlayingNow = 50
 

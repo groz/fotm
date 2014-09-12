@@ -16,7 +16,7 @@
             </thead>
 
             <tbody>
-                <tr ng-repeat="team in teams">
+                <tr ng-repeat="team in teamsOnPage()">
                     <td class="centered">{{team.rank}}</td>
                     <td class="hidden-xs hidden-sm vcentered">
                         <img ng-src="{{media.factionImage(team.factionId)}}" alt="{{media.factionText(team.factionId)}}" />
@@ -73,6 +73,15 @@
              ng-if="empty">
             <span>No high rated teams seem to be playing right now.</span>
         </div>
+
+        <ul class="pager">
+            <li class="previous">
+                <a role="button" class="btn btn-default" ng-click="previousPage()">&larr; Previous</a>
+            </li>
+            <li class="next">
+                <a role="button" class="btn btn-default" ng-click="nextPage()">Next &rarr;</a>
+            </li>
+        </ul>
 
     </div>
 </div>
