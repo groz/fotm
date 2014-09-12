@@ -21,18 +21,18 @@
                         <div class="col-lg-1"
                              ng-repeat="player in team.players">
 
-                            <a ng-href="{{media.armoryLink(region, player)}}" class="nolink">
-                                
+                            <a ng-href="{{media.armoryLink(region, player)}}" ng-click="armoryLookup(player)" class="nolink">
+
                                 <img class="hidden-lg"
                                      ng-src="{{media.raceImage(player.race, player.gender)}}"
                                      alt="{{media.raceText(player.race)}}" />
 
                                 <img class="hidden-xs"
-                                        ng-src="{{media.classImageForSpec(player.classSpec)}}"
-                                        alt="{{media.classText(player.classSpec)}}" />
+                                     ng-src="{{media.classImageForSpec(player.classSpec)}}"
+                                     alt="{{media.classText(player.classSpec)}}" />
 
                                 <img ng-src="{{media.specImage(player.classSpec)}}"
-                                        alt="{{media.specText(player.classSpec)}}" />
+                                     alt="{{media.specText(player.classSpec)}}" />
 
                                 <span>{{player.name}}</span>
                                 <span class="hidden-lg hidden-xs">-</span>

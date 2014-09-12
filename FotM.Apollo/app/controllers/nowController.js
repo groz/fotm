@@ -30,14 +30,26 @@ app.controller('NowController', ['media', 'api', 'settings', '$scope', function 
         return result;
     }
 
+    var pageId = $scope.region + ' ' + $scope.bracket.text + ' playingNow';
+
     $scope.nextPage = function () {
-        if ($scope.currentPage < $scope.nPages - 1)
+        if ($scope.currentPage < $scope.nPages - 1) {
             $scope.currentPage++;
+            ga('send', 'event', 'change page', 'next', pageId, $scope.currentPage);
+        }
     }
 
     $scope.previousPage = function () {
-        if ($scope.currentPage > 0)
+        if ($scope.currentPage > 0) {
             $scope.currentPage--;
+            ga('send', 'event', 'change page', 'previous', pageId, $scope.currentPage);
+        }
+    }
+
+    $scope.armoryLookup = function (player) {
+        var playerId = player.name + ' ' + player.realm.realmName;
+        console.log("logging lookup for ", pageId, playerId);
+        ga('send', 'event', 'armory lookup', pageId, playerId);
     }
 
     function fetchData() {

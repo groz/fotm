@@ -25,8 +25,8 @@
                     <td>
                         <div
                             ng-repeat="player in team.players">
-                            <a ng-href="{{media.armoryLink(region, player)}}" class="nolink">
-                                    
+                            <a ng-href="{{media.armoryLink(region, player)}}" ng-click="armoryLookup(player)" class="nolink">
+
                                 <img ng-src="{{media.raceImage(player.race, player.gender)}}"
                                      alt="{{media.raceText(player.race)}}" />
 
