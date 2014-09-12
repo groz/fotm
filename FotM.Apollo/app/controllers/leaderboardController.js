@@ -104,14 +104,22 @@ app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'setti
         var filterStrings = $scope.fotmFilters.reduce(function(arr, f) {
             var filterString = f.toString();
 
-            if (filterString != null)
+            if (filterString != null) {
                 nonEmpty = true;
+                ga('send', 'event', 'filter', filterString); // log each filter separately
+            }
 
             console.log(f, "reduced to", filterString);
 
             arr.push(filterString);
             return arr;
         }, []);
+
+        // log composite filtering if several filters are applied
+        if (filterStrings.length > 1 && nonEmpty) {
+            ga('send', 'event', 'composite filter', filterStrings.join());
+            alert(filterStrings.join());
+        }
 
         if (nonEmpty)
             $location.search( { filter: filterStrings } );
