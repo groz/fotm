@@ -118,7 +118,6 @@ app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'setti
         // log composite filtering if several filters are applied
         if (filterStrings.length > 1 && nonEmpty) {
             ga('send', 'event', 'composite filter', filterStrings.join());
-            alert(filterStrings.join());
         }
 
         if (nonEmpty)
