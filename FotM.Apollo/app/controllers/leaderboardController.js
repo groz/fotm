@@ -46,6 +46,7 @@ app.controller('LeaderboardController', ['filterFactory', 'media', 'api', 'setti
 
     $scope.armoryLookup = function (player) {
         var playerId = player.name + ' ' + player.realm.realmName;
+        console.log("logging lookup for ", pageId, playerId);
         ga('send', 'event', 'armory lookup', pageId, playerId);
     }
 
