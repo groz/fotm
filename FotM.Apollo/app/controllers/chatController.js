@@ -104,7 +104,7 @@ app.controller('ChatController', ['$scope', '$rootScope', 'shared', 'media', fun
 
         scrollDown();
 
-        $('#chatInputBox').focus();
+        //$('#chatInputBox').focus();
     }
 
     chat.client.messageAdded = function (userAvatar, text) {

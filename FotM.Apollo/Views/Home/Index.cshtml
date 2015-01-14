@@ -57,6 +57,20 @@
         <!-- /Region navigation menu -->
         
         <div class="row">
+            <span>&nbsp;</span>
+        </div>
+
+        <div class="row">
+            <div>
+                @Html.Partial("Paypal")
+            </div>
+            <div class="col-xs-8">
+                @Html.Partial("Yandex")
+            </div>
+        </div>
+        
+        <!-- Page selectors -->
+        <div class="row">
             <div ng-if="shared.currentRegion != 'about'" data-ng-cloak>
 
                 <ul class="pager col-lg-3 col-md-4 brackets" data-ng-cloak>
@@ -88,10 +102,14 @@
                 <!-- /Leaderboard-Now Selector -->
             </div>
         </div>
+        <!-- /Page selectors -->
         
+        <!-- Leaderboards -->
         <div ng-view>
         </div>
+        <!-- /Leaderboards -->
         
+        <!-- Chat -->
         <div ng-controller="ChatController" class="row">
             <div ng-if="chatLoaded" ng-cloak>
                 
@@ -150,6 +168,7 @@
 
             </div>
         </div>
+        <!-- /Chat -->
 
     </div>
 

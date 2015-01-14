@@ -194,6 +194,7 @@
     <Content Include="Views\Shared\InitVK.cshtml" />
     <Content Include="Views\Shared\Paypal.cshtml" />
     <Content Include="Views\Shared\Social.cshtml" />
+    <Content Include="Views\Shared\Yandex.cshtml" />
     <Content Include="Web.config" />
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
