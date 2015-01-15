@@ -1,4 +1,4 @@
-﻿namespace FotM.Hephaestus.Tests.CompressionTests
+﻿module FotM.Hephaestus.Tests.CompressionTests
 
 open System
 open Microsoft.VisualStudio.TestTools.UnitTesting
