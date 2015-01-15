@@ -28,8 +28,8 @@ v=1             // Version.
 let sendEvent (propertyId: string) (clientId: string) (event: AnalyticsEvent) =
     let body = 
         sprintf 
-            "v=1&tid=%s&cid=%s&t=event&ec=%s&ea=%s"
-            propertyId clientId event.category event.action //event.label event.value
+            "v=1&tid=%s&cid=%s&t=event&ec=%s&ea=%s&el=%s&ev=%s"
+            propertyId clientId event.category event.action event.label event.value
 
     createRequest Post "http://www.google-analytics.com/collect"
     |> withHeader(ContentType "application/x-www-form-urlencoded")
