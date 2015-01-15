@@ -7,9 +7,13 @@ open FotM.Hephaestus.TraceLogging
 open Microsoft.ServiceBus.Messaging
 
 module Argus =
+    open FotM.Hephaestus
+
     let armoryPollTimeout = Duration.FromSeconds(30L)
     let armoryPollTimeoutInMilliseconds = int (armoryPollTimeout.ToTimeSpan().TotalMilliseconds)
     let duplicateCheckPeriod = Duration.FromMinutes(30L)
+
+    let logEventToAnalytics = GoogleAnalytics.sendEvent "UA-49247455-4" "Argus"
 
     let shouldRetain snapshot =
          (SystemClock.Instance.Now - snapshot.timeTaken) < duplicateCheckPeriod
@@ -47,6 +51,13 @@ module Argus =
                 | Some(snapshot) ->
                     let uri = repository.upload (snapshot)
                     logInfo "%s publishing update message" armoryInfo
+
+                    logEventToAnalytics {
+                        category = snapshot.region + "_argus_event"
+                        action = snapshot.bracket.url + "_bracket_update"
+                        label = ""
+                        value = ""
+                    } |> ignore
 
                     publisher.send {
                         storageLocation = uri

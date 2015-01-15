@@ -16,6 +16,8 @@ type UpdateValidationResult =
 | ValidUpdate
 
 module Athena =
+    open FotM.Hephaestus
+
     (*
         1. calculate updates/diffs
         2. split into non-intersecting groups
@@ -25,6 +27,14 @@ module Athena =
     *)
 
     let duplicateCheckPeriod = Duration.FromMinutes(20L)
+
+    let logAthenaEvent (snapshot: LadderSnapshot<PlayerEntry>) (label: string) (value: string) = 
+        GoogleAnalytics.sendEvent "UA-49247455-4" "Athena" {
+            category = snapshot.region + "_athena_event"
+            action = snapshot.bracket.url
+            label = label
+            value = value
+        } |> ignore
 
     let calcUpdates currentSnapshot previousSnapshot =
         let previousMap = previousSnapshot.ladder |> Array.map (fun e -> e.player, e) |> Map.ofArray
@@ -88,8 +98,13 @@ module Athena =
         for g in groups do
             logInfo "(-- [%s, %s] group: %A --)" snapshot.region snapshot.bracket.url g
 
-        groups 
-        |> List.fold (fun acc g -> acc @ findTeamsInGroup snapshot.bracket.teamSize snapshot.timeTaken g) []
+        let teams = groups 
+                    |> List.collect (findTeamsInGroup snapshot.bracket.teamSize snapshot.timeTaken)
+
+        let coverage = (float (teams.Length * snapshot.bracket.teamSize)) / (float updates.Length)
+        logAthenaEvent snapshot "update_coverage" (string coverage)
+
+        teams
 
     let isCurrent snapshot =
         let elapsed = SystemClock.Instance.Now - snapshot.timeTaken
@@ -175,6 +190,8 @@ module Athena =
 
                 match validateUpdate snapshot previousSnapshot with
                 | ValidUpdate ->
+                    logAthenaEvent snapshot "calculation" "valid"
+
                     let teams = 
                         findTeams snapshot previousSnapshot
                         |> List.filter (fun t -> t.players.Length = snapshot.bracket.teamSize)
@@ -184,6 +201,8 @@ module Athena =
 
                     let newTeamHistory = (teams @ teamHistory) |> List.filter isValid
 
+                    logAthenaEvent snapshot "teams_found" (string teams.Length)
+
                     if teams.Length <> 0 then
                         logInfo "[%s, %s] Posting ladder update..." snapshot.region snapshot.bracket.url
                         sendUpdate newTeamHistory snapshot.region snapshot.bracket storage historyStorage updatePublisher
@@ -192,12 +211,15 @@ module Athena =
                     
                     snapshot :: currentSnapshotHistory, newTeamHistory
                 | DuplicateUpdate -> 
+                    logAthenaEvent snapshot "calculation" "duplicate"
                     logInfo "[%s, %s] Duplicate update. Skipping..." snapshot.region snapshot.bracket.url
                     currentSnapshotHistory, teamHistory
                 | OutdatedUpdate ->
+                    logAthenaEvent snapshot "calculation" "outdated"
                     logInfo "[%s, %s] Outdated update. Skipping..." snapshot.region snapshot.bracket.url
                     currentSnapshotHistory, teamHistory
                 | ExcessiveUpdate ->
+                    logAthenaEvent snapshot "calculation" "excessive"
                     logInfo "[%s, %s] Excessive update. Skipping..." snapshot.region snapshot.bracket.url
                     snapshot :: currentSnapshotHistory, teamHistory
             | _ -> 
