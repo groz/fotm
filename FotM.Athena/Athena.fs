@@ -182,6 +182,7 @@ module Athena =
         let currentSnapshotHistory = snapshotHistory |> List.filter isCurrent
 
         if currentSnapshotHistory |> List.exists (fun entry -> entry.ladder = snapshot.ladder) then
+            logAthenaEvent snapshot "update_discarded" "already_processed"
             logInfo "[%s, %s] Snapshot found in history. Skipping..." snapshot.region snapshot.bracket.url
             currentSnapshotHistory, teamHistory
         else
@@ -211,17 +212,18 @@ module Athena =
                     
                     snapshot :: currentSnapshotHistory, newTeamHistory
                 | DuplicateUpdate -> 
-                    logAthenaEvent snapshot "calculation" "duplicate"
+                    logAthenaEvent snapshot "update_discarded" "duplicate"
                     logInfo "[%s, %s] Duplicate update. Skipping..." snapshot.region snapshot.bracket.url
                     currentSnapshotHistory, teamHistory
                 | OutdatedUpdate ->
-                    logAthenaEvent snapshot "calculation" "outdated"
+                    logAthenaEvent snapshot "update_discarded" "outdated"
                     logInfo "[%s, %s] Outdated update. Skipping..." snapshot.region snapshot.bracket.url
                     currentSnapshotHistory, teamHistory
                 | ExcessiveUpdate ->
-                    logAthenaEvent snapshot "calculation" "excessive"
+                    logAthenaEvent snapshot "update_discarded" "excessive"
                     logInfo "[%s, %s] Excessive update. Skipping..." snapshot.region snapshot.bracket.url
                     snapshot :: currentSnapshotHistory, teamHistory
             | _ -> 
+                logAthenaEvent snapshot "update_discarded" "first"
                 logInfo "%s, %s Snapshot history is empty, couldn't calculate updates. Added snapshot to history." snapshot.region snapshot.bracket.url
                 snapshot :: currentSnapshotHistory, teamHistory
