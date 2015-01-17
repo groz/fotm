@@ -30,7 +30,7 @@ module Athena =
 
     let logAthenaEvent (snapshot: LadderSnapshot<PlayerEntry>) (label: string) (value: string) = 
         GoogleAnalytics.sendEvent "UA-49247455-4" "Athena" {
-            category = snapshot.region + "_athena_event"
+            category = sprintf "Athena_%s" snapshot.region
             action = snapshot.bracket.url
             label = label
             value = value
@@ -73,7 +73,8 @@ module Athena =
             float pu.seasonLosses
         |]  
 
-    let findTeamsInGroup (teamSize) (snapshotTime: NodaTime.Instant) (updateGroup: PlayerUpdate list) =
+    let findTeamsInGroup (teamSize) (snapshotTime: NodaTime.Instant) (updateGroup: PlayerUpdate list)
+        : TeamEntry list =
         let g = updateGroup |> Array.ofList
 
         if g.Length < teamSize then
@@ -92,6 +93,7 @@ module Athena =
     let findTeams snapshot previousSnapshot =
         let updates = calcUpdates snapshot previousSnapshot
         logInfo "[%s, %s] Total players updated: %i" snapshot.region snapshot.bracket.url updates.Length
+        logAthenaEvent snapshot "players_updated" (string updates.Length)
 
         let groups = split updates
 
@@ -182,7 +184,7 @@ module Athena =
         let currentSnapshotHistory = snapshotHistory |> List.filter isCurrent
 
         if currentSnapshotHistory |> List.exists (fun entry -> entry.ladder = snapshot.ladder) then
-            logAthenaEvent snapshot "update_discarded" "already_processed"
+            logAthenaEvent snapshot "update_already_processed" ""
             logInfo "[%s, %s] Snapshot found in history. Skipping..." snapshot.region snapshot.bracket.url
             currentSnapshotHistory, teamHistory
         else
@@ -191,7 +193,7 @@ module Athena =
 
                 match validateUpdate snapshot previousSnapshot with
                 | ValidUpdate ->
-                    logAthenaEvent snapshot "calculation" "valid"
+                    logAthenaEvent snapshot "valid_update" ""
 
                     let teams = 
                         findTeams snapshot previousSnapshot
@@ -212,18 +214,18 @@ module Athena =
                     
                     snapshot :: currentSnapshotHistory, newTeamHistory
                 | DuplicateUpdate -> 
-                    logAthenaEvent snapshot "update_discarded" "duplicate"
+                    logAthenaEvent snapshot "update_discarded_duplicate" ""
                     logInfo "[%s, %s] Duplicate update. Skipping..." snapshot.region snapshot.bracket.url
                     currentSnapshotHistory, teamHistory
                 | OutdatedUpdate ->
-                    logAthenaEvent snapshot "update_discarded" "outdated"
+                    logAthenaEvent snapshot "update_discarded_outdated" ""
                     logInfo "[%s, %s] Outdated update. Skipping..." snapshot.region snapshot.bracket.url
                     currentSnapshotHistory, teamHistory
                 | ExcessiveUpdate ->
-                    logAthenaEvent snapshot "update_discarded" "excessive"
+                    logAthenaEvent snapshot "update_discarded_excessive" ""
                     logInfo "[%s, %s] Excessive update. Skipping..." snapshot.region snapshot.bracket.url
                     snapshot :: currentSnapshotHistory, teamHistory
             | _ -> 
-                logAthenaEvent snapshot "update_discarded" "first"
+                logAthenaEvent snapshot "update_discarded_first" ""
                 logInfo "%s, %s Snapshot history is empty, couldn't calculate updates. Added snapshot to history." snapshot.region snapshot.bracket.url
                 snapshot :: currentSnapshotHistory, teamHistory

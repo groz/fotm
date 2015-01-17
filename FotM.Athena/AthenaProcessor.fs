@@ -37,7 +37,7 @@ module AthenaProcessor =
                         logInfo "[%s, %i] Processing update %A..." processorId (teamHistory |> List.length) storageLocation
                         let snapshot = fetch<LadderSnapshot<PlayerEntry>> storageLocation
 
-                        Athena.logAthenaEvent snapshot "update" ""
+                        Athena.logAthenaEvent snapshot "processing_update" ""
 
                         let newSnapshotHistory, newTeamHistory = 
                             Athena.processUpdate snapshot snapshotHistory teamHistory storage topic historyStorage
@@ -47,10 +47,10 @@ module AthenaProcessor =
                     with
                     | ex -> 
                         FotM.Hephaestus.GoogleAnalytics.sendEvent "UA-49247455-4" "Athena" {
-                            category = region + "_athena_event"
-                            action = bracket.url
-                            label = "exception"
-                            value = (string ex)
+                            category = sprintf "Athena_exception" 
+                            action = sprintf "%s_%s" region bracket.url
+                            label = (string ex)
+                            value = ""
                         } |> ignore
                         logError "Exception while handling message for %s: %A" processorId ex
                         snapshotHistory, teamHistory

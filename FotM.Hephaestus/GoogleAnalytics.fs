@@ -1,13 +1,6 @@
 ﻿module FotM.Hephaestus.GoogleAnalytics
 open HttpClient
  
-type AnalyticsEvent = {
-    category: string
-    action: string
-    label: string
-    value: string
-}
-
 (*
 POST /collect HTTP/1.1
 Host: www.google-analytics.com
@@ -25,6 +18,14 @@ v=1             // Version.
 &el=holiday     // Event label.
 &ev=300         // Event value.
 *)
+
+type AnalyticsEvent = {
+    category: string
+    action: string
+    label: string
+    value: string
+}
+
 let sendEvent (propertyId: string) (clientId: string) (event: AnalyticsEvent) =
     let body = 
         sprintf 

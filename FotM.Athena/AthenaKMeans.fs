@@ -83,7 +83,7 @@ type AthenaKMeans<'a>(featureExtractor: 'a -> float array, shouldNormalize: bool
                 distortionMetric matrix (centroids, clustering) // out of those get whatever has smaller distortion
             )
 
-    member this.computeGroups (dataSet: 'a array) (nGroups: int) =
+    member this.computeGroups (dataSet: 'a array) (nGroups: int): int array =
         let input = dataSet |> Array.map featureExtractor
         let matrix = if shouldNormalize then normalize input else input
 

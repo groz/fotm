@@ -16,7 +16,7 @@ type ``Google Analytics client tests``() =
             category = "someev"
             action = "someact"
             label = "somelabel"
-            value = "somevalue"
+            value = "1"
         }
 
         for i in seq {0..10} do
