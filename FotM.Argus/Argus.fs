@@ -32,6 +32,14 @@ module Argus =
             with
             | ex -> 
                 logError "%s, %s armory update check generated exception: %A" region.code bracket.url ex
+
+                logEventToAnalytics {
+                        category = sprintf "Argus_%s_Exception" region.code
+                        action = bracket.url + "_exception"
+                        label = ""
+                        value = ""
+                    } |> ignore
+
                 Some(None, history)
         ) [] // initial state is empty history
 
@@ -53,8 +61,8 @@ module Argus =
                     logInfo "%s publishing update message" armoryInfo
 
                     logEventToAnalytics {
-                        category = snapshot.region + "_argus_event"
-                        action = snapshot.bracket.url + "_bracket_update"
+                        category = sprintf "Argus_%s" snapshot.region
+                        action = sprintf "%s_bracket_update" snapshot.bracket.url
                         label = ""
                         value = ""
                     } |> ignore
