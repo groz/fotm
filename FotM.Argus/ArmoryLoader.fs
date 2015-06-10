@@ -61,6 +61,8 @@ module ArmoryLoader =
             rawLadder.Rows 
             |> Array.sortBy (fun row -> -row.Rating, row.Name, row.RealmId) 
             |> Array.mapi (fun i row -> toDomainPlayer(i + 1, row))
+            |> Seq.take 1000 // TODO: revert this workaround for clustering algo limitation
+            |> Seq.toArray
 
         return {
             region = region.code
